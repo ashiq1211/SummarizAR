@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "265232894440",
+    "project_id": "summarizar",
+    "storage_bucket": "summarizar.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:265232894440:android:3d7a476d01ad1a6fc2fc5d",
+        "android_client_info": {
+          "package_name": "com.example.project"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "265232894440-7r215cq48653rlr03fh3k27srbp0lub5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCd4bQNqwDHTxUyskvTB4qfPsK4sVGR9s4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "265232894440-7r215cq48653rlr03fh3k27srbp0lub5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
