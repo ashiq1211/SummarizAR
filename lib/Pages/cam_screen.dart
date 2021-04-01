@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:camera/camera.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
@@ -10,6 +11,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:project/Pages/preview_screen_recognized.dart';
 
 class CameraScreen extends StatefulWidget {
+  const CameraScreen({Key key, this.user}) : super(key: key);
+  final UserCredential user;
+
   @override
   _CameraScreenState createState() => _CameraScreenState();
 }
