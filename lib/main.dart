@@ -4,6 +4,8 @@ import 'package:flutter/services.dart';
 import 'package:project/Pages/cam_screen.dart';
 import 'package:project/Pages/login.dart';
 
+import 'Pages/welcome_page.dart';
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
@@ -19,7 +21,8 @@ class MyApp extends StatelessWidget {
         primaryColor: Colors.black,
       ),
       // home: CameraScreen(),
-      home: LoginPage(),
+      // home: LoginPage(),
+      home: WelcomePage(),
     );
   }
 }
