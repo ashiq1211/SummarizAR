@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 class SummaryPage extends StatefulWidget {
+  var path;
+  SummaryPage(this.path);
   @override
   _SummaryPageState createState() => _SummaryPageState();
 }

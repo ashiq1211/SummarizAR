@@ -1,10 +1,17 @@
 import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:path/path.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_icons/flutter_icons.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:project/Pages/summary.dart';
 import 'package:share/share.dart';
 
@@ -19,6 +26,7 @@ class PreviewScreen extends StatefulWidget {
 
 class _PreviewScreenState extends State<PreviewScreen> {
   Size _imageSize;
+  var imagePath;
   String recognizedText = "Loading ...";
 
   void _initializeVision() async {
@@ -43,7 +51,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
       for (TextLine line in block.lines) {
         setState(() {
           recognizedText += line.text;
-          recognizedText += "+";
+          recognizedText += " ";
         });
         print(recognizedText);
       }
@@ -82,12 +90,14 @@ class _PreviewScreenState extends State<PreviewScreen> {
           automaticallyImplyLeading: true,
         ),
         body: Container(
-          child: Column(
+          child:
+          
+          Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
                 flex: 2,
-                child: Text(recognizedText),
+                child: Text(recognizedText,style: GoogleFonts.openSans(),),
               ),
               Align(
                   alignment: Alignment.bottomCenter,
@@ -100,18 +110,51 @@ class _PreviewScreenState extends State<PreviewScreen> {
                         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                         children: <Widget>[
                           IconButton(
-                            icon: Icon(
-                              Entypo.download,
-                              color: Colors.white,
-                              size: 40,
-                            ),
-                            onPressed: () {
-                              Navigator.push(
-                                  this.context,
-                                  MaterialPageRoute(
-                                      builder: (context) => SummaryPage()));
-                            },
-                          ),
+                              icon: Icon(
+                                Entypo.download,
+                                color: Colors.white,
+                                size: 40,
+                              ),
+                              onPressed: () async {
+
+                               final pdf = pw.Document();
+
+pdf.addPage(pw.Page(
+      pageFormat: PdfPageFormat.a4,
+      build: (pw.Context context) {
+        return pw.Center(
+          child: pw.Text(recognizedText),
+        ); 
+      }));
+   
+   imagePath = join((await getApplicationDocumentsDirectory()).path,
+          '${DateTime.now()}.pdf');
+final File file = File(imagePath);
+ file.writeAsBytesSync(await pdf.save());
+ print(imagePath);
+ 
+ //To do firebase for storing pdf
+
+
+                                final status =
+                                    await Permission.storage.request();
+
+                                if (status.isGranted) {
+                                  final externalDir =
+                                      await getExternalStorageDirectory();
+
+                                  await FlutterDownloader.enqueue(
+                                    url:
+                                        "https://www.google.com/search?q=https://www.itl.cat/pngfile/big/10-100326_desktop-wallpaper-hd-full-screen-free-download-full.jpg;&sxsrf=ALeKk02uON2w1O-dqucDveUgu6WwiaVUzA:1617007949418&tbm=isch&source=iu&ictx=1&fir=j5LgEHLXLRAxRM%252CzfdbFylDAAK-oM%252C_&vet=1&usg=AI4_-kSECfbFgtJAqHs_t7OO8tbSrdIR7w&sa=X&ved=2ahUKEwj03rGDkNXvAhXBQ3wKHYM5CtAQ9QF6BAgPEAE#imgrc=j5LgEHLXLRAxRM",
+                                    savedDir: externalDir.path,
+                                    fileName: "download",
+                                    showNotification: true,
+                                    openFileFromNotification: true,
+                                  );
+                                } else {
+                                  print("Permission deined");
+                                }
+                              }),
                           IconButton(
                             icon: Icon(
                               Entypo.text_document,
@@ -122,7 +165,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                               Navigator.push(
                                   this.context,
                                   MaterialPageRoute(
-                                      builder: (context) => SummaryPage()));
+                                      builder: (context) => SummaryPage(imagePath)));
                             },
                           ),
                           IconButton(
@@ -132,7 +175,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                               size: 40,
                             ),
                             onPressed: () {
-                              Share.share(recognizedText);
+                              Share.shareFiles([imagePath],subject: "Document");
                             },
                           ),
                         ]),
