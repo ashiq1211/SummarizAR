@@ -72,7 +72,8 @@ class _CameraScreenState extends State<CameraScreen> {
 
     if (scale < 1) scale = 1 / scale;
 
-    return Transform.scale(
+    return 
+    Transform.scale(
       scale: scale,
       child: Center(
         child: CameraPreview(cameraController),
