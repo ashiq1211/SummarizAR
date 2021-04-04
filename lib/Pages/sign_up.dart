@@ -139,7 +139,7 @@ class _SignUpState extends State<SignUp> {
                 borderRadius: BorderRadius.circular(30.0),
               ),
             ),
-            obscureText: true,
+            obscureText: _isObscured,
           ),
           SizedBox(height: 60.0),
           Align(

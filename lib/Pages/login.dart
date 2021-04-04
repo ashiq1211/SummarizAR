@@ -160,16 +160,15 @@ class _LoginPageState extends State<LoginPage> {
               height: 50.0,
               width: 270,
               child: ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  shape: new RoundedRectangleBorder(
-                    borderRadius: new BorderRadius.circular(30.0),
+                  style: ElevatedButton.styleFrom(
+                    shape: new RoundedRectangleBorder(
+                      borderRadius: new BorderRadius.circular(30.0),
+                    ),
+                    primary: Colors.grey[900], // background
+                    onPrimary: Colors.white, // foreground
                   ),
-                  primary: Colors.grey[900], // background
-                  onPrimary: Colors.white, // foreground
-                ),
-                onPressed: signIn,
-                child: Text('Sign In'),
-              ),
+                  onPressed: signIn,
+                  child: Text('Sign In')),
             ),
           )
         ],
@@ -177,22 +176,59 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Incorrect Login Credentials'),
+          content: SingleChildScrollView(
+            child: Text(
+              'Either the email or password you entered is incorrect',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text("Try Again"),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            TextButton(
+              child: Text(
+                'SignUp',
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SignUp(),
+                        fullscreenDialog: true));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> signIn() async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
       formState.save();
+
       try {
         final UserCredential user = await FirebaseAuth.instance
             .signInWithEmailAndPassword(email: _email, password: _password);
+
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => CameraScreen(user: user)));
       } catch (e) {
+        _showMyDialog();
         print(e.message);
       }
     }
-  }
-
-  Future<void> resetPassword() async {
-    await FirebaseAuth.instance.sendPasswordResetEmail(email: _email);
   }
 }
