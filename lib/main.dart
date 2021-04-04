@@ -7,16 +7,12 @@ import 'package:project/Pages/login.dart';
 
 import 'Pages/welcome_page.dart';
 
-
-
- 
-
-void main() async{
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-await FlutterDownloader.initialize(
-  debug: true // optional: set false to disable printing logs to console
-);
-   WidgetsFlutterBinding.ensureInitialized();
+  await FlutterDownloader.initialize(
+      debug: true // optional: set false to disable printing logs to console
+      );
+  WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
 
   runApp(MyApp());
