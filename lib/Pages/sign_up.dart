@@ -164,6 +164,38 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
+  Future<void> _showMyDialog() async {
+    return showDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      // user must tap button!
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Account already exist'),
+          content: SingleChildScrollView(
+            child: Text(
+              'The email account you are trying to register is already in use.',
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text(
+                'SignIn',
+              ),
+              onPressed: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => LoginPage(),
+                        fullscreenDialog: true));
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   Future<void> signUp() async {
     final formState = _formKey.currentState;
     if (formState.validate()) {
@@ -176,6 +208,7 @@ class _SignUpState extends State<SignUp> {
             context, MaterialPageRoute(builder: (context) => LoginPage()));
         // Navigator.of(context).pop();
       } catch (e) {
+        _showMyDialog();
         print(e.message);
       }
     }
