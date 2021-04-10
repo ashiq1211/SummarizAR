@@ -28,7 +28,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
   Size _imageSize;
   var imagePath;
   String recognizedText = "Loading ...";
-
+  int flag = 0;
+  double cur = 0.0;
   void _initializeVision() async {
     // TODO: Initialize the text recognizer here
     if (widget.imgPath != null) {
@@ -50,10 +51,19 @@ class _PreviewScreenState extends State<PreviewScreen> {
     for (TextBlock block in visionText.blocks) {
       for (TextLine line in block.lines) {
         setState(() {
+          print(line.boundingBox);
+          print(line.text);
+          if (flag == 1) {
+            if (line.boundingBox.top > cur + 50.0) {
+              print("hello");
+              recognizedText += "\n";
+            }
+          }
+          cur = line.boundingBox.bottom;
           recognizedText += line.text;
           recognizedText += " ";
+          flag = 1;
         });
-        print(recognizedText);
       }
     }
   }
@@ -90,14 +100,15 @@ class _PreviewScreenState extends State<PreviewScreen> {
           automaticallyImplyLeading: true,
         ),
         body: Container(
-          child:
-          
-          Column(
+          child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
               Expanded(
                 flex: 2,
-                child: Text(recognizedText,style: GoogleFonts.openSans(),),
+                child: Text(
+                  recognizedText,
+                  style: GoogleFonts.openSans(),
+                ),
               ),
               Align(
                   alignment: Alignment.bottomCenter,
@@ -116,25 +127,25 @@ class _PreviewScreenState extends State<PreviewScreen> {
                                 size: 40,
                               ),
                               onPressed: () async {
+                                final pdf = pw.Document();
 
-                               final pdf = pw.Document();
+                                pdf.addPage(pw.Page(
+                                    pageFormat: PdfPageFormat.a4,
+                                    build: (pw.Context context) {
+                                      return pw.Center(
+                                        child: pw.Text(recognizedText),
+                                      );
+                                    }));
 
-pdf.addPage(pw.Page(
-      pageFormat: PdfPageFormat.a4,
-      build: (pw.Context context) {
-        return pw.Center(
-          child: pw.Text(recognizedText),
-        ); 
-      }));
-   
-   imagePath = join((await getApplicationDocumentsDirectory()).path,
-          '${DateTime.now()}.pdf');
-final File file = File(imagePath);
- file.writeAsBytesSync(await pdf.save());
- print(imagePath);
- 
- //To do firebase for storing pdf
+                                imagePath = join(
+                                    (await getApplicationDocumentsDirectory())
+                                        .path,
+                                    '${DateTime.now()}.pdf');
+                                final File file = File(imagePath);
+                                file.writeAsBytesSync(await pdf.save());
+                                print(imagePath);
 
+                                //To do firebase for storing pdf
 
                                 final status =
                                     await Permission.storage.request();
@@ -165,7 +176,8 @@ final File file = File(imagePath);
                               Navigator.push(
                                   this.context,
                                   MaterialPageRoute(
-                                      builder: (context) => SummaryPage(imagePath)));
+                                      builder: (context) =>
+                                          SummaryPage(imagePath)));
                             },
                           ),
                           IconButton(
@@ -175,7 +187,8 @@ final File file = File(imagePath);
                               size: 40,
                             ),
                             onPressed: () {
-                              Share.shareFiles([imagePath],subject: "Document");
+                              Share.shareFiles([imagePath],
+                                  subject: "Document");
                             },
                           ),
                         ]),
