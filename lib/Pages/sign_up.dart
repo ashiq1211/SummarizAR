@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:project/Pages/login.dart';
-import 'package:project/Pages/login.dart';
+import 'package:connectivity/connectivity.dart';
 
 import 'cam_screen.dart';
 
@@ -164,30 +164,34 @@ class _SignUpState extends State<SignUp> {
     );
   }
 
-  Future<void> _showMyDialog() async {
+  Future<void> _showMyDialog(String t, String t1, String t2) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
       // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Account already exist'),
+          title: Text(t1),
           content: SingleChildScrollView(
             child: Text(
-              'The email account you are trying to register is already in use.',
+              t,
             ),
           ),
           actions: <Widget>[
             TextButton(
               child: Text(
-                'SignIn',
+                t2,
               ),
               onPressed: () {
-                Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => LoginPage(),
-                        fullscreenDialog: true));
+                if (t2 == "SignIn") {
+                  Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => LoginPage(),
+                          fullscreenDialog: true));
+                } else {
+                  Navigator.of(context).pop();
+                }
               },
             ),
           ],
@@ -208,7 +212,19 @@ class _SignUpState extends State<SignUp> {
             context, MaterialPageRoute(builder: (context) => LoginPage()));
         // Navigator.of(context).pop();
       } catch (e) {
-        _showMyDialog();
+        String t, t1, t2;
+        var connectivityResult = await (Connectivity().checkConnectivity());
+        if (connectivityResult == ConnectivityResult.none) {
+          t1 = "No Connection";
+          t = "Check your Internet Connectivity";
+          t2 = "Try Again";
+          _showMyDialog(t, t1, t2);
+        } else {
+          t1 = "Account Already Exist";
+          t = "The email Id is already registered";
+          t2 = "SignIn";
+          _showMyDialog(t, t1, t2);
+        }
         print(e.message);
       }
     }
