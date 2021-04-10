@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 import 'package:project/Pages/login.dart';
 import 'package:connectivity/connectivity.dart';
 
@@ -218,13 +219,15 @@ class _SignUpState extends State<SignUp> {
           t1 = "No Connection";
           t = "Check your Internet Connectivity";
           t2 = "Try Again";
-          _showMyDialog(t, t1, t2);
+          // _showMyDialog(t, t1, t2);
+
         } else {
           t1 = "Account Already Exist";
           t = "The email Id is already registered";
           t2 = "SignIn";
-          _showMyDialog(t, t1, t2);
         }
+        _showMyDialog(t, t1, t2);
+
         print(e.message);
       }
     }

@@ -1,3 +1,4 @@
+import 'package:connectivity/connectivity.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:project/Pages/cam_screen.dart';
@@ -176,29 +177,23 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Future<void> _showMyDialog() async {
+  Future<void> _showMyDialog(String t, String t1, String t2) async {
     return showDialog<void>(
       context: context,
       barrierDismissible: false,
       // user must tap button!
       builder: (BuildContext context) {
         return AlertDialog(
-          title: Text('Incorrect Login Credentials'),
+          title: Text(t),
           content: SingleChildScrollView(
             child: Text(
-              'Either the email or password you entered is incorrect',
+              t1,
             ),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text("Try Again"),
-              onPressed: () {
-                Navigator.of(context).pop();
-              },
-            ),
-            TextButton(
               child: Text(
-                'SignUp',
+                t2,
               ),
               onPressed: () {
                 Navigator.pushReplacement(
@@ -206,6 +201,12 @@ class _LoginPageState extends State<LoginPage> {
                     MaterialPageRoute(
                         builder: (context) => SignUp(),
                         fullscreenDialog: true));
+              },
+            ),
+            TextButton(
+              child: Text("Try Again"),
+              onPressed: () {
+                Navigator.of(context).pop();
               },
             ),
           ],
@@ -226,7 +227,21 @@ class _LoginPageState extends State<LoginPage> {
         Navigator.push(context,
             MaterialPageRoute(builder: (context) => CameraScreen(user: user)));
       } catch (e) {
-        _showMyDialog();
+        String t, t1, t2;
+        var connectivityResult = await (Connectivity().checkConnectivity());
+        if (connectivityResult == ConnectivityResult.none) {
+          t1 = "No Connection";
+          t = "Check your Internet Connectivity";
+          t2 = "";
+          // _showMyDialog(t, t1, t2);
+
+        } else {
+          t1 = "Invalid Login Credentials!";
+          t = "The email or password you entered is incorrect";
+          t2 = "SignUp";
+        }
+        _showMyDialog(t, t1, t2);
+
         print(e.message);
       }
     }
