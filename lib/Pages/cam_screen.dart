@@ -9,10 +9,15 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:project/Pages/preview_screen_recognized.dart';
+import 'package:project/ScopedModel/main.dart';
 
 class CameraScreen extends StatefulWidget {
-  const CameraScreen({Key key, this.user}) : super(key: key);
-  final UserCredential user;
+  // const CameraScreen({Key key, this.user},this._model) : super(key: key);
+  // final UserCredential user;
+   final Mainmodel _model;
+  CameraScreen([this._model]);
+  
+ 
 
   @override
   _CameraScreenState createState() => _CameraScreenState();
@@ -22,7 +27,7 @@ class _CameraScreenState extends State<CameraScreen> {
   CameraController cameraController;
   List cameras;
   int selectedCameraIndex;
-  bool flash = false;
+  bool flash = true;
   double zoom = 0.0;
   File _image;
   final picker = ImagePicker();
