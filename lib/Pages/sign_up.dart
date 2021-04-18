@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_icons/flutter_icons.dart';
 
 import 'package:project/Pages/login.dart';
@@ -8,6 +9,11 @@ import 'package:project/ScopedModel/main.dart';
 import 'package:project/Widget/alert.dart';
 import 'package:project/Widget/loading.dart';
 import 'package:scoped_model/scoped_model.dart';
+=======
+
+import 'package:project/Pages/login.dart';
+import 'package:connectivity/connectivity.dart';
+
 
 import 'cam_screen.dart';
 
@@ -240,12 +246,16 @@ void _submitform(Mainmodel model)async{
       
 
 
+
     }else{
        showDialog(
           context: context,
           builder: (BuildContext context) {
             return AlertWidget(response["message"]);
           }); 
+
+  
+  
     }
 
   }  );
