@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   firebase_auth: ^1.0.1
+  settings_ui: ^1.0.0
   
 
 

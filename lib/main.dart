@@ -11,7 +11,8 @@ import 'package:project/ScopedModel/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 import 'Pages/welcome_page.dart';
-bool isAuth=false;
+
+bool isAuth = false;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await FlutterDownloader.initialize(
@@ -19,13 +20,11 @@ void main() async {
       );
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  FirebaseAuth.instance
-  .authStateChanges()
-  .listen((User user) {
+  FirebaseAuth.instance.authStateChanges().listen((User user) {
     if (user == null) {
-      isAuth=false;
+      isAuth = false;
     } else {
-      isAuth=true;
+      isAuth = true;
     }
   });
 
@@ -34,28 +33,27 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   final Mainmodel _model = Mainmodel();
-  
- 
+
   @override
   Widget build(BuildContext context) {
-    
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle());
-   
+
     return ScopedModel<Mainmodel>(
-      model: _model,
-     child: MaterialApp(
-      theme: ThemeData(
-        primaryColor: Colors.black,
-      ),
-      // home: CameraScreen(),
-      // home: LoginPage(),
-      home:isAuth ?HomePage(): WelcomePage(),
-      routes: {
-         "/signup": (BuildContext context) => SignUp(_model),
-         "/login": (BuildContext context) => LoginPage(_model),
-         "/cameraPage":(BuildContext context) => CameraScreen(_model),
-          "/homePage":(BuildContext context) => HomePage(_model),
-      },
-    ));
+        model: _model,
+        child: MaterialApp(
+          theme: ThemeData(
+            primaryColor: Colors.black,
+          ),
+
+          // home: CameraScreen(),
+          // home: LoginPage(),
+          home: isAuth ? HomePage() : WelcomePage(),
+          routes: {
+            "/signup": (BuildContext context) => SignUp(_model),
+            "/login": (BuildContext context) => LoginPage(_model),
+            "/cameraPage": (BuildContext context) => CameraScreen(_model),
+            "/homePage": (BuildContext context) => HomePage(_model),
+          },
+        ));
   }
 }

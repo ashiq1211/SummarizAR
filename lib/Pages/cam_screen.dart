@@ -14,10 +14,8 @@ import 'package:project/ScopedModel/main.dart';
 class CameraScreen extends StatefulWidget {
   // const CameraScreen({Key key, this.user},this._model) : super(key: key);
   // final UserCredential user;
-   final Mainmodel _model;
+  final Mainmodel _model;
   CameraScreen([this._model]);
-  
- 
 
   @override
   _CameraScreenState createState() => _CameraScreenState();
@@ -77,8 +75,7 @@ class _CameraScreenState extends State<CameraScreen> {
 
     if (scale < 1) scale = 1 / scale;
 
-    return 
-    Transform.scale(
+    return Transform.scale(
       scale: scale,
       child: Center(
         child: CameraPreview(cameraController),
