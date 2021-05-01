@@ -17,13 +17,15 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:project/Pages/summary.dart';
+import 'package:project/ScopedModel/main.dart';
 import 'package:share/share.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 class PreviewScreen extends StatefulWidget {
   final File imgPath;
   final String fileName;
-  PreviewScreen({this.imgPath, this.fileName});
+  final Mainmodel model;
+  PreviewScreen(this.model,[this.imgPath, this.fileName]);
 
   @override
   _PreviewScreenState createState() => _PreviewScreenState();

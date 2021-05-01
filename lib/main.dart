@@ -39,16 +39,16 @@ runApp(MyApp());
 
 class MyApp extends StatelessWidget {
  
- final AppModel model = Mainmodel();
+ final Mainmodel model = Mainmodel();
 
   @override
   Widget build(BuildContext context) {
      
     
 
-    return ScopedModel<AppModel>(
+    return ScopedModel< Mainmodel>(
       
-        model: AppModel(),
+        model: model,
         child: MaterialApp(
           theme: ThemeData(
             primaryColor: Colors.black,
