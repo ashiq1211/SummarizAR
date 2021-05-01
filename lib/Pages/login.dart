@@ -10,17 +10,16 @@ import 'package:project/Widget/loading.dart';
 import 'package:scoped_model/scoped_model.dart';
 
 class LoginPage extends StatefulWidget {
-   Mainmodel _model;
+  Mainmodel _model;
   LoginPage([this._model]);
   @override
-
   _LoginPageState createState() => new _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  TextEditingController _passwordcontroller=TextEditingController();
-   FocusNode _focusNode = FocusNode();
-  TextEditingController _mailcontroller=TextEditingController();
+  TextEditingController _passwordcontroller = TextEditingController();
+  FocusNode _focusNode = FocusNode();
+  TextEditingController _mailcontroller = TextEditingController();
   bool _isObscured = true;
   Color _eyeButton = Colors.grey;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
@@ -39,22 +38,23 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<Mainmodel>(builder: (BuildContext context,Widget child,Mainmodel model){
-   
-    return Scaffold(
-        body: ListView(
-            padding: const EdgeInsets.fromLTRB(22.0, 0.0, 22.0, 22.0),
-            children: <Widget>[
-          SizedBox(
-            height: kToolbarHeight,
-          ),
-          buildTitle(),
-          buildTitleLine(),
-          SizedBox(height: 70),
-          signInForm(),
-          SizedBox(height: 70),
-          buildSignUpInSignin(model)
-        ])); });
+    return ScopedModelDescendant<Mainmodel>(
+        builder: (BuildContext context, Widget child, Mainmodel model) {
+      return Scaffold(
+          body: ListView(
+              padding: const EdgeInsets.fromLTRB(22.0, 0.0, 22.0, 22.0),
+              children: <Widget>[
+            SizedBox(
+              height: kToolbarHeight,
+            ),
+            buildTitle(),
+            buildTitleLine(),
+            SizedBox(height: 70),
+            signInForm(),
+            SizedBox(height: 70),
+            buildSignUpInSignin(model)
+          ]));
+    });
   }
 
   Row buildSignUpInSignin(Mainmodel model) {
@@ -72,15 +72,15 @@ class _LoginPageState extends State<LoginPage> {
             child: Text('SignUp',
                 style: TextStyle(fontSize: 14.0, color: Colors.black)),
             onPressed: () {
-             if(model.load){
-              return null;
-            }else{
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => SignUp(),
-                      fullscreenDialog: true));
-            }
+              if (model.load) {
+                return null;
+              } else {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SignUp(),
+                        fullscreenDialog: true));
+              }
             }),
       ],
     );
@@ -101,153 +101,134 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   Widget signInForm() {
-     return ScopedModelDescendant<Mainmodel>(builder: (BuildContext context,Widget child,Mainmodel model){
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: <Widget>[
-          TextFormField(
-            validator: (input) {
-              if (input.isEmpty|| !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+").hasMatch(input)) {
-                return 'Please provide the correct email';
-              }
-            },
-            controller: _mailcontroller,
-            decoration: InputDecoration(
-              labelText: 'Email ',
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
+    return ScopedModelDescendant<Mainmodel>(
+        builder: (BuildContext context, Widget child, Mainmodel model) {
+      return Form(
+        key: _formKey,
+        child: Column(
+          children: <Widget>[
+            TextFormField(
+              validator: (input) {
+                if (input.isEmpty ||
+                    !RegExp(r"^[a-zA-Z0-9.a-zA-Z0-9.!#$%&'*+-/=?^_`{|}~]+@[a-zA-Z0-9]+\.[a-zA-Z]+")
+                        .hasMatch(input)) {
+                  return 'Please provide the correct email';
+                }
+              },
+              controller: _mailcontroller,
+              decoration: InputDecoration(
+                labelText: 'Email ',
+                prefixIcon: Icon(Icons.email_rounded),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
               ),
             ),
-          ),
-          SizedBox(
-            height: 30.0,
-          ),
-          TextFormField(
-            validator: (input) {
-              if (input.length < 6) {
-                return 'Password should be minimum of 6 characters';
-              }
-            },
-            controller: _passwordcontroller,
-            decoration: InputDecoration(
-              labelText: 'Password',
-              suffixIcon: IconButton(
-                  icon: Icon(
-                    Icons.remove_red_eye,
-                    color: _eyeButton,
-                  ),
-                  onPressed: () {
-                    if (_isObscured) {
-                      setState(() {
-                        _isObscured = false;
-                        _eyeButton = Theme.of(context).primaryColor;
-                      });
-                    } else {
-                      setState(() {
-                        _isObscured = true;
-                        _eyeButton = Colors.grey;
-                      });
-                    }
-                  }),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(30.0),
-              ),
+            SizedBox(
+              height: 30.0,
             ),
-            obscureText: _isObscured,
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () {
-                  if(model.load){
-              return null;
-            }else{
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => ForgotPassword(),
-                      fullscreenDialog: true));
-            }
-                },
-                child: Text("Forgot Password",
-                    style: TextStyle(fontSize: 12.0, color: Colors.grey)),
-              )),
-          SizedBox(height: 60.0),
-          Align(
-            child: SizedBox(
-              height: 50.0,
-              width: 270,
-              child:model.load?LoadingWidget(): ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    shape: new RoundedRectangleBorder(
-                      borderRadius: new BorderRadius.circular(30.0),
+            TextFormField(
+              validator: (input) {
+                if (input.length < 6) {
+                  return 'Password should be minimum of 6 characters';
+                }
+              },
+              controller: _passwordcontroller,
+              decoration: InputDecoration(
+                labelText: 'Password',
+                suffixIcon: IconButton(
+                    icon: Icon(
+                      Icons.remove_red_eye,
+                      color: _eyeButton,
                     ),
-                    primary: Colors.grey[900], // background
-                    onPrimary: Colors.white, // foreground
-                  ),
-                  onPressed: ()=>_submitform(model),
-                  child: Text('Sign In')),
+                    onPressed: () {
+                      if (_isObscured) {
+                        setState(() {
+                          _isObscured = false;
+                          _eyeButton = Theme.of(context).primaryColor;
+                        });
+                      } else {
+                        setState(() {
+                          _isObscured = true;
+                          _eyeButton = Colors.grey;
+                        });
+                      }
+                    }),
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+              ),
+              obscureText: _isObscured,
             ),
-          )
-        ],
-      ),
-    );
-  });}
+            SizedBox(
+              height: 5,
+            ),
+            Align(
+                alignment: Alignment.centerRight,
+                child: TextButton(
+                  onPressed: () {
+                    if (model.load) {
+                      return null;
+                    } else {
+                      Navigator.pushReplacement(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => ForgotPassword(),
+                              fullscreenDialog: true));
+                    }
+                  },
+                  child: Text("Forgot Password",
+                      style: TextStyle(fontSize: 12.0, color: Colors.grey)),
+                )),
+            SizedBox(height: 60.0),
+            Align(
+              child: SizedBox(
+                height: 50.0,
+                width: 270,
+                child: model.load
+                    ? LoadingWidget()
+                    : ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0),
+                          ),
+                          primary: Colors.grey[900], // background
+                          onPrimary: Colors.white, // foreground
+                        ),
+                        onPressed: () => _submitform(model),
+                        child: Text('Sign In')),
+              ),
+            )
+          ],
+        ),
+      );
+    });
+  }
 
-  
-void _submitform(Mainmodel model)async{
-   
-    
-    if(!_formKey.currentState.validate()){
+  void _submitform(Mainmodel model) async {
+    if (!_formKey.currentState.validate()) {
       return;
     }
 
-    
-   _focusNode.unfocus();
-  model.signin(_mailcontroller.text, _passwordcontroller.text,).then((response) {
-   
-    if(!response['error']){
-           
- 
-     
-    
+    _focusNode.unfocus();
+    model
+        .signin(
+      _mailcontroller.text,
+      _passwordcontroller.text,
+    )
+        .then((response) {
+      if (!response['error']) {
         Navigator.pushReplacementNamed(context, '/homePage');
-      
-
-
-
-    }else{
-       showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return AlertWidget(response["message"]);
-          }); 
-
-  
-    }
-
-  }  );
-
-
-    
+      } else {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertWidget(response["message"]);
+            });
+      }
+    });
 
     //  checkuser();
-     
-     
-     
-     
-  
-    
-     
-   
-   
-     
- 
-    
   }
   // Future<void> _showMyDialog(String t, String t1, String t2) async {
   //   return showDialog<void>(

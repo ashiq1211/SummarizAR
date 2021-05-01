@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   firebase_auth: ^1.0.1
+  settings_ui: ^1.0.0
   
 
 
@@ -50,6 +51,8 @@ dependencies:
   connectivity: ^3.0.3
   dio: ^4.0.0
   fluttertoast: ^8.0.4
+  firebase_storage: ^8.0.5
+  firebase_database: ^6.1.2
 
 
 dev_dependencies:
