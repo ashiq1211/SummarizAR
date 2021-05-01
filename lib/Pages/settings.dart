@@ -29,7 +29,7 @@ class settings extends StatelessWidget {
           SettingsSection(
             tiles: [
               SettingsTile(
-                titleMaxLines: 3,
+                
                 switchActiveColor: Colors.grey,
                 titleTextStyle: TextStyle(color: Colors.grey[400]),
                 title: 'Swathy M',

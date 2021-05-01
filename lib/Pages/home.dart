@@ -1,9 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:project/Pages/cam_screen.dart';
 import 'package:project/Pages/settings.dart';
+import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
 import 'package:scoped_model/scoped_model.dart';
 
@@ -15,6 +17,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  final mainReference = FirebaseDatabase.instance.reference().child('Database');
+  List<DocumentModel> itemList = [];
+  Mainmodel _model;
+  void initState() {
+    mainReference.once().then((DataSnapshot snap) {
+      print("Swaty");
+      print(snap);
+      var data = snap.value;
+      print(data);
+      itemList.clear();
+      data.forEach((key, value) {
+        DocumentModel m = new DocumentModel(value['PDF'], value['FileName']);
+        itemList.add(m);
+      });
+      print(itemList);
+      setState(() {});
+    });
+  }
+
   FocusNode _focusNode = FocusNode();
   void _select(
     choice,
@@ -60,67 +81,114 @@ class _HomePageState extends State<HomePage> {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
       return Scaffold(
-          floatingActionButton: FloatingActionButton(
-            backgroundColor: Theme.of(context).primaryColor,
-            child: Icon(Icons.camera_alt),
-            onPressed: () {
-              Navigator.pushNamed(context, "/cameraPage");
-            },
+        floatingActionButton: FloatingActionButton(
+          backgroundColor: Theme.of(context).primaryColor,
+          child: Icon(Icons.camera_alt),
+          onPressed: () {
+            Navigator.pushNamed(context, "/cameraPage");
+          },
+        ),
+        appBar: AppBar(
+          title: Text(
+            "Home",
+            style: TextStyle(fontSize: 18, color: Colors.white),
           ),
-          appBar: AppBar(
-            title: Text(
-              "Home",
-              style: TextStyle(fontSize: 18, color: Colors.white),
+          elevation: 10,
+          backgroundColor: Theme.of(context).primaryColor,
+          actions: [
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.search),
             ),
-            elevation: 10,
-            backgroundColor: Theme.of(context).primaryColor,
-            actions: [
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(Icons.search),
-              ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: Icon(Icons.notifications),
-              ),
-              IconButton(
-                onPressed: () {
-                  _settingModalBottomSheet(context);
+            Padding(
+              padding: EdgeInsets.all(8.0),
+              child: Icon(Icons.notifications),
+            ),
+            IconButton(
+              onPressed: () {
+                _settingModalBottomSheet(context);
+              },
+              icon: new Icon(Icons.more_vert),
+            ),
+            PopupMenuButton(
+              elevation: 3.2,
+              onCanceled: () {
+                print('You have not chossed anything');
+              },
+              tooltip: 'This is tooltip',
+              onSelected: _select,
+              itemBuilder: (BuildContext context) {
+                return choices.map((CustomPopupMenu choice) {
+                  return PopupMenuItem(
+                    value: choice.title,
+                    child: ListTile(
+                      leading: Icon(choice.icon),
+                      title: Text(choice.title),
+                    ),
+                  );
+                }).toList();
+              },
+            )
+          ],
+        ),
+        drawer: Drawer(),
+        body: itemList.length == 0
+            ? Center(
+                child: Text(
+                "Nothing Found!!. \n Add some Docs.",
+                style: GoogleFonts.lato(
+                    textStyle: TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w700,
+                  color: Colors.black,
+                )),
+              ))
+            : ListView.builder(
+                itemCount: itemList.length,
+                itemBuilder: (context, index) {
+                  return Padding(
+                      padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
+                      child: GestureDetector(
+                        onTap: () {
+                          // String passData=itemList[index].link;
+                          // Navigator.push(
+                          //     context,
+                          //     MaterialPageRoute(
+                          //         builder: (context)=>ViewPdf(),
+                          //         settings: RouteSettings(
+                          //         )
+                          //     )
+                          // );
+                        },
+                        child: Stack(
+                          children: <Widget>[
+                            Container(
+                              height: 100,
+                              // decoration: BoxDecoration(
+                              //   // image: DecorationImage(
+                              //   //   image: AssetImage(''),
+                              //   //   fit: BoxFit.cover,
+                              //   // ),
+                              // ),
+                            ),
+                            Center(
+                              child: Container(
+                                height: 140,
+                                child: Card(
+                                  margin: EdgeInsets.all(18),
+                                  elevation: 7.0,
+                                  child: Center(
+                                    child: Text(itemList[index].name),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ));
                 },
-                icon: new Icon(Icons.more_vert),
               ),
-              PopupMenuButton(
-                elevation: 3.2,
-                onCanceled: () {
-                  print('You have not chossed anything');
-                },
-                tooltip: 'This is tooltip',
-                onSelected: _select,
-                itemBuilder: (BuildContext context) {
-                  return choices.map((CustomPopupMenu choice) {
-                    return PopupMenuItem(
-                      value: choice.title,
-                      child: ListTile(
-                        leading: Icon(choice.icon),
-                        title: Text(choice.title),
-                      ),
-                    );
-                  }).toList();
-                },
-              )
-            ],
-          ),
-          drawer: Drawer(),
-          body: Center(
-              child: Text(
-            "Nothing Found!!. \n Add some Docs.",
-            style: GoogleFonts.lato(
-                textStyle: TextStyle(
-              fontSize: 14.0,
-              fontWeight: FontWeight.w700,
-              color: Colors.black,
-            )),
-          )));
+      );
     });
   }
 

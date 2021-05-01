@@ -1,6 +1,10 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
+import 'dart:convert';
+import 'package:firebase_database/firebase_database.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart';
 import 'package:pdf/pdf.dart';
@@ -14,6 +18,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:project/Pages/summary.dart';
 import 'package:share/share.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 class PreviewScreen extends StatefulWidget {
   final File imgPath;
@@ -37,6 +42,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
     }
     final FirebaseVisionImage visionImage =
         FirebaseVisionImage.fromFile(widget.imgPath);
+
+    final mainReference =
+        FirebaseDatabase.instance.reference().child('Database');
 
     final TextRecognizer textRecognizer =
         FirebaseVision.instance.textRecognizer();
@@ -66,6 +74,49 @@ class _PreviewScreenState extends State<PreviewScreen> {
         });
       }
     }
+
+    String CreateCryptoRandomString([int length = 32]) {
+      final Random _random = Random.secure();
+      var values = List<int>.generate(length, (i) => _random.nextInt(256));
+      return base64Url.encode(values);
+    }
+
+    void documentFileUpload(String str, String name) {
+      var data = {
+        "PDF": str,
+        "FileName": name,
+      };
+      mainReference.child(CreateCryptoRandomString()).set(data).then((value) {
+        print("Successfully");
+        print(str);
+      });
+    }
+
+    savePdf(List<int> asset, String name) async {
+      Reference reference = FirebaseStorage.instance.ref().child(name);
+      UploadTask uploadTask = reference.putData(asset);
+
+      var imageUrl = await (await uploadTask).ref.getDownloadURL();
+      final url = imageUrl.toString();
+      print(url);
+      documentFileUpload(url, name);
+    }
+
+    String randomName = '${DateTime.now()}.pdf';
+    final pdf = pw.Document();
+
+    pdf.addPage(pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Text(recognizedText),
+          );
+        }));
+    imagePath = join((await getApplicationDocumentsDirectory()).path,
+        '${DateTime.now()}.pdf');
+    final File file = File(imagePath);
+    file.writeAsBytesSync(await pdf.save());
+    savePdf(file.readAsBytesSync(), randomName);
   }
 
   Future<void> _getImageSize(File imageFile) async {
@@ -105,9 +156,19 @@ class _PreviewScreenState extends State<PreviewScreen> {
             children: <Widget>[
               Expanded(
                 flex: 2,
-                child: Text(
-                  recognizedText,
-                  style: GoogleFonts.openSans(),
+                child: Container(
+                  margin: const EdgeInsets.all(15.0),
+                  padding: const EdgeInsets.all(3.0),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      width: 3,
+                      color: Colors.black,
+                    ),
+                  ),
+                  child: Text(
+                    recognizedText,
+                    style: GoogleFonts.openSans(),
+                  ),
                 ),
               ),
               Align(
