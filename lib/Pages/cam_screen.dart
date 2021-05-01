@@ -9,12 +9,13 @@ import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:project/Pages/preview_screen_recognized.dart';
-import 'package:project/ScopedModel/main.dart';
+import 'package:project/ScopedModel/appModel.dart';
+
 
 class CameraScreen extends StatefulWidget {
   // const CameraScreen({Key key, this.user},this._model) : super(key: key);
   // final UserCredential user;
-  final Mainmodel _model;
+  final AppModel _model;
   CameraScreen([this._model]);
 
   @override
@@ -226,9 +227,9 @@ class _CameraScreenState extends State<CameraScreen> {
       Navigator.push(
           context,
           MaterialPageRoute(
-              builder: (context) => PreviewScreen(
-                    imgPath: _image,
-                    fileName: "$name.png",
+              builder: (context) => PreviewScreen(widget._model,
+                    _image,
+                     "$name.png",
                   )));
     } catch (e) {
       showCameraException(e);
@@ -247,9 +248,9 @@ class _CameraScreenState extends State<CameraScreen> {
         Navigator.push(
             this.context,
             MaterialPageRoute(
-                builder: (context) => PreviewScreen(
-                      imgPath: _image,
-                      fileName: "$name.png",
+                builder: (context) => PreviewScreen(widget._model,
+                      _image,
+                      "$name.png",
                     )));
       } else {
         print('No image selected.');
