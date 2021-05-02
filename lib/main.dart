@@ -11,28 +11,35 @@ import 'package:project/Pages/sign_up.dart';
 import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Pages/pdf_preview.dart';
 import 'Pages/welcome_page.dart';
 
 bool isAuth = false;
  
 void main() async {
+
   //  await FirebaseAuth.instance.signOut();
   WidgetsFlutterBinding.ensureInitialized();
+  
   await FlutterDownloader.initialize(
       debug: true // optional: set false to disable printing logs to console
       );
 
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
   FirebaseAuth.instance.authStateChanges().listen((User user) {
     if (user == null) {
       isAuth = false;
+      prefs.setString('userId', "noUser");
     } else {
       isAuth = true;
+       prefs.setString('userId', user.uid);
     }
   });
-   print("chcn");     
+    
 runApp(MyApp());
   
 }
@@ -44,10 +51,10 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
      
-    
+  
 
     return ScopedModel< Mainmodel>(
-      
+         
         model: model,
         child: MaterialApp(
           theme: ThemeData(
@@ -63,6 +70,7 @@ class MyApp extends StatelessWidget {
             "/cameraPage": (BuildContext context) => CameraScreen(model),
             "/homePage": (BuildContext context) => HomePage(model),
              "/preview": (BuildContext context) => PreviewScreen(model),
+             "/previewPdf": (BuildContext context) => PdfPreview(),
           },
         ));
   }
