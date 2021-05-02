@@ -1,117 +1,78 @@
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:project/Pages/cam_screen.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:project/Model/doc.dart';
 import 'package:project/Pages/settings.dart';
-import 'package:project/ScopedModel/appModel.dart';
-import 'package:project/ScopedModel/main.dart';
-import 'package:project/Widget/loading.dart';
-import 'package:project/Widget/tile.dart';
-import 'package:scoped_model/scoped_model.dart';
-
-class HomePage extends StatefulWidget {
-  Mainmodel model;
-  HomePage([this.model]);
+import 'package:share/share.dart';
+import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+class PdfPreview extends StatefulWidget {
+  final Doc doc;
+  PdfPreview([this.doc]);
   @override
-  _HomePageState createState() => _HomePageState();
+  _PdfPreviewState createState() => _PdfPreviewState();
 }
 
-class _HomePageState extends State<HomePage> {
-  
-  List<DocumentModel> itemList = [];
 
- @override
+class _PdfPreviewState extends State<PdfPreview> {
+   @override
   void initState() {
-    print("hiiii");
-   widget.model.getDoc();
+   
     super.initState();
   }
-  FocusNode _focusNode = FocusNode();
-  void _select(
-    choice,
-  ) async {
-    print(choice);
+  // void _select(
+  //   choice,
+  // ) async {
+  //   print(choice);
 
-    if (choice == "Logout") {
-      print(choice);
-      await FirebaseAuth.instance.signOut().then((value) {
-        Navigator.pushReplacementNamed(context, "/login");
-      });
-    }
-  }
+  //   if (choice == "Logout") {
+  //     print(choice);
+  //     await FirebaseAuth.instance.signOut().then((value) {
+  //       Navigator.pushReplacementNamed(context, "/login");
+  //     });
+  //   }
+  // }
 
-  Future<void> _signOut() async {
+  Future<void> _signOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut().then((value) {
       Navigator.pushReplacementNamed(context, "/login");
-    });
-  }
-
-  
-
-  TextEditingController _searchController = TextEditingController();
+    });}
   @override
   Widget build(BuildContext context) {
-    return ScopedModelDescendant<Mainmodel>(
-        builder: (BuildContext context, Widget child, Mainmodel model) {
-      return Scaffold(
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Theme.of(context).primaryColor,
-          child: Icon(Icons.camera_alt),
-          onPressed: () {
-            Navigator.pushNamed(context, "/cameraPage");
-          },
-        ),
-        appBar: AppBar(
-          title: Text(
-            "Home",
-            style: TextStyle(fontSize: 18, color: Colors.white),
-          ),
-          elevation: 10,
-          backgroundColor: Theme.of(context).primaryColor,
-          actions: [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.search),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.notifications),
-            ),
-            IconButton(
+    return Scaffold(
+      appBar: AppBar(
+        leading: 
+        
+        IconButton(
+              onPressed: () {
+             Navigator.of(context).pop();
+              },
+              icon: new Icon(Icons.arrow_back),
+            ), 
+        title:Text(widget.doc.name, style: TextStyle(fontSize: 15),) ,
+        actions: [
+           IconButton(
+              onPressed: () async{
+                 var imagePath = join((await getApplicationDocumentsDirectory()).path,
+        '${widget.doc.path}.pdf');
+        print(imagePath);
+                Share.shareFiles ([imagePath],
+                                  subject: "Document");
+              },
+              icon: new Icon(Icons.share),
+            ), IconButton(
               onPressed: () {
                 _settingModalBottomSheet(context);
               },
               icon: new Icon(Icons.more_vert),
             ),
-           
-          ],
-        ),
-        drawer: Drawer(),
-        body: model.load?LoadingWidget():model.doclist.length == 0
-            ? Center(
-                child: Text(
-                "Nothing Found!!. \n Add some Docs.",
-                style: GoogleFonts.lato(
-                    textStyle: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                )),
-              ))
-            : ListView.separated(
-              separatorBuilder: (_, __) => Divider(height: 1.5,thickness: 0.7,),
-                itemCount: model.doclist.length,
-                itemBuilder: (context, index) {
-                  return ListTileWidget(model.doclist[index]);
-                },
-              ),
-      );
-    });
+          
+        ],
+      ),
+      body: SfPdfViewer.network(widget.doc.link),
+    );
   }
-
-  void _settingModalBottomSheet(context) {
+   void _settingModalBottomSheet(context) {
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -171,7 +132,7 @@ class _HomePageState extends State<HomePage> {
                         style:
                             TextStyle(color: Colors.white, letterSpacing: 0.8),
                       ),
-                      onTap: () => _signOut(),
+                      onTap: () => _signOut(context),
                     ),
                   ],
                 ),
@@ -181,4 +142,3 @@ class _HomePageState extends State<HomePage> {
         });
   }
 }
-

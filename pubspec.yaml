@@ -23,7 +23,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  firebase_auth: ^1.0.1
+  
   settings_ui: ^1.0.0
   
 
@@ -37,8 +37,8 @@ dependencies:
   path_provider: ^2.0.1
   firebase_ml_vision: ^0.11.0
   image_picker: ^0.7.3
-  firebase_core: ^1.0.2
-  # firebase_auth: ^1.0.1
+  firebase_core: ^1.1.0
+  firebase_auth: ^1.1.2
   # cloud_firestore: ^1.0.3
   flutter_icons: ^1.1.0
   flutter_downloader: ^1.5.2
@@ -51,8 +51,11 @@ dependencies:
   connectivity: ^3.0.3
   dio: ^4.0.0
   fluttertoast: ^8.0.4
+  shared_preferences: ^2.0.5
   firebase_storage: ^8.0.5
   firebase_database: ^6.1.2
+  syncfusion_flutter_pdfviewer:
+  intl: ^0.17.0
 
 
 dev_dependencies:

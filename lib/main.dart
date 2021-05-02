@@ -6,40 +6,56 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:project/Pages/cam_screen.dart';
 import 'package:project/Pages/home.dart';
 import 'package:project/Pages/login.dart';
+import 'package:project/Pages/preview_screen_recognized.dart';
 import 'package:project/Pages/sign_up.dart';
+import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
+import 'Pages/pdf_preview.dart';
 import 'Pages/welcome_page.dart';
 
 bool isAuth = false;
+ 
 void main() async {
+
+  //  await FirebaseAuth.instance.signOut();
   WidgetsFlutterBinding.ensureInitialized();
+  
   await FlutterDownloader.initialize(
       debug: true // optional: set false to disable printing logs to console
       );
+
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
   FirebaseAuth.instance.authStateChanges().listen((User user) {
     if (user == null) {
       isAuth = false;
+      prefs.setString('userId', "noUser");
     } else {
       isAuth = true;
+       prefs.setString('userId', user.uid);
     }
   });
-
-  runApp(MyApp());
+    
+runApp(MyApp());
+  
 }
 
 class MyApp extends StatelessWidget {
-  final Mainmodel _model = Mainmodel();
+ 
+ final Mainmodel model = Mainmodel();
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle());
+     
+  
 
-    return ScopedModel<Mainmodel>(
-        model: _model,
+    return ScopedModel< Mainmodel>(
+         
+        model: model,
         child: MaterialApp(
           theme: ThemeData(
             primaryColor: Colors.black,
@@ -47,12 +63,14 @@ class MyApp extends StatelessWidget {
 
           // home: CameraScreen(),
           // home: LoginPage(),
-          home: isAuth ? HomePage() : WelcomePage(),
+          home: isAuth ? HomePage(model) : WelcomePage(),
           routes: {
-            "/signup": (BuildContext context) => SignUp(_model),
-            "/login": (BuildContext context) => LoginPage(_model),
-            "/cameraPage": (BuildContext context) => CameraScreen(_model),
-            "/homePage": (BuildContext context) => HomePage(_model),
+            "/signup": (BuildContext context) => SignUp(model),
+            "/login": (BuildContext context) => LoginPage(model),
+            "/cameraPage": (BuildContext context) => CameraScreen(model),
+            "/homePage": (BuildContext context) => HomePage(model),
+             "/preview": (BuildContext context) => PreviewScreen(model),
+             "/previewPdf": (BuildContext context) => PdfPreview(),
           },
         ));
   }

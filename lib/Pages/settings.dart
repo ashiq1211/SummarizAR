@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter/foundation.dart';
 
-class settings extends StatelessWidget {
+class Settings extends StatelessWidget {
   @override
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
