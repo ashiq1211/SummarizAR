@@ -1,5 +1,5 @@
-import 'dart:io';
 
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -19,11 +19,7 @@ class PdfPreview extends StatefulWidget {
 
 
 class _PdfPreviewState extends State<PdfPreview> {
-  @override
-  void initState() {
-    
-    super.initState();
-  }
+
   // void _select(
   //   choice,
   // ) async {
@@ -58,6 +54,7 @@ class _PdfPreviewState extends State<PdfPreview> {
            IconButton(
               onPressed: () async{
 
+
                
                  var imagePath = join((await getApplicationDocumentsDirectory()).path,
         '${widget.doc.path}.pdf');
@@ -78,6 +75,7 @@ class _PdfPreviewState extends State<PdfPreview> {
                                   subject: "Document");
          }
                 
+
               },
               icon: new Icon(Icons.share),
             ), IconButton(

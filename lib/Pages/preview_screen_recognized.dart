@@ -42,6 +42,7 @@ class PreviewScreen extends StatefulWidget {
 class _PreviewScreenState extends State<PreviewScreen> {
  int flag=0;
   var imagePath;
+
  File file;
  final pdf = pw.Document();
   DateTime date=DateTime.now();
@@ -49,6 +50,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   Future createPdf(String recognizedText) async {
  
     
+
       date=DateTime.now();
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -59,10 +61,12 @@ class _PreviewScreenState extends State<PreviewScreen> {
         }));
     imagePath = join((await getApplicationDocumentsDirectory()).path,
         '${date}.pdf');
+
      file = File(imagePath);
     file.writeAsBytesSync(await pdf.save());
     print (file);
     
+
 
   }
 
@@ -79,6 +83,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   //     }),
   //   );
 
+
   //   final Size imageSize = await completer.future;
   //   setState(() {
   //     _imageSize = imageSize;
@@ -89,6 +94,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   void initState() {
 
    
+
 
     
     super.initState();
@@ -121,14 +127,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
     
     );
   }
-  @override
-void dipose(){
-  
-    
-    super.dispose();
-   
 
-}
   void showToast() {  
     Fluttertoast.showToast(  
         msg: 'Document has been saved !.',  
@@ -142,6 +141,7 @@ void dipose(){
 
   @override
   Widget build(BuildContext context) {
+
      
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
@@ -153,6 +153,7 @@ void dipose(){
           if(model.load){
             return;
           }
+
            Navigator.push(
                                   this.context,
                                   MaterialPageRoute(
@@ -165,11 +166,12 @@ void dipose(){
         
       ),
         appBar: AppBar(
-          
+
           leading: 
         
         IconButton(
               onPressed: () {
+
                 if(model.load){
             return;}
                 if(flag==0){
@@ -184,10 +186,12 @@ void dipose(){
                     )),
   (Route<dynamic> route) => false,
 );
+
               },
               icon: new Icon(Icons.arrow_back),
             ), 
         title:Text(date.toString(), style: TextStyle(fontSize: 15),) ,
+
         actions: [ 
           IconButton(
               onPressed: () async{
@@ -213,13 +217,14 @@ void dipose(){
               if(model.load){
             return;
           }     
+
         print(imagePath);
                 Share.shareFiles ([imagePath],
                                   subject: "Document");
               },
               icon: new Icon(Icons.share),
             ), 
-           
+
           
         ],
         ),
@@ -262,15 +267,17 @@ void dipose(){
                       color: Colors.black,
                     ),
                   ),
+
                   child:
                      
                     Text(
                     model.recognizedTxt,
+
                     style: GoogleFonts.openSans(),
                   ),
                 ),
               ),
-              
+
             ],
           ),
         );

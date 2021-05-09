@@ -56,7 +56,6 @@ dependencies:
   firebase_storage: ^8.0.5
   firebase_database: ^6.1.2
   syncfusion_flutter_pdfviewer:
-  
   intl: ^0.17.0
 
 

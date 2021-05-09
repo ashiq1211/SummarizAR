@@ -22,11 +22,14 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
    final picker = ImagePicker();
+
   List<DocumentModel> itemList = [];
 
  @override
   void initState() {
+
   Mainmodel model = ScopedModel.of(this.context);
    model.getDoc().then((value) {
      if(value["error"]){ showDialog(context: context, builder:(BuildContext context){
@@ -34,6 +37,7 @@ class _HomePageState extends State<HomePage> {
      } );}
     
    });
+
     super.initState();
   }
   FocusNode _focusNode = FocusNode();
@@ -106,7 +110,9 @@ Navigator.of(context).pushNamed("/cameraPage");
           ],
         ),
         drawer: Drawer(),
+
         body: model.load?Center(child:LoadingWidget()):model.doclist.length == 0
+
             ? Center(
                 child: Text(
                 "Nothing Found!!. \n Add some Docs.",

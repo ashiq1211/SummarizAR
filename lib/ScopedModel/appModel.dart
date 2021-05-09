@@ -1,11 +1,15 @@
 import 'dart:convert';
+
 import 'dart:io';
+
 import 'dart:math';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:project/Model/doc.dart';
@@ -102,6 +106,7 @@ prefs.setString('userId', FirebaseAuth.instance.currentUser.uid);
 }
 
 class DocumentModel extends AppModel{
+
   String recognizedText=" ";
   List<Doc> itemList=[];
    List<Doc> get doclist{
@@ -181,6 +186,7 @@ class DocumentModel extends AppModel{
     print(message);
     return {"message": message, "error": haserror,"TextRecognized":recognizedText};
   }
+
   
    
   Future<Map<dynamic, dynamic>> putDoc(List<int> asset,DateTime date) async {
@@ -242,6 +248,7 @@ class DocumentModel extends AppModel{
     return {"message": message, "error": haserror};
   }
 
+
  Future<void> refreshDoc() async {
     getDoc();
   }
@@ -252,10 +259,12 @@ class DocumentModel extends AppModel{
     loading = true;
     notifyListeners();
   
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId=prefs.getString("userId");
     final mainReference =
         FirebaseDatabase.instance.reference().child('$userId/Documents');
+
 
     try {
       
@@ -289,11 +298,13 @@ mainReference.once().then((DataSnapshot snap) {
     notifyListeners();
     print(message);
    
+
       
     });
 
     } on FirebaseException catch (e) {
       
+
    
      
     } catch (e) {
@@ -310,6 +321,7 @@ mainReference.once().then((DataSnapshot snap) {
     print(haserror);
      return {"message": message, "error": haserror};
  
+
   }
 
   
