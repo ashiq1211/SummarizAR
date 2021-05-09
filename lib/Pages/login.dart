@@ -40,7 +40,12 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
-      return Scaffold(
+      return 
+      GestureDetector(onTap: (){
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+        child: 
+      Scaffold(
           body: ListView(
               padding: const EdgeInsets.fromLTRB(22.0, 0.0, 22.0, 22.0),
               children: <Widget>[
@@ -53,7 +58,7 @@ class _LoginPageState extends State<LoginPage> {
             signInForm(),
             SizedBox(height: 70),
             buildSignUpInSignin(model)
-          ]));
+          ])));
     });
   }
 
@@ -72,6 +77,7 @@ class _LoginPageState extends State<LoginPage> {
             child: Text('SignUp',
                 style: TextStyle(fontSize: 14.0, color: Colors.black)),
             onPressed: () {
+              FocusScope.of(context).requestFocus(FocusNode());
               if (model.load) {
                 return null;
               } else {
