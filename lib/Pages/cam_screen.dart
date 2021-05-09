@@ -245,13 +245,15 @@ class _CameraScreenState extends State<CameraScreen> {
     setState(() {
       if (pickedFile != null) {
         _image = File(pickedFile.path);
-        Navigator.push(
-            this.context,
-            MaterialPageRoute(
-                builder: (context) => PreviewScreen(widget._model,
+        Navigator.pushAndRemoveUntil(
+  this.context,
+  MaterialPageRoute(builder: (context) =>PreviewScreen(widget._model,
                       _image,
                       "$name.png",
-                    )));
+                    )),
+  (Route<dynamic> route) => false,
+);
+        
       } else {
         print('No image selected.');
       }

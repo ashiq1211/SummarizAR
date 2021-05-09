@@ -3,10 +3,13 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:project/Pages/cam_screen.dart';
+import 'package:project/Pages/login.dart';
 import 'package:project/Pages/settings.dart';
 import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
+import 'package:project/Widget/alert.dart';
 import 'package:project/Widget/loading.dart';
 import 'package:project/Widget/tile.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -19,13 +22,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  
+
+   final picker = ImagePicker();
+
   List<DocumentModel> itemList = [];
 
  @override
   void initState() {
-    print("hiiii");
-   widget.model.getDoc();
+
+  Mainmodel model = ScopedModel.of(this.context);
+   model.getDoc().then((value) {
+     if(value["error"]){ showDialog(context: context, builder:(BuildContext context){
+       return AlertWidget(value["message"]);
+     } );}
+    
+   });
+
     super.initState();
   }
   FocusNode _focusNode = FocusNode();
@@ -44,7 +56,11 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut().then((value) {
-      Navigator.pushReplacementNamed(context, "/login");
+      Navigator.pushAndRemoveUntil(
+  context,
+  MaterialPageRoute(builder: (context) => LoginPage()),
+  (Route<dynamic> route) => false,
+);
     });
   }
 
@@ -55,12 +71,17 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
-      return Scaffold(
+      return RefreshIndicator(
+        color: Colors.black,
+        onRefresh: model.refreshDoc,
+        child: 
+      Scaffold(
         floatingActionButton: FloatingActionButton(
           backgroundColor: Theme.of(context).primaryColor,
           child: Icon(Icons.camera_alt),
-          onPressed: () {
-            Navigator.pushNamed(context, "/cameraPage");
+          onPressed: () async{
+            // final pickedFile = await picker.getImage(source: ImageSource.camera);
+Navigator.of(context).pushNamed("/cameraPage");
           },
         ),
         appBar: AppBar(
@@ -89,7 +110,9 @@ class _HomePageState extends State<HomePage> {
           ],
         ),
         drawer: Drawer(),
-        body: model.load?LoadingWidget():model.doclist.length == 0
+
+        body: model.load?Center(child:LoadingWidget()):model.doclist.length == 0
+
             ? Center(
                 child: Text(
                 "Nothing Found!!. \n Add some Docs.",
@@ -107,7 +130,7 @@ class _HomePageState extends State<HomePage> {
                   return ListTileWidget(model.doclist[index]);
                 },
               ),
-      );
+      ));
     });
   }
 

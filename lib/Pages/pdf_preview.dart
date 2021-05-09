@@ -1,3 +1,5 @@
+
+import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
@@ -5,6 +7,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:project/Model/doc.dart';
 import 'package:project/Pages/settings.dart';
 import 'package:share/share.dart';
+import 'dart:io' as io;
+import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
 class PdfPreview extends StatefulWidget {
   final Doc doc;
@@ -15,11 +19,7 @@ class PdfPreview extends StatefulWidget {
 
 
 class _PdfPreviewState extends State<PdfPreview> {
-   @override
-  void initState() {
-   
-    super.initState();
-  }
+
   // void _select(
   //   choice,
   // ) async {
@@ -53,11 +53,29 @@ class _PdfPreviewState extends State<PdfPreview> {
         actions: [
            IconButton(
               onPressed: () async{
+
+
+               
                  var imagePath = join((await getApplicationDocumentsDirectory()).path,
         '${widget.doc.path}.pdf');
         print(imagePath);
-                Share.shareFiles ([imagePath],
+        bool exist=await File(imagePath).exists();
+         if(exist){
+           print("und");
+           Share.shareFiles ([imagePath],
                                   subject: "Document");
+         }else{
+           var data = await http.get(Uri.parse(widget.doc.link));
+      var bytes = data.bodyBytes;
+       var imagePath = join((await getApplicationDocumentsDirectory()).path,
+        '${widget.doc.path}.pdf');
+         final file = File(imagePath);
+   file.writeAsBytes(bytes);
+   Share.shareFiles ([imagePath],
+                                  subject: "Document");
+         }
+                
+
               },
               icon: new Icon(Icons.share),
             ), IconButton(

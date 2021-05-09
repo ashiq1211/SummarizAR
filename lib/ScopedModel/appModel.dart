@@ -1,9 +1,15 @@
 import 'dart:convert';
+
+import 'dart:io';
+
 import 'dart:math';
 
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+
+import 'package:firebase_ml_vision/firebase_ml_vision.dart';
+
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:intl/intl.dart';
 import 'package:project/Model/doc.dart';
@@ -100,10 +106,87 @@ prefs.setString('userId', FirebaseAuth.instance.currentUser.uid);
 }
 
 class DocumentModel extends AppModel{
+
+  String recognizedText=" ";
   List<Doc> itemList=[];
-  List<Doc> get doclist{
+   List<Doc> get doclist{
     return List.from(itemList);
   }
+  int flag = 0;
+  double cur = 0.0;
+   String get recognizedTxt{
+    return recognizedText;}
+  
+ 
+
+  Future<Map<dynamic, dynamic>> recognizeText(File imagePath) async {
+    
+  
+  //  String formattedDate = DateFormat('dd-MM-yy kk:mm').format(date);
+  //   SharedPreferences prefs = await SharedPreferences.getInstance();
+  //   userId=prefs.getString("userId");
+  //   final mainReference =
+  //       FirebaseDatabase.instance.reference().child('$userId/Documents');
+    haserror = false;
+    loading = true;
+    notifyListeners();
+    try {
+
+  final FirebaseVisionImage visionImage =
+        FirebaseVisionImage.fromFile(imagePath);
+        final TextRecognizer textRecognizer =
+        FirebaseVision.instance.textRecognizer();
+        final VisionText visionText =
+        await textRecognizer.processImage(visionImage);
+        if (visionText.blocks.isNotEmpty) {
+           recognizedText = " ";
+           print("xzbjkxcbcxjk");
+           
+    } else if (visionText.blocks.isEmpty) {
+      recognizedText = "Something went wrong...";
+      print("uoo");
+      haserror=true;
+      notifyListeners();
+      return null;
+    
+    }
+    for (TextBlock block in visionText.blocks) {
+      for (TextLine line in block.lines) {
+        
+
+          if (flag == 1) {
+            if (line.boundingBox.top > cur + 50.0) {
+ 
+              recognizedText += "\n";
+            }
+          }
+          cur = line.boundingBox.bottom;
+          recognizedText += line.text;
+          recognizedText += " ";
+          flag = 1;
+       
+      }
+    }
+  
+
+
+
+    } on FirebaseException catch (e) {
+      
+        var connectivityResult = await (Connectivity().checkConnectivity());
+        if (connectivityResult == ConnectivityResult.none) {
+          message = "Check your Internet Connectivity";
+          haserror = true;
+    
+        }
+      
+    } catch (e) {}
+    // loading = false;
+    // notifyListeners();
+    print(message);
+    return {"message": message, "error": haserror,"TextRecognized":recognizedText};
+  }
+
   
    
   Future<Map<dynamic, dynamic>> putDoc(List<int> asset,DateTime date) async {
@@ -166,50 +249,79 @@ class DocumentModel extends AppModel{
   }
 
 
+ Future<void> refreshDoc() async {
+    getDoc();
+  }
 
   Future<Map<dynamic, dynamic>> getDoc() async {
+     itemList=[]; 
+    haserror = false;
+    loading = true;
+    notifyListeners();
+  
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId=prefs.getString("userId");
     final mainReference =
         FirebaseDatabase.instance.reference().child('$userId/Documents');
-    haserror = false;
-    loading = true;
-    notifyListeners();
+
+
     try {
       
+     
+       
 mainReference.once().then((DataSnapshot snap) {
+
   if(snap.value==null){
-    return;
+    loading=false;
+    notifyListeners();
+    return null;
   }
       print("Swaty");
-      print(snap);
+    
       var data = snap.value;
       print(data);
      
-      itemList.clear();
+      
       data.forEach((key, value) {
         Doc m = new Doc(link:value['PDF'], name:value['FileName'],date: value['Date'], path:value["ActualDate"]);
         itemList.add(m);
-        notifyListeners();
+        // notifyListeners();
       });
+     itemList.sort((a,b) => a.name.compareTo(b.name));
+     itemList=itemList.reversed.toList();
+      notifyListeners();
       print(itemList);
+         print("kooy");
+    loading = false;
+    
+    notifyListeners();
+    print(message);
+   
+
       
     });
 
     } on FirebaseException catch (e) {
       
-        var connectivityResult = await (Connectivity().checkConnectivity());
+
+   
+     
+    } catch (e) {
+
+      loading=false;
+      notifyListeners();
+    }     var connectivityResult = await (Connectivity().checkConnectivity());
         if (connectivityResult == ConnectivityResult.none) {
           message = "Check your Internet Connectivity";
           haserror = true;
+          loading=false;
           notifyListeners();
         }
-     
-    } catch (e) {}
-    loading = false;
-    notifyListeners();
-    print(message);
-    return {"message": message, "error": haserror};
+    print(haserror);
+     return {"message": message, "error": haserror};
+ 
+
   }
 
   

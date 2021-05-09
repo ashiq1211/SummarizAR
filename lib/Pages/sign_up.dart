@@ -90,7 +90,11 @@ class _SignUpState extends State<SignUp> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
-      return Scaffold(
+      return GestureDetector(onTap: (){
+        FocusScope.of(context).requestFocus(FocusNode());
+      },
+        child: 
+      Scaffold(
           key: _scaffoldKey,
           body: ListView(
               padding: const EdgeInsets.fromLTRB(22.0, 0.0, 22.0, 22.0),
@@ -106,7 +110,7 @@ class _SignUpState extends State<SignUp> {
                   height: 70,
                 ),
                 buildSigninInSignup(model)
-              ]));
+              ])));
     });
   }
 
@@ -219,7 +223,10 @@ class _SignUpState extends State<SignUp> {
                           primary: Colors.grey[900], // background
                           onPrimary: Colors.white, // foreground
                         ),
-                        onPressed: () => _submitform(model),
+                        onPressed: () {
+                          FocusScope.of(context).requestFocus(FocusNode());
+                          _submitform(model);
+                        } ,
                         child: Text('Sign Up'),
                       ),
               ),

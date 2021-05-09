@@ -17,8 +17,13 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:project/Pages/home.dart';
 import 'package:project/Pages/summary.dart';
+import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
+import 'package:project/Widget/alert.dart';
+import 'package:project/Widget/loading.dart';
+import 'package:scoped_model/scoped_model.dart';
 import 'package:share/share.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
@@ -26,6 +31,8 @@ class PreviewScreen extends StatefulWidget {
   final File imgPath;
   final String fileName;
   final Mainmodel model;
+ 
+  
   PreviewScreen(this.model,[this.imgPath, this.fileName]);
 
   @override
@@ -33,55 +40,17 @@ class PreviewScreen extends StatefulWidget {
 }
 
 class _PreviewScreenState extends State<PreviewScreen> {
-  Size _imageSize;
+ int flag=0;
   var imagePath;
-  String recognizedText = "Loading ...";
-  int flag = 0;
-  DateTime date=DateTime.now();
-  double cur = 0.0;
-  Future _initializeVision() async {
-    // TODO: Initialize the text recognizer here
-    if (widget.imgPath != null) {
-      await _getImageSize(widget.imgPath);
-    }
-    final FirebaseVisionImage visionImage =
-        FirebaseVisionImage.fromFile(widget.imgPath);
 
+ File file;
+ final pdf = pw.Document();
+  DateTime date=DateTime.now();
+ 
+  Future createPdf(String recognizedText) async {
+ 
     
 
-    final TextRecognizer textRecognizer =
-        FirebaseVision.instance.textRecognizer();
-
-    final VisionText visionText =
-        await textRecognizer.processImage(visionImage);
-    if (visionText.blocks.isNotEmpty) {
-      recognizedText = " ";
-    } else if (visionText.blocks.isEmpty) {
-      recognizedText = "Something went wrong...";
-    }
-    for (TextBlock block in visionText.blocks) {
-      for (TextLine line in block.lines) {
-        setState(() {
-          print(line.boundingBox);
-          print(line.text);
-          if (flag == 1) {
-            if (line.boundingBox.top > cur + 50.0) {
-              print("hello");
-              recognizedText += "\n";
-            }
-          }
-          cur = line.boundingBox.bottom;
-          recognizedText += line.text;
-          recognizedText += " ";
-          flag = 1;
-        });
-      }
-    }
-
-   
-
-   
-    final pdf = pw.Document();
       date=DateTime.now();
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -92,38 +61,73 @@ class _PreviewScreenState extends State<PreviewScreen> {
         }));
     imagePath = join((await getApplicationDocumentsDirectory()).path,
         '${date}.pdf');
-    final File file = File(imagePath);
+
+     file = File(imagePath);
     file.writeAsBytesSync(await pdf.save());
-    widget.model.putDoc(file.readAsBytesSync(),date);
+    print (file);
+    
+
 
   }
 
-  Future<void> _getImageSize(File imageFile) async {
-    final Completer<Size> completer = Completer<Size>();
+  // Future<void> _getImageSize(File imageFile) async {
+  //   final Completer<Size> completer = Completer<Size>();
 
-    final Image image = Image.file(widget.imgPath);
-    image.image.resolve(const ImageConfiguration()).addListener(
-      ImageStreamListener((ImageInfo info, bool _) {
-        completer.complete(Size(
-          info.image.width.toDouble(),
-          info.image.height.toDouble(),
-        ));
-      }),
-    );
+  //   final Image image = Image.file(widget.imgPath);
+  //   image.image.resolve(const ImageConfiguration()).addListener(
+  //     ImageStreamListener((ImageInfo info, bool _) {
+  //       completer.complete(Size(
+  //         info.image.width.toDouble(),
+  //         info.image.height.toDouble(),
+  //       ));
+  //     }),
+  //   );
 
-    final Size imageSize = await completer.future;
-    setState(() {
-      _imageSize = imageSize;
-    });
-  }
-FToast fToast;
+
+  //   final Size imageSize = await completer.future;
+  //   setState(() {
+  //     _imageSize = imageSize;
+  //   });
+  // }
+
   @override
   void initState() {
-    _initializeVision().then((value) => showToast());
+
+   
+
 
     
     super.initState();
+    Mainmodel model = ScopedModel.of(this.context);
+     model.recognizeText(widget.imgPath).then((value) {
+  if(!value["error"]){
+    print(value["error"]);
+      createPdf(value["TextRecognized"]).then((value) {
+        print("ashi");
+        model.putDoc(file.readAsBytesSync(),date).then((value) {
+          
+        if(value["error"]){
+          showDialog(
+            context: this.context,
+            builder: (BuildContext context) {
+              return AlertWidget(value["message"]);
+            });
+        }
+     
+    });
+         
+      });
+    } else{
+      showDialog(
+            context: this.context,
+            builder: (BuildContext context) {
+              return AlertWidget(value["message"]);
+            });
+    }}
+    
+    );
   }
+
   void showToast() {  
     Fluttertoast.showToast(  
         msg: 'Document has been saved !.',  
@@ -137,10 +141,19 @@ FToast fToast;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+
+     
+    return ScopedModelDescendant<Mainmodel>(
+        builder: (BuildContext context, Widget child, Mainmodel model) {
+    return 
+    WillPopScope(child: Scaffold(
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked, 
       floatingActionButton: FloatingActionButton.extended(
         onPressed: (){
+          if(model.load){
+            return;
+          }
+
            Navigator.push(
                                   this.context,
                                   MaterialPageRoute(
@@ -153,30 +166,93 @@ FToast fToast;
         
       ),
         appBar: AppBar(
-          automaticallyImplyLeading: true,
+
           leading: 
         
         IconButton(
               onPressed: () {
-             Navigator.of(context).pop();
+
+                if(model.load){
+            return;}
+                if(flag==0){
+      file.delete();
+       print("bjbvjzbxvjxbjxbjkbdfjkbdfkbjfdff");
+     
+     
+    }
+              Navigator.pushAndRemoveUntil(
+  this.context,
+  MaterialPageRoute(builder: (context) =>HomePage(
+                    )),
+  (Route<dynamic> route) => false,
+);
+
               },
               icon: new Icon(Icons.arrow_back),
             ), 
         title:Text(date.toString(), style: TextStyle(fontSize: 15),) ,
-        actions: [
-           IconButton(
+
+        actions: [ 
+          IconButton(
               onPressed: () async{
-                 
+                setState(() {
+                  flag=1;
+                });
+              if(model.load){
+            return;
+          }   
+          file.delete();  
+          print(file);
+          
+     file = File(imagePath);
+    file.writeAsBytesSync(await pdf.save());
+    showToast();
+       
+                
+              },
+              icon: new Icon(Icons.picture_as_pdf),
+            ), 
+          IconButton(
+              onPressed: () async{
+              if(model.load){
+            return;
+          }     
+
         print(imagePath);
                 Share.shareFiles ([imagePath],
                                   subject: "Document");
               },
               icon: new Icon(Icons.share),
             ), 
+
           
         ],
         ),
-        body: Container(
+        body:body(model,context) ), onWillPop: () async{
+          if(flag==0){
+      file.delete();
+       print("bjbvjzbxvjxbjxbjkbdfjkbdfkbjfdff");
+     
+     
+    }
+      Navigator.pushAndRemoveUntil(
+  this.context,
+  MaterialPageRoute(builder: (context) =>HomePage(
+                    )),
+  (Route<dynamic> route) => false,
+);
+    
+        });
+    
+  });}
+  Widget body(Mainmodel model, BuildContext context){
+
+    if(model.load){
+      return showLoadingIndicator(context);
+    }else{
+  
+    return Container(
+     
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: <Widget>[
@@ -191,100 +267,85 @@ FToast fToast;
                       color: Colors.black,
                     ),
                   ),
-                  child:recognizedText=="Loading ..."? Center(child:Text(
-                    recognizedText,
-                    style: GoogleFonts.openSans(),
-                  ),) :Text(
-                    recognizedText,
+
+                  child:
+                     
+                    Text(
+                    model.recognizedTxt,
+
                     style: GoogleFonts.openSans(),
                   ),
                 ),
               ),
-              // Align(
-              //     alignment: Alignment.bottomCenter,
-              //     child: Container(
-              //       height: 100,
-              //       width: double.infinity,
-              //       padding: EdgeInsets.all(15),
-              //       color: Color.fromRGBO(00, 00, 00, 0.7),
-              //       child: Row(
-              //           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              //           children: <Widget>[
-              //             // IconButton(
-              //             //     icon: Icon(
-              //             //       Entypo.download,
-              //             //       color: Colors.white,
-              //             //       size: 40,
-              //             //     ),
-              //             //     onPressed: () async {
-              //             //       final pdf = pw.Document();
 
-              //             //       pdf.addPage(pw.Page(
-              //             //           pageFormat: PdfPageFormat.a4,
-              //             //           build: (pw.Context context) {
-              //             //             return pw.Center(
-              //             //               child: pw.Text(recognizedText),
-              //             //             );
-              //             //           }));
-
-              //             //       imagePath = join(
-              //             //           (await getApplicationDocumentsDirectory())
-              //             //               .path,
-              //             //           '${DateTime.now()}.pdf');
-              //             //       final File file = File(imagePath);
-              //             //       file.writeAsBytesSync(await pdf.save());
-              //             //       print(imagePath);
-
-              //             //       //To do firebase for storing pdf
-
-              //             //       final status =
-              //             //           await Permission.storage.request();
-
-              //             //       if (status.isGranted) {
-              //             //         final externalDir =
-              //             //             await getExternalStorageDirectory();
-
-              //             //         await FlutterDownloader.enqueue(
-              //             //           url:
-              //             //               "https://www.google.com/search?q=https://www.itl.cat/pngfile/big/10-100326_desktop-wallpaper-hd-full-screen-free-download-full.jpg;&sxsrf=ALeKk02uON2w1O-dqucDveUgu6WwiaVUzA:1617007949418&tbm=isch&source=iu&ictx=1&fir=j5LgEHLXLRAxRM%252CzfdbFylDAAK-oM%252C_&vet=1&usg=AI4_-kSECfbFgtJAqHs_t7OO8tbSrdIR7w&sa=X&ved=2ahUKEwj03rGDkNXvAhXBQ3wKHYM5CtAQ9QF6BAgPEAE#imgrc=j5LgEHLXLRAxRM",
-              //             //           savedDir: externalDir.path,
-              //             //           fileName: "download",
-              //             //           showNotification: true,
-              //             //           openFileFromNotification: true,
-              //             //         );
-              //             //       } else {
-              //             //         print("Permission deined");
-              //             //       }
-              //             //     }),
-              //             IconButton(
-              //               icon: Icon(
-              //                 Entypo.text_document,
-              //                 color: Colors.white,
-              //                 size: 40,
-              //               ),
-              //               onPressed: () {
-              //                 Navigator.push(
-              //                     this.context,
-              //                     MaterialPageRoute(
-              //                         builder: (context) =>
-              //                             SummaryPage(imagePath)));
-              //               },
-              //             ),
-              //             // IconButton(
-              //             //   icon: Icon(
-              //             //     Icons.share,
-              //             //     color: Colors.white,
-              //             //     size: 40,
-              //             //   ),
-              //             //   onPressed: () {
-              //             //     Share.shareFiles([imagePath],
-              //             //         subject: "Document");
-              //             //   },
-              //             // ),
-              //           ]),
-              //     ))
             ],
           ),
-        ));
+        );
+  }}
+   Widget  showLoadingIndicator(BuildContext context) {
+     
+        return  WillPopScope(
+            onWillPop: () async => false,
+            child: AlertDialog(
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(Radius.circular(8.0))
+              ),
+              backgroundColor: Colors.black,
+              content: Container(
+        padding: EdgeInsets.all(16),
+        color: Colors.black,
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _getLoadingIndicator(),
+              _getHeading(context),
+              _getText("Recognizing Text ...")
+            ]
+        )
+    ),
+            )
+        );
+     
+       
+   
+  }
+ Padding _getLoadingIndicator() {
+    return Padding(
+        child: Container(
+            child: CircularProgressIndicator(
+                strokeWidth: 3
+            ),
+            width: 32,
+            height: 32
+        ),
+        padding: EdgeInsets.only(bottom: 16)
+    );
+  }
+
+  Widget _getHeading(context) {
+    return
+      Padding(
+          child: Text(
+            'Please wait …',
+            style: TextStyle(
+                color: Colors.white,
+                fontSize: 16
+            ),
+            textAlign: TextAlign.center,
+          ),
+          padding: EdgeInsets.only(bottom: 4)
+      );
+  }
+
+  Text _getText(String displayedText) {
+    return Text(
+      displayedText,
+      style: TextStyle(
+          color: Colors.white,
+          fontSize: 14
+      ),
+      textAlign: TextAlign.center,
+    );
   }
 }
