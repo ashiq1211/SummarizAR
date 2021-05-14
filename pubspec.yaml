@@ -57,6 +57,7 @@ dependencies:
   firebase_database: ^6.1.2
   syncfusion_flutter_pdfviewer:
   intl: ^0.17.0
+  image_cropper: ^1.4.0
 
 
 dev_dependencies:
