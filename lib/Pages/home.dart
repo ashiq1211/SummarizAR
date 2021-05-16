@@ -29,6 +29,7 @@ class _HomePageState extends State<HomePage> {
   @override
   void initState() {
     Mainmodel model = ScopedModel.of(this.context);
+    model.isAppend = 0;
     model.getDoc().then((value) {
       if (value["error"]) {
         showDialog(
