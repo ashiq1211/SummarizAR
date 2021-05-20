@@ -8,6 +8,7 @@ import 'package:project/Pages/home.dart';
 import 'package:project/Pages/login.dart';
 import 'package:project/Pages/preview_screen_recognized.dart';
 import 'package:project/Pages/sign_up.dart';
+import 'package:project/Pages/subscription_page.dart';
 import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -63,7 +64,7 @@ class MyApp extends StatelessWidget {
 
           // home: CameraScreen(),
           // home: LoginPage(),
-          home: isAuth ? HomePage(model) : WelcomePage(),
+          home:  HomePage(),
           routes: {
             "/signup": (BuildContext context) => SignUp(model),
             "/login": (BuildContext context) => LoginPage(model),
@@ -71,6 +72,7 @@ class MyApp extends StatelessWidget {
             "/homePage": (BuildContext context) => HomePage(model),
              "/preview": (BuildContext context) => PreviewScreen(model),
              "/previewPdf": (BuildContext context) => PdfPreview(),
+              "/subscription": (BuildContext context) => SubscriptionPage(),
           },
         ));
   }

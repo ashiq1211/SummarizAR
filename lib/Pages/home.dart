@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project/Pages/cam_screen.dart';
@@ -13,6 +14,7 @@ import 'package:project/Widget/alert.dart';
 import 'package:project/Widget/loading.dart';
 import 'package:project/Widget/tile.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   Mainmodel model;
@@ -22,24 +24,34 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-   final picker = ImagePicker();
+  final picker = ImagePicker();
 
   List<DocumentModel> itemList = [];
 
- @override
+  @override
   void initState() {
-
-  Mainmodel model = ScopedModel.of(this.context);
-   model.getDoc().then((value) {
-     if(value["error"]){ showDialog(context: context, builder:(BuildContext context){
-       return AlertWidget(value["message"]);
-     } );}
+      SharedPreferences.getInstance().then((value) {
+        SharedPreferences prefs = value;
+         if(prefs.getBool("isHeNew")==null){
+       loginBottomSheet(context);
+     }
+      });
     
-   });
+     
+    Mainmodel model = ScopedModel.of(this.context);
+    model.getDoc().then((value) {
+      if (value["error"]) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertWidget(value["message"]);
+            });
+      }
+    });
 
     super.initState();
   }
+
   FocusNode _focusNode = FocusNode();
   void _select(
     choice,
@@ -57,14 +69,12 @@ class _HomePageState extends State<HomePage> {
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut().then((value) {
       Navigator.pushAndRemoveUntil(
-  context,
-  MaterialPageRoute(builder: (context) => LoginPage()),
-  (Route<dynamic> route) => false,
-);
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+        (Route<dynamic> route) => false,
+      );
     });
   }
-
-  
 
   TextEditingController _searchController = TextEditingController();
   @override
@@ -72,69 +82,69 @@ class _HomePageState extends State<HomePage> {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
       return RefreshIndicator(
-        color: Colors.black,
-        onRefresh: model.refreshDoc,
-        child: 
-      Scaffold(
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Theme.of(context).primaryColor,
-          child: Icon(Icons.camera_alt),
-          onPressed: () async{
-            // final pickedFile = await picker.getImage(source: ImageSource.camera);
-Navigator.of(context).pushNamed("/cameraPage");
-          },
-        ),
-        appBar: AppBar(
-          title: Text(
-            "Home",
-            style: TextStyle(fontSize: 18, color: Colors.white),
-          ),
-          elevation: 10,
-          backgroundColor: Theme.of(context).primaryColor,
-          actions: [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.search),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.notifications),
-            ),
-            IconButton(
-              onPressed: () {
-                _settingModalBottomSheet(context);
+          color: Colors.black,
+          onRefresh: model.refreshDoc,
+          child: Scaffold(
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: Theme.of(context).primaryColor,
+              child: Icon(Icons.camera_alt),
+              onPressed: () async {
+                // final pickedFile = await picker.getImage(source: ImageSource.camera);
+                Navigator.of(context).pushNamed("/cameraPage");
               },
-              icon: new Icon(Icons.more_vert),
             ),
-           
-          ],
-        ),
-        drawer: Drawer(),
-
-        body: model.load?Center(child:LoadingWidget()):model.doclist.length == 0
-
-            ? Center(
-                child: Text(
-                "Nothing Found!!. \n Add some Docs.",
-                style: GoogleFonts.lato(
-                    textStyle: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                )),
-              ))
-            : ListView.separated(
-              separatorBuilder: (_, __) => Divider(height: 1.5,thickness: 0.7,),
-                itemCount: model.doclist.length,
-                itemBuilder: (context, index) {
-                  return ListTileWidget(model.doclist[index]);
-                },
+            appBar: AppBar(
+              title: Text(
+                "Home",
+                style: TextStyle(fontSize: 18, color: Colors.white),
               ),
-      ));
+              elevation: 10,
+              backgroundColor: Theme.of(context).primaryColor,
+              actions: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.search),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(Icons.notifications),
+                ),
+                IconButton(
+                  onPressed: () {
+                    _settingModalBottomSheet(context);
+                  },
+                  icon: new Icon(Icons.more_vert),
+                ),
+              ],
+            ),
+            drawer: Drawer(),
+            body: model.load
+                ? Center(child: LoadingWidget())
+                : model.doclist.length == 0
+                    ? Center(
+                        child: Text(
+                        "Nothing Found!!. \n Add some Docs.",
+                        style: GoogleFonts.lato(
+                            textStyle: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        )),
+                      ))
+                    : ListView.separated(
+                        separatorBuilder: (_, __) => Divider(
+                          height: 1.5,
+                          thickness: 0.7,
+                        ),
+                        itemCount: model.doclist.length,
+                        itemBuilder: (context, index) {
+                          return ListTileWidget(model.doclist[index]);
+                        },
+                      ),
+          ));
     });
   }
-
-  void _settingModalBottomSheet(context) {
+ void _settingModalBottomSheet(context) {
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -203,5 +213,82 @@ Navigator.of(context).pushNamed("/cameraPage");
           );
         });
   }
-}
+  void loginBottomSheet(context) {
+    showModalBottomSheet(
+      isDismissible: false,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            padding: EdgeInsets.all(10),
+            height: 280,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(15.0),
+                    topRight: const Radius.circular(15.0))),
+            child: Column(
+              
+              children: [
+               Align(alignment: Alignment.topRight,child:  IconButton(icon: Icon(Icons.close), onPressed: ()async{
+                 SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setBool("isHeNew", true);
+                 Navigator.of(context).pop();
 
+                }),),
+              
+              
+              
+                    Center(child:Text("Login for subscription !!",style: GoogleFonts.ptSans(
+                            textStyle: TextStyle(
+                          fontSize: 23.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        )),),),
+                        SizedBox(height: 20,),
+                         Center(child: Text("Authenticate to subscribe premium.",style: GoogleFonts.ptSans(
+                            textStyle: TextStyle(
+                          fontSize: 15.0,
+                         
+                          color: Colors.grey,
+                        )),)),
+                         Center(child: Text("Otherwise you will be treated as-",style: GoogleFonts.ptSans(
+                            textStyle: TextStyle(
+                          fontSize: 15.0,
+                         
+                          color: Colors.grey,
+                        )),)),
+                        Center(child: Text("guest user including free trials.",style: GoogleFonts.ptSans(
+                            textStyle: TextStyle(
+                          fontSize: 15.0,
+                         
+                          color: Colors.grey,
+                        )),)),
+                        SizedBox(height: 20,),
+              
+                        ElevatedButton(
+                          
+                        style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(horizontal: 48),
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0),
+                          ),
+                          primary: Colors.grey[900], // background
+                          onPrimary: Colors.white, // foreground
+                        ),
+                        onPressed: () async{
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setBool("isHeNew", true);
+                 Navigator.of(context).pop();
+                 Navigator.pushNamed(context, "/login");
+
+                        },
+                        child: Text('Login'))
+                  
+              ],
+            ),
+          );
+        });
+  }
+}
