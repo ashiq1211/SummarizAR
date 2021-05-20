@@ -1,4 +1,3 @@
-
 import 'dart:io';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +9,7 @@ import 'package:share/share.dart';
 import 'dart:io' as io;
 import 'package:http/http.dart' as http;
 import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+
 class PdfPreview extends StatefulWidget {
   final Doc doc;
   PdfPreview([this.doc]);
@@ -17,9 +17,7 @@ class PdfPreview extends StatefulWidget {
   _PdfPreviewState createState() => _PdfPreviewState();
 }
 
-
 class _PdfPreviewState extends State<PdfPreview> {
-
   // void _select(
   //   choice,
   // ) async {
@@ -36,61 +34,60 @@ class _PdfPreviewState extends State<PdfPreview> {
   Future<void> _signOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut().then((value) {
       Navigator.pushReplacementNamed(context, "/login");
-    });}
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        leading: 
-        
-        IconButton(
-              onPressed: () {
-             Navigator.of(context).pop();
-              },
-              icon: new Icon(Icons.arrow_back),
-            ), 
-        title:Text(widget.doc.name, style: TextStyle(fontSize: 15),) ,
+        leading: IconButton(
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+          icon: new Icon(Icons.arrow_back),
+        ),
+        title: Text(
+          widget.doc.name,
+          style: TextStyle(fontSize: 15),
+        ),
         actions: [
-           IconButton(
-              onPressed: () async{
-
-
-               
-                 var imagePath = join((await getApplicationDocumentsDirectory()).path,
-        '${widget.doc.path}.pdf');
-        print(imagePath);
-        bool exist=await File(imagePath).exists();
-         if(exist){
-           print("und");
-           Share.shareFiles ([imagePath],
-                                  subject: "Document");
-         }else{
-           var data = await http.get(Uri.parse(widget.doc.link));
-      var bytes = data.bodyBytes;
-       var imagePath = join((await getApplicationDocumentsDirectory()).path,
-        '${widget.doc.path}.pdf');
-         final file = File(imagePath);
-   file.writeAsBytes(bytes);
-   Share.shareFiles ([imagePath],
-                                  subject: "Document");
-         }
-                
-
-              },
-              icon: new Icon(Icons.share),
-            ), IconButton(
-              onPressed: () {
-                _settingModalBottomSheet(context);
-              },
-              icon: new Icon(Icons.more_vert),
-            ),
-          
+          IconButton(
+            onPressed: () async {
+              var imagePath = join(
+                  (await getApplicationDocumentsDirectory()).path,
+                  '${widget.doc.path}.pdf');
+              print(imagePath);
+              bool exist = await File(imagePath).exists();
+              if (exist) {
+                print("und");
+                Share.shareFiles([imagePath], subject: "Document");
+              } else {
+                var data = await http.get(Uri.parse(widget.doc.link));
+                var bytes = data.bodyBytes;
+                var imagePath = join(
+                    (await getApplicationDocumentsDirectory()).path,
+                    '${widget.doc.path}.pdf');
+                final file = File(imagePath);
+                file.writeAsBytes(bytes);
+                Share.shareFiles([imagePath], subject: "Document");
+              }
+            },
+            icon: new Icon(Icons.share),
+          ),
+          IconButton(
+            onPressed: () {
+              _settingModalBottomSheet(context);
+            },
+            icon: new Icon(Icons.more_vert),
+          ),
         ],
       ),
       body: SfPdfViewer.network(widget.doc.link),
     );
   }
-   void _settingModalBottomSheet(context) {
+
+  void _settingModalBottomSheet(context) {
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),

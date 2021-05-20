@@ -47,6 +47,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   final pdf = pw.Document();
   DateTime date = DateTime.now();
 
+
   Future createPdf(String recognizedText) async {
     date = DateTime.now();
     pdf.addPage(pw.Page(
@@ -129,6 +130,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         builder: (BuildContext context, Widget child, Mainmodel model) {
       return WillPopScope(
           child: Scaffold(
+
               // floatingActionButtonLocation:
               //     FloatingActionButtonLocation.centerDocked,
               floatingActionButton: Row(
@@ -174,6 +176,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     },
                   )
                 ],
+
               ),
               appBar: AppBar(
                 leading: IconButton(
@@ -245,6 +248,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   Widget body(Mainmodel model, BuildContext context) {
     if (model.load) {
+
       return showLoadingIndicator(context);
     } else {
       return Container(
@@ -277,11 +281,18 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       // letterSpacing: 3,
                       // wordSpacing: 2,
                     ),
+
                   ),
                 ),
+                child: Text(
+                  model.recognizedTxt,
+                  style: GoogleFonts.openSans(),
+                ),
               ),
+
             ],
           ),
+
         ),
       );
     }

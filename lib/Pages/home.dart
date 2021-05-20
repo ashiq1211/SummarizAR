@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project/Pages/cam_screen.dart';
@@ -13,6 +14,7 @@ import 'package:project/Widget/alert.dart';
 import 'package:project/Widget/loading.dart';
 import 'package:project/Widget/tile.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
   Mainmodel model;
@@ -28,8 +30,19 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+
+      SharedPreferences.getInstance().then((value) {
+        SharedPreferences prefs = value;
+         if(prefs.getBool("isHeNew")==null){
+       loginBottomSheet(context);
+     }
+      });
+    
+     
     Mainmodel model = ScopedModel.of(this.context);
+
     model.isAppend = 0;
+
     model.getDoc().then((value) {
       if (value["error"]) {
         showDialog(
@@ -87,6 +100,7 @@ class _HomePageState extends State<HomePage> {
             appBar: AppBar(
               title: Text(
                 "Home",
+
                 style: TextStyle(
                     fontSize: 18, color: Color.fromRGBO(64, 75, 96, .9)),
               ),
@@ -105,13 +119,16 @@ class _HomePageState extends State<HomePage> {
                     Icons.notifications,
                     color: Color.fromRGBO(64, 75, 96, .9),
                   ),
+
                 ),
                 IconButton(
                   onPressed: () {
                     _settingModalBottomSheet(context);
                   },
+
                   icon: new Icon(Icons.more_vert,
                       color: Color.fromRGBO(64, 75, 96, .9)),
+
                 ),
               ],
             ),
@@ -129,6 +146,7 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.black,
                         )),
                       ))
+
                     : Container(
                         color: Colors.black,
                         child: ListView.separated(
@@ -143,12 +161,12 @@ class _HomePageState extends State<HomePage> {
                             return ListTileWidget(model.doclist[index]);
                           },
                         ),
+
                       ),
           ));
     });
   }
-
-  void _settingModalBottomSheet(context) {
+ void _settingModalBottomSheet(context) {
     showModalBottomSheet(
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
@@ -217,4 +235,84 @@ class _HomePageState extends State<HomePage> {
           );
         });
   }
+
+  void loginBottomSheet(context) {
+    showModalBottomSheet(
+      isDismissible: false,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            padding: EdgeInsets.all(10),
+            height: 280,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(15.0),
+                    topRight: const Radius.circular(15.0))),
+            child: Column(
+              
+              children: [
+               Align(alignment: Alignment.topRight,child:  IconButton(icon: Icon(Icons.close), onPressed: ()async{
+                 SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setBool("isHeNew", true);
+                 Navigator.of(context).pop();
+
+                }),),
+              
+              
+              
+                    Center(child:Text("Login for subscription !!",style: GoogleFonts.ptSans(
+                            textStyle: TextStyle(
+                          fontSize: 23.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        )),),),
+                        SizedBox(height: 20,),
+                         Center(child: Text("Authenticate to subscribe premium.",style: GoogleFonts.ptSans(
+                            textStyle: TextStyle(
+                          fontSize: 15.0,
+                         
+                          color: Colors.grey,
+                        )),)),
+                         Center(child: Text("Otherwise you will be treated as-",style: GoogleFonts.ptSans(
+                            textStyle: TextStyle(
+                          fontSize: 15.0,
+                         
+                          color: Colors.grey,
+                        )),)),
+                        Center(child: Text("guest user including free trials.",style: GoogleFonts.ptSans(
+                            textStyle: TextStyle(
+                          fontSize: 15.0,
+                         
+                          color: Colors.grey,
+                        )),)),
+                        SizedBox(height: 20,),
+              
+                        ElevatedButton(
+                          
+                        style: ElevatedButton.styleFrom(padding: EdgeInsets.symmetric(horizontal: 48),
+                          shape: new RoundedRectangleBorder(
+                            borderRadius: new BorderRadius.circular(30.0),
+                          ),
+                          primary: Colors.grey[900], // background
+                          onPrimary: Colors.white, // foreground
+                        ),
+                        onPressed: () async{
+                          SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setBool("isHeNew", true);
+                 Navigator.of(context).pop();
+                 Navigator.pushNamed(context, "/login");
+
+                        },
+                        child: Text('Login'))
+                  
+              ],
+            ),
+          );
+        });
+  }
+
 }

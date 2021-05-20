@@ -222,6 +222,7 @@ class _CameraScreenState extends State<CameraScreen> {
           print(imagePath);
         });
       });
+
       _cropImage(_image.path);
       // Navigator.push(
       //     context,
@@ -231,6 +232,7 @@ class _CameraScreenState extends State<CameraScreen> {
       //               _image,
       //               "$name.png",
       //             )));
+
     } catch (e) {
       showCameraException(e);
     }
@@ -252,6 +254,8 @@ class _CameraScreenState extends State<CameraScreen> {
     print("image picked");
     _cropImage(pickedFile.path);
   }
+
+
 
   _cropImage(filePath) async {
     final name = DateTime.now();
@@ -306,5 +310,6 @@ class _CameraScreenState extends State<CameraScreen> {
         }
       });
     }
+
   }
 }

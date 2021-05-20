@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
@@ -102,7 +103,51 @@ class UserModel extends AppModel {
     await FirebaseAuth.instance.signOut();
     print("object");
   }
+
+   Future<Map<dynamic, dynamic>> uploadPack(var plan) async {
+    haserror = false;
+    loading = true;
+    notifyListeners();
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString("userId");
+    final firestoreInstance = FirebaseFirestore.instance;
+ 
+    try {
+    firestoreInstance.collection("$userId/Subsciprtion")
+          .add({
+            'plan':"plan" , // John Doe
+            'days': "company", // Stokes and Sons
+            'age': "age" // 42
+          })
+          .then((value) => print("User Added"))
+          .catchError((error) => print("Failed to add user: $error"));
+      
+    } on FirebaseAuthException catch (e) {
+      if (e.code == 'user-not-found') {
+        message = ('No user found for that email.');
+        haserror = true;
+        notifyListeners();
+      } else if (e.code == 'wrong-password') {
+        message = ('Wrong password provided for that user.');
+
+        haserror = true;
+        notifyListeners();
+      } else {
+        var connectivityResult = await (Connectivity().checkConnectivity());
+        if (connectivityResult == ConnectivityResult.none) {
+          message = "Check your Internet Connectivity";
+          haserror = true;
+          notifyListeners();
+        }
+      }
+    } catch (e) {}
+    loading = false;
+    notifyListeners();
+    print(message);
+    return {"message": message, "error": haserror};
+  }
 }
+
 
 class DocumentModel extends AppModel {
   String recognizedText = " ";
@@ -111,7 +156,9 @@ class DocumentModel extends AppModel {
     return List.from(itemList);
   }
 
+
   int isAppend = 0;
+
   int flag = 0;
   double cur = 0.0;
   String get recognizedTxt {
@@ -134,7 +181,9 @@ class DocumentModel extends AppModel {
           FirebaseVision.instance.textRecognizer();
       final VisionText visionText =
           await textRecognizer.processImage(visionImage);
+
       if (visionText.blocks.isNotEmpty && isAppend == 0) {
+
         recognizedText = " ";
         print("xzbjkxcbcxjk");
       } else if (visionText.blocks.isEmpty) {
@@ -205,6 +254,7 @@ class DocumentModel extends AppModel {
 
       Reference reference =
           FirebaseStorage.instance.ref().child("$userId/Documents/$date");
+
       UploadTask uploadTask = reference.putData(asset);
 
       var imageUrl = await (await uploadTask).ref.getDownloadURL();
@@ -230,6 +280,68 @@ class DocumentModel extends AppModel {
   }
 
   Future<Map<dynamic, dynamic>> getDoc() async {
+    itemList = [];
+    haserror = false;
+    loading = true;
+    notifyListeners();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString("userId");
+    final mainReference =
+        FirebaseDatabase.instance.reference().child('$userId/Documents');
+
+ print("there");
+    try {
+      mainReference.once().then((DataSnapshot snap) {
+
+     
+        if (snap.value == null) {
+          loading = false;
+          notifyListeners();
+          return null;
+        }
+        print("Swaty");
+
+        var data = snap.value;
+        print(data);
+
+        data.forEach((key, value) {
+          Doc m = new Doc(
+              link: value['PDF'],
+              name: value['FileName'],
+              date: value['Date'],
+              path: value["ActualDate"]);
+          itemList.add(m);
+          // notifyListeners();
+        });
+        itemList.sort((a, b) => a.name.compareTo(b.name));
+        itemList = itemList.reversed.toList();
+        notifyListeners();
+        print(itemList);
+        print("kooy");
+        loading = false;
+
+
+        notifyListeners();
+        print(message);
+      });
+    } on FirebaseException catch (e) {} catch (e) {
+      loading = false;
+      notifyListeners();
+    }
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      message = "Check your Internet Connectivity";
+      haserror = true;
+      loading = false;
+
+      notifyListeners();
+    }
+    print("sdbhds");
+    print(haserror);
+    return {"message": message, "error": haserror};
+  }
+  Future<Map<dynamic, dynamic>> updateDoc() async {
     itemList = [];
     haserror = false;
     loading = true;
@@ -282,6 +394,63 @@ class DocumentModel extends AppModel {
       loading = false;
       notifyListeners();
     }
+    print(haserror);
+    return {"message": message, "error": haserror};
+  }
+  Future<Map<dynamic, dynamic>> deleteDoc() async {
+    itemList = [];
+    haserror = false;
+    loading = true;
+    notifyListeners();
+
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    userId = prefs.getString("userId");
+    final mainReference =
+        FirebaseDatabase.instance.reference().child('$userId/Documents');
+
+    try {
+      mainReference.once().then((DataSnapshot snap) {
+        if (snap.value == null) {
+          loading = false;
+          notifyListeners();
+          return null;
+        }
+        print("Swaty");
+
+        var data = snap.value;
+        print(data);
+
+        data.forEach((key, value) {
+          Doc m = new Doc(
+              link: value['PDF'],
+              name: value['FileName'],
+              date: value['Date'],
+              path: value["ActualDate"]);
+          itemList.add(m);
+          // notifyListeners();
+        });
+        itemList.sort((a, b) => a.name.compareTo(b.name));
+        itemList = itemList.reversed.toList();
+        notifyListeners();
+        print(itemList);
+        print("kooy");
+        loading = false;
+
+        notifyListeners();
+        print(message);
+      });
+    } on FirebaseException catch (e) {} catch (e) {
+      loading = false;
+      notifyListeners();
+    }
+    var connectivityResult = await (Connectivity().checkConnectivity());
+    if (connectivityResult == ConnectivityResult.none) {
+      message = "Check your Internet Connectivity";
+      haserror = true;
+      loading = false;
+      notifyListeners();
+    }
+
     print(haserror);
     return {"message": message, "error": haserror};
   }

@@ -57,6 +57,23 @@ dependencies:
   firebase_database: ^6.1.2
   syncfusion_flutter_pdfviewer:
   intl: ^0.17.0
+
+  flutter_launcher_icons: ^0.9.0
+  flutter_native_splash: ^1.1.8+4
+  # carousel_slider: ^3.0.0
+  device_info: ^2.0.0
+  cloud_firestore: ^2.1.0
+flutter_icons:
+    android: "launcher_icon"
+    # ios: true
+    image_path: "assets/images/appicon.png"
+flutter_native_splash:
+     image: "assets/images/appicon.png"
+     color: "#ffffff"
+     android: true
+ 
+     
+
   image_cropper: ^1.4.0
 
 

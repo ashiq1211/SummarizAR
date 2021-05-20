@@ -251,7 +251,7 @@ class _SignUpState extends State<SignUp> {
     )
         .then((response) {
       if (!response['error']) {
-        Navigator.pushReplacementNamed(context, '/login');
+        Navigator.pushReplacementNamed(context, '/subscription');
       } else {
         showDialog(
             context: context,
