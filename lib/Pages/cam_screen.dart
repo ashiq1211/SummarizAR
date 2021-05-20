@@ -1,5 +1,5 @@
 import 'dart:io';
-
+import 'package:image_cropper/image_cropper.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
@@ -223,14 +223,16 @@ class _CameraScreenState extends State<CameraScreen> {
         });
       });
 
-      Navigator.push(
-          context,
-          MaterialPageRoute(
-              builder: (context) => PreviewScreen(
-                    widget._model,
-                    _image,
-                    "$name.png",
-                  )));
+      _cropImage(_image.path);
+      // Navigator.push(
+      //     context,
+      //     MaterialPageRoute(
+      //         builder: (context) => PreviewScreen(
+      //               widget._model,
+      //               _image,
+      //               "$name.png",
+      //             )));
+
     } catch (e) {
       showCameraException(e);
     }
@@ -239,25 +241,75 @@ class _CameraScreenState extends State<CameraScreen> {
   void showCameraException(e) {}
 
   pickImage() async {
-    final name = DateTime.now();
-    final pickedFile = await picker.getImage(source: ImageSource.gallery);
+    final pickedFile = await picker.getImage(
+      source: ImageSource.gallery,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    File img = File(pickedFile.path);
+    // return Container(
+    //   child: img == Null ? Text("No image selected yet") : Image.file(img),
+    //   height: 300,
+    // );
+    print("image picked");
+    _cropImage(pickedFile.path);
+  }
 
-    setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-        Navigator.pushAndRemoveUntil(
-          this.context,
-          MaterialPageRoute(
-              builder: (context) => PreviewScreen(
-                    widget._model,
-                    _image,
-                    "$name.png",
-                  )),
-          (Route<dynamic> route) => false,
-        );
-      } else {
-        print('No image selected.');
-      }
-    });
+
+
+  _cropImage(filePath) async {
+    final name = DateTime.now();
+    print("started");
+    File croppedImage = await ImageCropper.cropImage(
+      sourcePath: filePath,
+      maxWidth: 1080,
+      maxHeight: 1080,
+      aspectRatioPresets: Platform.isAndroid
+          ? [
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio16x9
+            ]
+          : [
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio5x3,
+              CropAspectRatioPreset.ratio5x4,
+              CropAspectRatioPreset.ratio7x5,
+              CropAspectRatioPreset.ratio16x9
+            ],
+      androidUiSettings: AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: Colors.deepOrange,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false),
+    );
+    print("suceess");
+    if (croppedImage != null) {
+      // File imageFile = croppedImage;
+      setState(() {
+        if (croppedImage != null) {
+          _image = File(croppedImage.path);
+          Navigator.pushAndRemoveUntil(
+            this.context,
+            MaterialPageRoute(
+                builder: (context) => PreviewScreen(
+                      widget._model,
+                      _image,
+                      "$name.png",
+                    )),
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          print('No image selected.');
+        }
+      });
+    }
+
   }
 }

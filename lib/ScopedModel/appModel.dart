@@ -149,13 +149,15 @@ class UserModel extends AppModel {
 }
 
 
-
 class DocumentModel extends AppModel {
   String recognizedText = " ";
   List<Doc> itemList = [];
   List<Doc> get doclist {
     return List.from(itemList);
   }
+
+
+  int isAppend = 0;
 
   int flag = 0;
   double cur = 0.0;
@@ -179,7 +181,9 @@ class DocumentModel extends AppModel {
           FirebaseVision.instance.textRecognizer();
       final VisionText visionText =
           await textRecognizer.processImage(visionImage);
-      if (visionText.blocks.isNotEmpty) {
+
+      if (visionText.blocks.isNotEmpty && isAppend == 0) {
+
         recognizedText = " ";
         print("xzbjkxcbcxjk");
       } else if (visionText.blocks.isEmpty) {
@@ -250,7 +254,7 @@ class DocumentModel extends AppModel {
 
       Reference reference =
           FirebaseStorage.instance.ref().child("$userId/Documents/$date");
-         
+
       UploadTask uploadTask = reference.putData(asset);
 
       var imageUrl = await (await uploadTask).ref.getDownloadURL();
@@ -285,6 +289,7 @@ class DocumentModel extends AppModel {
     userId = prefs.getString("userId");
     final mainReference =
         FirebaseDatabase.instance.reference().child('$userId/Documents');
+
  print("there");
     try {
       mainReference.once().then((DataSnapshot snap) {
@@ -316,6 +321,7 @@ class DocumentModel extends AppModel {
         print("kooy");
         loading = false;
 
+
         notifyListeners();
         print(message);
       });
@@ -328,6 +334,7 @@ class DocumentModel extends AppModel {
       message = "Check your Internet Connectivity";
       haserror = true;
       loading = false;
+
       notifyListeners();
     }
     print("sdbhds");
@@ -443,6 +450,7 @@ class DocumentModel extends AppModel {
       loading = false;
       notifyListeners();
     }
+
     print(haserror);
     return {"message": message, "error": haserror};
   }

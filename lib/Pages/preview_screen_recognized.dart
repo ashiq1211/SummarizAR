@@ -17,6 +17,7 @@ import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:project/Pages/cam_screen.dart';
 import 'package:project/Pages/home.dart';
 import 'package:project/Pages/summary.dart';
 import 'package:project/ScopedModel/appModel.dart';
@@ -86,7 +87,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
   @override
   void initState() {
     super.initState();
+
     Mainmodel model = ScopedModel.of(this.context);
+
     model.recognizeText(widget.imgPath).then((value) {
       if (!value["error"]) {
         print(value["error"]);
@@ -127,22 +130,53 @@ class _PreviewScreenState extends State<PreviewScreen> {
         builder: (BuildContext context, Widget child, Mainmodel model) {
       return WillPopScope(
           child: Scaffold(
-              floatingActionButtonLocation:
-                  FloatingActionButtonLocation.centerDocked,
-              floatingActionButton: FloatingActionButton.extended(
-                onPressed: () {
-                  if (model.load) {
-                    return;
-                  }
 
-                  Navigator.push(
-                      this.context,
-                      MaterialPageRoute(
-                          builder: (context) => SummaryPage(imagePath)));
-                },
-                icon: Icon(Octicons.note),
-                label: Text("Summary"),
-                backgroundColor: Theme.of(context).primaryColor,
+              // floatingActionButtonLocation:
+              //     FloatingActionButtonLocation.centerDocked,
+              floatingActionButton: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  FloatingActionButton.extended(
+                    heroTag: "btn1",
+                    onPressed: () {
+                      if (model.load) {
+                        return;
+                      }
+
+                      Navigator.push(
+                          this.context,
+                          MaterialPageRoute(
+                              builder: (context) => SummaryPage(imagePath)));
+                    },
+                    icon: Icon(Octicons.note),
+                    label: Text("Summary"),
+                    backgroundColor: Theme.of(context).primaryColor,
+                  ),
+                  SizedBox(
+                    width: 50,
+                  ),
+                  FloatingActionButton(
+                    heroTag: "btn2",
+                    child: Icon(
+                      Icons.add_a_photo_outlined,
+                    ),
+                    backgroundColor: Theme.of(context).primaryColor,
+                    onPressed: () async {
+                      model.isAppend = 1;
+                      // final pickedFile = await picker.getImage(source: ImageSource.camera);
+                      Navigator.of(context).pushNamed("/cameraPage");
+                      //             Navigator.pushAndRemoveUntil(
+                      //   this.context,
+                      //   MaterialPageRoute(
+                      //       builder: (context) => CameraScreen(
+                      //             model.recognizedTxt
+                      //           )),
+                      //   (Route<dynamic> route) => false,
+                      // );
+                    },
+                  )
+                ],
+
               ),
               appBar: AppBar(
                 leading: IconButton(
@@ -214,30 +248,40 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   Widget body(Mainmodel model, BuildContext context) {
     if (model.load) {
-   
 
- 
- 
-       return  showLoadingIndicator(context);
-    
-
-     
-     
+      return showLoadingIndicator(context);
     } else {
-  
       return Container(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Expanded(
-              flex: 2,
-              child: Container(
-                margin: const EdgeInsets.all(15.0),
-                padding: const EdgeInsets.all(3.0),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    width: 3,
-                    color: Colors.black,
+        child: Container(
+          margin: const EdgeInsets.all(15.0),
+          // adding padding
+
+          padding: const EdgeInsets.all(3.0),
+          decoration: BoxDecoration(
+            // adding borders around the widget
+            border: Border.all(
+              color: Color.fromRGBO(64, 75, 96, .9),
+              width: 5.0,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(10.0),
+                  scrollDirection: Axis.vertical,
+                  child: Text(
+                    model.recognizedTxt,
+                    style: TextStyle(
+                      color: Colors.black,
+                      // fontWeight: FontWeight.bold,
+                      fontSize: 15.0,
+                      // letterSpacing: 3,
+                      // wordSpacing: 2,
+                    ),
+
                   ),
                 ),
                 child: Text(
@@ -245,8 +289,10 @@ class _PreviewScreenState extends State<PreviewScreen> {
                   style: GoogleFonts.openSans(),
                 ),
               ),
-            ),
-          ],
+
+            ],
+          ),
+
         ),
       );
     }

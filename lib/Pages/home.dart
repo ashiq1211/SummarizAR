@@ -30,6 +30,7 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+
       SharedPreferences.getInstance().then((value) {
         SharedPreferences prefs = value;
          if(prefs.getBool("isHeNew")==null){
@@ -39,6 +40,9 @@ class _HomePageState extends State<HomePage> {
     
      
     Mainmodel model = ScopedModel.of(this.context);
+
+    model.isAppend = 0;
+
     model.getDoc().then((value) {
       if (value["error"]) {
         showDialog(
@@ -96,24 +100,35 @@ class _HomePageState extends State<HomePage> {
             appBar: AppBar(
               title: Text(
                 "Home",
-                style: TextStyle(fontSize: 18, color: Colors.white),
+
+                style: TextStyle(
+                    fontSize: 18, color: Color.fromRGBO(64, 75, 96, .9)),
               ),
               elevation: 10,
-              backgroundColor: Theme.of(context).primaryColor,
+              iconTheme: IconThemeData(color: Color.fromRGBO(64, 75, 96, .9)),
+              backgroundColor: Colors.white30,
               actions: [
                 Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.search),
+                  child:
+                      Icon(Icons.search, color: Color.fromRGBO(64, 75, 96, .9)),
                 ),
                 Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Icon(Icons.notifications),
+                  child: Icon(
+                    Icons.notifications,
+                    color: Color.fromRGBO(64, 75, 96, .9),
+                  ),
+
                 ),
                 IconButton(
                   onPressed: () {
                     _settingModalBottomSheet(context);
                   },
-                  icon: new Icon(Icons.more_vert),
+
+                  icon: new Icon(Icons.more_vert,
+                      color: Color.fromRGBO(64, 75, 96, .9)),
+
                 ),
               ],
             ),
@@ -131,15 +146,22 @@ class _HomePageState extends State<HomePage> {
                           color: Colors.black,
                         )),
                       ))
-                    : ListView.separated(
-                        separatorBuilder: (_, __) => Divider(
-                          height: 1.5,
-                          thickness: 0.7,
+
+                    : Container(
+                        color: Colors.black,
+                        child: ListView.separated(
+                          separatorBuilder: (_, __) => Divider(
+                            height: 10.0,
+                            thickness: 0.7,
+                          ),
+                          padding: const EdgeInsets.all(16.0),
+                          itemCount: model.doclist.length,
+                          physics: BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return ListTileWidget(model.doclist[index]);
+                          },
                         ),
-                        itemCount: model.doclist.length,
-                        itemBuilder: (context, index) {
-                          return ListTileWidget(model.doclist[index]);
-                        },
+
                       ),
           ));
     });
@@ -213,6 +235,7 @@ class _HomePageState extends State<HomePage> {
           );
         });
   }
+
   void loginBottomSheet(context) {
     showModalBottomSheet(
       isDismissible: false,
@@ -291,4 +314,5 @@ class _HomePageState extends State<HomePage> {
           );
         });
   }
+
 }
