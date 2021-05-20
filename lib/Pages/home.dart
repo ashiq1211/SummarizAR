@@ -22,24 +22,27 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-   final picker = ImagePicker();
+  final picker = ImagePicker();
 
   List<DocumentModel> itemList = [];
 
- @override
+  @override
   void initState() {
-
-  Mainmodel model = ScopedModel.of(this.context);
-   model.getDoc().then((value) {
-     if(value["error"]){ showDialog(context: context, builder:(BuildContext context){
-       return AlertWidget(value["message"]);
-     } );}
-    
-   });
+    Mainmodel model = ScopedModel.of(this.context);
+    model.isAppend = 0;
+    model.getDoc().then((value) {
+      if (value["error"]) {
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AlertWidget(value["message"]);
+            });
+      }
+    });
 
     super.initState();
   }
+
   FocusNode _focusNode = FocusNode();
   void _select(
     choice,
@@ -57,14 +60,12 @@ class _HomePageState extends State<HomePage> {
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut().then((value) {
       Navigator.pushAndRemoveUntil(
-  context,
-  MaterialPageRoute(builder: (context) => LoginPage()),
-  (Route<dynamic> route) => false,
-);
+        context,
+        MaterialPageRoute(builder: (context) => LoginPage()),
+        (Route<dynamic> route) => false,
+      );
     });
   }
-
-  
 
   TextEditingController _searchController = TextEditingController();
   @override
@@ -72,65 +73,78 @@ class _HomePageState extends State<HomePage> {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
       return RefreshIndicator(
-        color: Colors.black,
-        onRefresh: model.refreshDoc,
-        child: 
-      Scaffold(
-        floatingActionButton: FloatingActionButton(
-          backgroundColor: Theme.of(context).primaryColor,
-          child: Icon(Icons.camera_alt),
-          onPressed: () async{
-            // final pickedFile = await picker.getImage(source: ImageSource.camera);
-Navigator.of(context).pushNamed("/cameraPage");
-          },
-        ),
-        appBar: AppBar(
-          title: Text(
-            "Home",
-            style: TextStyle(fontSize: 18, color: Colors.white),
-          ),
-          elevation: 10,
-          backgroundColor: Theme.of(context).primaryColor,
-          actions: [
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.search),
-            ),
-            Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Icon(Icons.notifications),
-            ),
-            IconButton(
-              onPressed: () {
-                _settingModalBottomSheet(context);
+          color: Colors.black,
+          onRefresh: model.refreshDoc,
+          child: Scaffold(
+            floatingActionButton: FloatingActionButton(
+              backgroundColor: Theme.of(context).primaryColor,
+              child: Icon(Icons.camera_alt),
+              onPressed: () async {
+                // final pickedFile = await picker.getImage(source: ImageSource.camera);
+                Navigator.of(context).pushNamed("/cameraPage");
               },
-              icon: new Icon(Icons.more_vert),
             ),
-           
-          ],
-        ),
-        drawer: Drawer(),
-
-        body: model.load?Center(child:LoadingWidget()):model.doclist.length == 0
-
-            ? Center(
-                child: Text(
-                "Nothing Found!!. \n Add some Docs.",
-                style: GoogleFonts.lato(
-                    textStyle: TextStyle(
-                  fontSize: 14.0,
-                  fontWeight: FontWeight.w700,
-                  color: Colors.black,
-                )),
-              ))
-            : ListView.separated(
-              separatorBuilder: (_, __) => Divider(height: 1.5,thickness: 0.7,),
-                itemCount: model.doclist.length,
-                itemBuilder: (context, index) {
-                  return ListTileWidget(model.doclist[index]);
-                },
+            appBar: AppBar(
+              title: Text(
+                "Home",
+                style: TextStyle(
+                    fontSize: 18, color: Color.fromRGBO(64, 75, 96, .9)),
               ),
-      ));
+              elevation: 10,
+              iconTheme: IconThemeData(color: Color.fromRGBO(64, 75, 96, .9)),
+              backgroundColor: Colors.white30,
+              actions: [
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child:
+                      Icon(Icons.search, color: Color.fromRGBO(64, 75, 96, .9)),
+                ),
+                Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Icon(
+                    Icons.notifications,
+                    color: Color.fromRGBO(64, 75, 96, .9),
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    _settingModalBottomSheet(context);
+                  },
+                  icon: new Icon(Icons.more_vert,
+                      color: Color.fromRGBO(64, 75, 96, .9)),
+                ),
+              ],
+            ),
+            drawer: Drawer(),
+            body: model.load
+                ? Center(child: LoadingWidget())
+                : model.doclist.length == 0
+                    ? Center(
+                        child: Text(
+                        "Nothing Found!!. \n Add some Docs.",
+                        style: GoogleFonts.lato(
+                            textStyle: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        )),
+                      ))
+                    : Container(
+                        color: Colors.black,
+                        child: ListView.separated(
+                          separatorBuilder: (_, __) => Divider(
+                            height: 10.0,
+                            thickness: 0.7,
+                          ),
+                          padding: const EdgeInsets.all(16.0),
+                          itemCount: model.doclist.length,
+                          physics: BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return ListTileWidget(model.doclist[index]);
+                          },
+                        ),
+                      ),
+          ));
     });
   }
 
@@ -204,4 +218,3 @@ Navigator.of(context).pushNamed("/cameraPage");
         });
   }
 }
-

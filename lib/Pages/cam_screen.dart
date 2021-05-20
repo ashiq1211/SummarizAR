@@ -244,6 +244,11 @@ class _CameraScreenState extends State<CameraScreen> {
       maxWidth: 1800,
       maxHeight: 1800,
     );
+    File img = File(pickedFile.path);
+    // return Container(
+    //   child: img == Null ? Text("No image selected yet") : Image.file(img),
+    //   height: 300,
+    // );
     print("image picked");
     _cropImage(pickedFile.path);
   }
