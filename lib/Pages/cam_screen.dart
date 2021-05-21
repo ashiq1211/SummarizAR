@@ -15,7 +15,7 @@ class CameraScreen extends StatefulWidget {
   // const CameraScreen({Key key, this.user},this._model) : super(key: key);
   // final UserCredential user;
   final AppModel _model;
-  CameraScreen([this._model]);
+  CameraScreen(this._model);
 
   @override
   _CameraScreenState createState() => _CameraScreenState();
