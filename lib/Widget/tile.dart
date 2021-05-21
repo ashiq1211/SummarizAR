@@ -22,7 +22,7 @@ class _ListTileWidgetState extends State<ListTileWidget> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => PdfPreview(doc),
+                  builder: (context) => PdfPreview(widget.doc),
                   fullscreenDialog: true));
         },
         minLeadingWidth: 16.0,
@@ -33,9 +33,9 @@ class _ListTileWidgetState extends State<ListTileWidget> {
           size: 45,
         ),
         title:
-            Text(doc.name, style: TextStyle(color: Colors.white, fontSize: 15)),
+            Text(widget.doc.name, style: TextStyle(color: Colors.white, fontSize: 15)),
         subtitle: Text(
-          doc.date,
+          widget.doc.date,
           style: TextStyle(color: Colors.grey, fontSize: 13),
         ),
         trailing:

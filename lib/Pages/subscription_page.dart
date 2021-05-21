@@ -28,7 +28,18 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                         
                           fontWeight: FontWeight.bold,
                           color: Colors.black,
-                        )),),),SizedBox(height: 50,),
+                        )),),
+                        
+                        ), SizedBox(height: 20,),
+                        Padding(padding: EdgeInsets.symmetric (horizontal: 20),child:Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                          ListTile(leading:Icon(Feather.check,color: Colors.green[700],) ,title: Text("Get unlimited summary")),
+                          ListTile(leading:Icon(Feather.check,color: Colors.green[700],) ,title: Text("No Ads"))
+                        ],), ),
+                        
+                       
+                        SizedBox(height: 50,),
                         GridView.count(
                           crossAxisSpacing: 28,
                           mainAxisSpacing: 18,

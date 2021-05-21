@@ -142,7 +142,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       if (model.load) {
                         return;
                       }
-
+                    model.getSummary(model.recognizedTxt);
                       Navigator.push(
                           this.context,
                           MaterialPageRoute(
@@ -284,10 +284,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
                   ),
                 ),
-                child: Text(
-                  model.recognizedTxt,
-                  style: GoogleFonts.openSans(),
-                ),
+                
               ),
 
             ],

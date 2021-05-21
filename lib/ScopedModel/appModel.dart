@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'dart:math';
-
+import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -24,7 +24,39 @@ class AppModel extends Model {
   String message = 'Something wrong';
   String userId = " ";
 }
-
+class SummaryModel extends AppModel{
+  String summaryText=" ";
+  String get sumTxt{
+    return summaryText;
+  }
+  String url="http://192.168.43.117:5000/";
+  Future<Map<String,dynamic>> getSummary(String text)async{
+    loading=true;
+    notifyListeners();
+    print("clicked");
+  var response=await http.post(
+   Uri.parse(url), body: jsonEncode(<String, String>{
+      'actualText':text,
+    }),
+    headers: { 'Content-Type': 'application/json'},
+     
+ 
+    
+  );
+  var responseData=json.decode(response.body);
+  summaryText=responseData["summary"];
+  loading=false;
+    notifyListeners();
+  return{"error":false};
+  // var response=await http.get(Uri.parse(url),headers: {
+      
+  //       'Content-Type': 'application/json'
+  //     });
+  //    print(response);
+  //    print(response.body);
+   
+  }
+}
 class UserModel extends AppModel {
   bool get load {
     return loading;
@@ -206,6 +238,7 @@ class DocumentModel extends AppModel {
           flag = 1;
         }
       }
+        recognizedText += "\n";
     } on FirebaseException catch (e) {
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.none) {

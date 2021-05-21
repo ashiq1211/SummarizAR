@@ -30,9 +30,12 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
-
+ SharedPreferences prefs;
       SharedPreferences.getInstance().then((value) {
-        SharedPreferences prefs = value;
+        setState(() {
+           prefs = value;
+        });
+      
          if(prefs.getBool("isHeNew")==null){
        loginBottomSheet(context);
      }
@@ -43,7 +46,7 @@ class _HomePageState extends State<HomePage> {
 
     model.isAppend = 0;
 
-    model.getDoc().then((value) {
+   model.getDoc().then((value) {
       if (value["error"]) {
         showDialog(
             context: context,
@@ -52,6 +55,8 @@ class _HomePageState extends State<HomePage> {
             });
       }
     });
+
+   
 
     super.initState();
   }
@@ -90,8 +95,8 @@ class _HomePageState extends State<HomePage> {
           onRefresh: model.refreshDoc,
           child: Scaffold(
             floatingActionButton: FloatingActionButton(
-              backgroundColor: Theme.of(context).primaryColor,
-              child: Icon(Icons.camera_alt),
+              backgroundColor: Colors.white,
+              child: Icon(Icons.camera_alt,color: Colors.black,),
               onPressed: () async {
                 // final pickedFile = await picker.getImage(source: ImageSource.camera);
                 Navigator.of(context).pushNamed("/cameraPage");
@@ -115,8 +120,11 @@ class _HomePageState extends State<HomePage> {
                 ),
                 Padding(
                   padding: EdgeInsets.all(8.0),
-                  child: Icon(
-                    Icons.notifications,
+                  child: IconButton(onPressed: (){
+                    // print("object");
+                    // model.getSummary("text");
+                  },
+                    icon:Icon(Icons.notifications),
                     color: Color.fromRGBO(64, 75, 96, .9),
                   ),
 
