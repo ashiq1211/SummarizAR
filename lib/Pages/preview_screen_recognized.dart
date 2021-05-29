@@ -5,6 +5,8 @@ import 'dart:typed_data';
 import 'dart:convert';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:flutter_quill/models/rules/insert.dart';
+import 'package:flutter_quill/widgets/controller.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:path/path.dart';
@@ -13,6 +15,9 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/widgets/editor.dart';
+import 'package:flutter_quill/widgets/toolbar.dart';
+import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:path_provider/path_provider.dart';
@@ -42,11 +47,10 @@ class PreviewScreen extends StatefulWidget {
 class _PreviewScreenState extends State<PreviewScreen> {
   int flag = 0;
   var imagePath;
-
+  var a = 1;
   File file;
   final pdf = pw.Document();
   DateTime date = DateTime.now();
-
 
   Future createPdf(String recognizedText) async {
     date = DateTime.now();
@@ -142,7 +146,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       if (model.load) {
                         return;
                       }
-                    model.getSummary(model.recognizedTxt);
+
+                      print(model.recognizedTxt);
+                      model.getSummary(model.recognizedTxt);
                       Navigator.push(
                           this.context,
                           MaterialPageRoute(
@@ -176,7 +182,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     },
                   )
                 ],
-
               ),
               appBar: AppBar(
                 leading: IconButton(
@@ -248,9 +253,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   Widget body(Mainmodel model, BuildContext context) {
     if (model.load) {
-
       return showLoadingIndicator(context);
-    } else {
+    } else if (a == 2) {
       return Container(
         child: Container(
           margin: const EdgeInsets.all(15.0),
@@ -281,15 +285,27 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       // letterSpacing: 3,
                       // wordSpacing: 2,
                     ),
-
                   ),
                 ),
-                
               ),
-
             ],
           ),
-
+        ),
+      );
+    } else {
+      return Container(
+        child: Column(
+          children: [
+            QuillToolbar.basic(controller: model.controller),
+            Expanded(
+              child: Container(
+                child: QuillEditor.basic(
+                  controller: model.controller,
+                  readOnly: false, // true for view only mode
+                ),
+              ),
+            )
+          ],
         ),
       );
     }

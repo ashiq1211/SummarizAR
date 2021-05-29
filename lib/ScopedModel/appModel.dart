@@ -1,8 +1,7 @@
 import 'dart:convert';
-
 import 'dart:io';
-
 import 'dart:math';
+import 'package:flutter_quill/widgets/controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
@@ -24,39 +23,39 @@ class AppModel extends Model {
   String message = 'Something wrong';
   String userId = " ";
 }
-class SummaryModel extends AppModel{
-  String summaryText=" ";
-  String get sumTxt{
+
+class SummaryModel extends AppModel {
+  String summaryText = " ";
+  String get sumTxt {
     return summaryText;
   }
-  String url="http://192.168.43.117:5000/";
-  Future<Map<String,dynamic>> getSummary(String text)async{
-    loading=true;
+
+  String url = "http://192.168.1.7:5000/";
+  Future<Map<String, dynamic>> getSummary(String text) async {
+    loading = true;
     notifyListeners();
     print("clicked");
-  var response=await http.post(
-   Uri.parse(url), body: jsonEncode(<String, String>{
-      'actualText':text,
-    }),
-    headers: { 'Content-Type': 'application/json'},
-     
- 
-    
-  );
-  var responseData=json.decode(response.body);
-  summaryText=responseData["summary"];
-  loading=false;
+    var response = await http.post(
+      Uri.parse(url),
+      body: jsonEncode(<String, String>{
+        'actualText': text,
+      }),
+      headers: {'Content-Type': 'application/json'},
+    );
+    var responseData = json.decode(response.body);
+    summaryText = responseData["summary"];
+    loading = false;
     notifyListeners();
-  return{"error":false};
-  // var response=await http.get(Uri.parse(url),headers: {
-      
-  //       'Content-Type': 'application/json'
-  //     });
-  //    print(response);
-  //    print(response.body);
-   
+    return {"error": false};
+    // var response=await http.get(Uri.parse(url),headers: {
+
+    //       'Content-Type': 'application/json'
+    //     });
+    //    print(response);
+    //    print(response.body);
   }
 }
+
 class UserModel extends AppModel {
   bool get load {
     return loading;
@@ -136,24 +135,24 @@ class UserModel extends AppModel {
     print("object");
   }
 
-   Future<Map<dynamic, dynamic>> uploadPack(var plan) async {
+  Future<Map<dynamic, dynamic>> uploadPack(var plan) async {
     haserror = false;
     loading = true;
     notifyListeners();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId = prefs.getString("userId");
     final firestoreInstance = FirebaseFirestore.instance;
- 
+
     try {
-    firestoreInstance.collection("$userId/Subsciprtion")
+      firestoreInstance
+          .collection("$userId/Subsciprtion")
           .add({
-            'plan':"plan" , // John Doe
+            'plan': "plan", // John Doe
             'days': "company", // Stokes and Sons
             'age': "age" // 42
           })
           .then((value) => print("User Added"))
           .catchError((error) => print("Failed to add user: $error"));
-      
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         message = ('No user found for that email.');
@@ -180,7 +179,6 @@ class UserModel extends AppModel {
   }
 }
 
-
 class DocumentModel extends AppModel {
   String recognizedText = " ";
   List<Doc> itemList = [];
@@ -188,11 +186,11 @@ class DocumentModel extends AppModel {
     return List.from(itemList);
   }
 
-
   int isAppend = 0;
 
   int flag = 0;
   double cur = 0.0;
+  QuillController controller = QuillController.basic();
   String get recognizedTxt {
     return recognizedText;
   }
@@ -205,6 +203,7 @@ class DocumentModel extends AppModel {
     //       FirebaseDatabase.instance.reference().child('$userId/Documents');
     haserror = false;
     loading = true;
+
     notifyListeners();
     try {
       final FirebaseVisionImage visionImage =
@@ -215,8 +214,8 @@ class DocumentModel extends AppModel {
           await textRecognizer.processImage(visionImage);
 
       if (visionText.blocks.isNotEmpty && isAppend == 0) {
-
         recognizedText = " ";
+        this.controller = QuillController.basic();
         print("xzbjkxcbcxjk");
       } else if (visionText.blocks.isEmpty) {
         recognizedText = "Something went wrong...";
@@ -238,7 +237,10 @@ class DocumentModel extends AppModel {
           flag = 1;
         }
       }
-        recognizedText += "\n";
+
+      recognizedText += "\n";
+      controller = QuillController.basic();
+      controller.document.insert(0, recognizedText);
     } on FirebaseException catch (e) {
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.none) {
@@ -247,8 +249,10 @@ class DocumentModel extends AppModel {
       }
     } catch (e) {}
     // loading = false;
-    // notifyListeners();
-    print(message);
+    notifyListeners();
+
+    print(recognizedText);
+
     return {
       "message": message,
       "error": haserror,
@@ -323,11 +327,9 @@ class DocumentModel extends AppModel {
     final mainReference =
         FirebaseDatabase.instance.reference().child('$userId/Documents');
 
- print("there");
+    print("there");
     try {
       mainReference.once().then((DataSnapshot snap) {
-
-     
         if (snap.value == null) {
           loading = false;
           notifyListeners();
@@ -354,7 +356,6 @@ class DocumentModel extends AppModel {
         print("kooy");
         loading = false;
 
-
         notifyListeners();
         print(message);
       });
@@ -374,6 +375,7 @@ class DocumentModel extends AppModel {
     print(haserror);
     return {"message": message, "error": haserror};
   }
+
   Future<Map<dynamic, dynamic>> updateDoc() async {
     itemList = [];
     haserror = false;
@@ -430,6 +432,7 @@ class DocumentModel extends AppModel {
     print(haserror);
     return {"message": message, "error": haserror};
   }
+
   Future<Map<dynamic, dynamic>> deleteDoc() async {
     itemList = [];
     haserror = false;

@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_quill/widgets/controller.dart';
+import 'package:flutter_quill/widgets/editor.dart';
+import 'package:flutter_quill/widgets/toolbar.dart';
 import 'package:project/Pages/home.dart';
 import 'package:project/ScopedModel/main.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:flutter_quill/flutter_quill.dart';
+
 class SummaryPage extends StatefulWidget {
   var path;
   SummaryPage(this.path);
@@ -9,12 +14,11 @@ class SummaryPage extends StatefulWidget {
   _SummaryPageState createState() => _SummaryPageState();
 }
 
-
 class _SummaryPageState extends State<SummaryPage> {
-   Widget body(Mainmodel model, BuildContext context) {
+  var a = 2;
 
-       if (model.load) {
-
+  Widget body(Mainmodel model, BuildContext context) {
+    if (model.load) {
       return showLoadingIndicator(context);
     } else {
       return Container(
@@ -47,64 +51,73 @@ class _SummaryPageState extends State<SummaryPage> {
                       // letterSpacing: 3,
                       // wordSpacing: 2,
                     ),
-
                   ),
                 ),
-                
               ),
-
             ],
           ),
-
         ),
       );
     }
-   }
+    // } else {
+    //   return Container(
+    //     child: Column(
+    //       children: [
+    //         QuillToolbar.basic(controller: _controller),
+    //         Expanded(
+    //           child: Container(
+    //             child: QuillEditor.basic(
+    //               controller: _controller,
+    //               readOnly: false, // true for view only mode
+    //             ),
+    //           ),
+    //         )
+    //       ],
+    //     ),
+    //   );
+    // }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
-    return Scaffold(
-      appBar: AppBar(
-        leading: IconButton(
-                  onPressed: () {
-                   
-                   
-                    Navigator.pushAndRemoveUntil(
-                      this.context,
-                      MaterialPageRoute(builder: (context) => HomePage()),
-                      (Route<dynamic> route) => false,
-                    );
-                  },
-                  icon: new Icon(Icons.home),
-                  
-                ),title: Text(
-                 "Summary",textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 18),
+      return Scaffold(
+          appBar: AppBar(
+              leading: IconButton(
+                onPressed: () {
+                  Navigator.pushAndRemoveUntil(
+                    this.context,
+                    MaterialPageRoute(builder: (context) => HomePage()),
+                    (Route<dynamic> route) => false,
+                  );
+                },
+                icon: new Icon(Icons.home),
+              ),
+              title: Text(
+                "Summary",
+                textAlign: TextAlign.center,
+                style: TextStyle(fontSize: 18),
+              ),
+              actions: [
+                IconButton(
+                  onPressed: () async {},
+                  icon: new Icon(Icons.picture_as_pdf),
                 ),
-                actions: [
-                  IconButton(
-                    onPressed: () async {
-                     
-                    },
-                    icon: new Icon(Icons.picture_as_pdf),
-                  ),
-                  IconButton(
-                    onPressed: () async {
-                      if (model.load) {
-                        return;
-                      }
+                IconButton(
+                  onPressed: () async {
+                    if (model.load) {
+                      return;
+                    }
+                  },
+                  icon: new Icon(Icons.share),
+                ),
+              ]),
+          body: body(model, context));
+    });
+  }
 
-                    
-                    },
-                    icon: new Icon(Icons.share),
-                  ),
-                ]
-      ),
-      body: body(model, context)
-    );
-  });}
-   Widget showLoadingIndicator(BuildContext context) {
+  Widget showLoadingIndicator(BuildContext context) {
     return WillPopScope(
         onWillPop: () async => false,
         child: AlertDialog(
