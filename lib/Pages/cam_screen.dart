@@ -304,8 +304,9 @@ Widget retakeButton(Mainmodel model) {
                 ):Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                     summaryButton(model),
+                     
                     retakeButton(model),
+                    summaryButton(model),
                    
         
                   ],
