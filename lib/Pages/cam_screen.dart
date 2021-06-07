@@ -225,7 +225,7 @@ class _CameraScreenState extends State<CameraScreen> {
             size: 40),
              onPressed: (){
                Navigator.popAndPushNamed(this.context, "/homePage");
-             }),SizedBox(height: 10,),Text("  Library", style: TextStyle(color: Colors.white),)]  ,
+             })]  ,
       ),
     ));
   }
@@ -236,7 +236,7 @@ Widget summaryButton(model) {
       child: Align(
         alignment: Alignment.centerRight,
         child: Column(children:[IconButton(icon: Icon(Octicons.note,color: Colors.white,
-            size: 40),
+            size: 48),
              onPressed: (){
               model.getSummary(model.recognizedTxt);
              }),SizedBox(height: 10,),Text("Summarize", style: TextStyle(color: Colors.white),)]  ,
@@ -304,8 +304,9 @@ Widget retakeButton(Mainmodel model) {
                 ):Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    retakeButton(model),
+                    
                     summaryButton(model),
+                    retakeButton(model),
         
                   ],
                 ),
