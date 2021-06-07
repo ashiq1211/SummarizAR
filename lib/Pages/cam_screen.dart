@@ -176,7 +176,7 @@ class _CameraScreenState extends State<CameraScreen> {
       print('Error : ${e.code}');
     });
   }
-  Widget rectShapeContainer() {
+  Widget rectShapeContainer(String str) {
      return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
     return Container(
@@ -200,7 +200,7 @@ class _CameraScreenState extends State<CameraScreen> {
       ),
       child: new Column(
         children: <Widget>[
-          new Text(model.recognizedTxt,
+          new Text(str,
                  
             style: new TextStyle(
               color: Colors.white,
@@ -211,7 +211,11 @@ class _CameraScreenState extends State<CameraScreen> {
       ),
     );
   });}
-
+Widget summaryButton(Mainmodel model){
+  return IconButton(icon: Icon(Icons.notes), onPressed: (){
+      model.getSummary(model.recognizedTxt);
+  });
+}
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
@@ -226,10 +230,17 @@ class _CameraScreenState extends State<CameraScreen> {
               alignment: Alignment.center,
               child: cameraPreview(),
             ),
-           model.recognizedTxt==" "?Container(): new Column(
+           model.recognizedTxt==" "?Container():model.sumTxt== " "? new Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              rectShapeContainer(),
+              Expanded(child:SingleChildScrollView(child:rectShapeContainer(model.recognizedTxt) ,) )
+              
+            ],
+          ):new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(child:SingleChildScrollView(child:rectShapeContainer(model.sumTxt) ,) )
+              
             ],
           ),
             Align(
@@ -239,12 +250,19 @@ class _CameraScreenState extends State<CameraScreen> {
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 color: Color.fromRGBO(00, 00, 00, 0.7),
-                child: model.loading? Center(child:CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.white))): Row(
+                child: model.loading? Center(child:CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.white))):model.recognizedTxt==" " ?Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     pickFromGalley(),
                     cameraControl(context,model),
                     flashControl()
+                  ],
+                ):Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  children: <Widget>[
+                    // retakeButton(),
+                    summaryButton(model),
+        
                   ],
                 ),
               ),
