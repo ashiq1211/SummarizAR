@@ -43,7 +43,7 @@ class _HomePageState extends State<HomePage> {
     
      
     Mainmodel model = ScopedModel.of(this.context);
-
+    model.setStr=" ";
     model.isAppend = 0;
 
    model.getDoc().then((value) {

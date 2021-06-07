@@ -190,7 +190,9 @@ class DocumentModel extends AppModel {
     return List.from(itemList);
   }
 
-
+ set setStr(str){
+   recognizedText=" ";
+ }
   int isAppend = 0;
 
   int flag = 0;
