@@ -85,7 +85,7 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 
-  Widget cameraControl(context,model) {
+  Widget cameraControl(context, model) {
     return Expanded(
       child: Align(
         alignment: Alignment.center,
@@ -100,7 +100,7 @@ class _CameraScreenState extends State<CameraScreen> {
               ),
               backgroundColor: Colors.white,
               onPressed: () {
-                onCapture(context,model);
+                onCapture(context, model);
               },
             )
           ],
@@ -116,20 +116,26 @@ class _CameraScreenState extends State<CameraScreen> {
 
     return Expanded(
       child: Align(
-        alignment: Alignment.centerLeft,
-        child:Column(children:[IconButton(
-          onPressed: () {
-            pickImage();
-          },
-          icon: Icon(
-            Ionicons.md_image,
-            color: Colors.white,
-            size: 40,
-          ),
-          
-        ),SizedBox(height: 10,),
-        Text("Import", style: TextStyle(color: Colors.white),)]) 
-      ),
+          alignment: Alignment.centerLeft,
+          child: Column(children: [
+            IconButton(
+              onPressed: () {
+                pickImage();
+              },
+              icon: Icon(
+                Ionicons.md_image,
+                color: Colors.white,
+                size: 40,
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              "Import",
+              style: TextStyle(color: Colors.white),
+            )
+          ])),
     );
   }
 
@@ -178,151 +184,226 @@ class _CameraScreenState extends State<CameraScreen> {
       print('Error : ${e.code}');
     });
   }
+
   Widget rectShapeContainer(String str) {
-     return ScopedModelDescendant<Mainmodel>(
+    return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10.0),
-      padding: const EdgeInsets.all(15.0),
-      decoration: new BoxDecoration(
-        //you can get rid of below line also
-        borderRadius: new BorderRadius.circular(10.0),
-        //below line is for rectangular shape
-        shape: BoxShape.rectangle,
-        //you can change opacity with color here(I used black) for rect
-        color: Colors.black.withOpacity(0.1),
-        //I added some shadow, but you can remove boxShadow also.
-        boxShadow: <BoxShadow>[
-          new BoxShadow(
-            color: Colors.black26,
-            blurRadius: 5.0,
-            offset: new Offset(5.0, 5.0),
-          ),
-        ],
-      ),
-      child: new Column(
-        children: <Widget>[
-          new Text(str,
-                 
-            style: new TextStyle(
-              color: Colors.white,
-              fontSize: 20.0,
+      return Container(
+        margin: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10.0),
+        padding: const EdgeInsets.all(15.0),
+        decoration: new BoxDecoration(
+          //you can get rid of below line also
+          borderRadius: new BorderRadius.circular(10.0),
+          //below line is for rectangular shape
+          shape: BoxShape.rectangle,
+          //you can change opacity with color here(I used black) for rect
+          color: Colors.black.withOpacity(0.2),
+          //I added some shadow, but you can remove boxShadow also.
+          boxShadow: <BoxShadow>[
+            new BoxShadow(
+              color: Colors.black26,
+              blurRadius: 5.0,
+              offset: new Offset(5.0, 5.0),
             ),
-          ),
-        ],
-      ),
-    );
-  });}
- Widget libraryButton() {
+          ],
+        ),
+        child: new Column(
+          children: <Widget>[
+            new Text(
+              str,
+              style: new TextStyle(
+                color: Colors.white,
+                fontSize: 20.0,
+              ),
+            ),
+          ],
+        ),
+      );
+    });
+  }
+
+  Widget libraryButton() {
     if (cameras == null || cameras.isEmpty) {
       return Spacer();
     }
 
     return Expanded(
-      child: Align(
-        alignment: Alignment.centerRight,
-        child: Column(children:[IconButton(icon: Icon(Icons.folder_open,color: Colors.white,
-            size: 40),
-             onPressed: (){
-               Navigator.popAndPushNamed(this.context, "/homePage");
-             }),SizedBox(height: 10,),Text("  Library", style: TextStyle(color: Colors.white),)]  ,
+        child: Align(
+      alignment: Alignment.centerRight,
+      child: Column(
+        children: [
+          IconButton(
+              icon: Icon(Icons.folder_open, color: Colors.white, size: 40),
+              onPressed: () {
+                Navigator.popAndPushNamed(this.context, "/homePage");
+              }),
+          SizedBox(
+            height: 10,
+          ),
+          Text(
+            "  Library",
+            style: TextStyle(color: Colors.white),
+          )
+        ],
       ),
     ));
   }
-Widget summaryButton(model) {
-    
 
-  
-     
-       
-      return Column(children:[IconButton(icon: Icon(Octicons.note,color: Colors.white,
-            size: 40),
-             onPressed: (){
+  Widget summaryButton(model) {
+    return Column(
+      children: [
+        IconButton(
+            icon: Icon(Octicons.note, color: Colors.white, size: 40),
+            onPressed: () {
               model.getSummary(model.recognizedTxt);
-             }),SizedBox(height: 10,),Text("Summarize", style: TextStyle(color: Colors.white),)]  ,
-      );
+            }),
+        SizedBox(
+          height: 10,
+        ),
+        Text(
+          "Summarize",
+          style: TextStyle(color: Colors.white),
+        )
+      ],
+    );
   }
-Widget retakeButton(Mainmodel model) {
-    
-
-
-return
-Column(children: [IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,color: Colors.white,
-            size: 40),
-             onPressed: (){
-              model.setRecoTxt=" ";
-             }),SizedBox(height: 10,),Text("Retake", style: TextStyle(color: Colors.white),)],);
-
+Widget saveButton(Mainmodel model){
+   return Column(
+      children: [
+        IconButton(
+            icon: Icon(Feather.save,
+                color: Colors.white, size: 40),
+            onPressed: () {
+             saveBottomSheet(context);
+             }
+            ),
+        SizedBox(
+          height: 10,
+        ),
+        Text(
+          "Save",
+          style: TextStyle(color: Colors.white),
+        )
+      ],
+    );
+}
+Widget shareButton(Mainmodel model){
+  return Column(
+      children: [
+        IconButton(
+            icon: Icon(MaterialCommunityIcons.share,
+                color: Colors.white, size: 40),
+            onPressed: () {
+              shareBottomSheet(context);
+             
+            }),
+        SizedBox(
+          height: 10,
+        ),
+        Text(
+          "Share",
+          style: TextStyle(color: Colors.white),
+        )
+      ],
+    );
+}
+  Widget retakeButton(Mainmodel model) {
+    return Column(
+      children: [
+        IconButton(
+            icon: Icon(MaterialCommunityIcons.camera_retake,
+                color: Colors.white, size: 40),
+            onPressed: () {
+              model.setRecoTxt = " ";
+            }),
+        SizedBox(
+          height: 10,
+        ),
+        Text(
+          "Retake",
+          style: TextStyle(color: Colors.white),
+        )
+      ],
+    );
   }
 
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
-   
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: Container(
-        child: Stack(
-          children: <Widget>[
-            Align(
-              alignment: Alignment.center,
-              child: cameraPreview(),
-            ),
-           model.recognizedTxt==" "?Container():model.sumTxt== " "? new Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+      return Scaffold(
+        backgroundColor: Colors.black,
+        body: Container(
+          child: Stack(
             children: <Widget>[
-              Expanded(child:SingleChildScrollView(child:rectShapeContainer(model.recognizedTxt) ,) )
-              
-            ],
-          ):new Column(
-            
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              rectShapeContainer(model.sumTxt) ,
-              
+              Align(
+                alignment: Alignment.center,
+                child: cameraPreview(),
+              ),
+              model.recognizedTxt == " "
+                  ? Container()
+                  : model.sumTxt == " "
+                      ? new Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            Expanded(
+                                child: SingleChildScrollView(
+                              child: rectShapeContainer(model.recognizedTxt),
+                            ))
+                          ],
+                        )
+                      : new Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: <Widget>[
+                            rectShapeContainer(model.sumTxt),
+                          ],
+                        ),
+              Align(
+                alignment: Alignment.bottomCenter,
+                child: Container(
+                  height: 110,
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 17),
+                  color: Color.fromRGBO(00, 00, 00, 0.7),
+                  child: model.loading
+                      ? Center(
+                          child: CircularProgressIndicator(
+                              valueColor: new AlwaysStoppedAnimation<Color>(
+                                  Colors.white)))
+                      : model.recognizedTxt == " "
+                          ? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              children: <Widget>[
+                                pickFromGalley(),
+                                cameraControl(context, model),
+
+                                libraryButton()
+                                // flashControl()
+                              ],
+                            )
+                          :model.sumTxt==" "? Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                retakeButton(model),
+                                summaryButton(model)
+                              ],
+                            ):Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              children: <Widget>[
+                                saveButton(model),
+                                shareButton(model)
+                              ],
+                            ),
+                ),
+              )
             ],
           ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              
-              child: Container(
-                height: 110,
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal:30, vertical: 17),
-                color: Color.fromRGBO(00, 00, 00, 0.7),
-                child: model.loading? Center(child:CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.white))):model.recognizedTxt==" " ?Row(
-                  
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
-                  children: <Widget>[
-                    pickFromGalley(),
-                    cameraControl(context,model),
-                 
-                    libraryButton()
-                    // flashControl()
-                  ],
-                ):Row(
-                  
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                     
-                    retakeButton(model),
-               
-                    
-summaryButton(model)
-        
-                  ],
-                ),
-              ),
-            )
-          ],
         ),
-      ),
-    );
+      );
+    });
   }
-    );}
 
-  onCapture(context,Mainmodel model) async {
+  onCapture(context, Mainmodel model) async {
     try {
       final name = DateTime.now();
       var imagePath = join((await getApplicationDocumentsDirectory()).path,
@@ -335,9 +416,9 @@ summaryButton(model)
           print(imagePath);
         });
       });
-    model.recognizeText(_image);
+      model.recognizeText(_image);
       // _cropImage(_image.path);
-      
+
       // Navigator.push(
       //     context,
       //     MaterialPageRoute(
@@ -368,8 +449,6 @@ summaryButton(model)
     print("image picked");
     _cropImage(pickedFile.path);
   }
-
-
 
   _cropImage(filePath) async {
     final name = DateTime.now();
@@ -424,6 +503,59 @@ summaryButton(model)
         }
       });
     }
-
+  }
+   void saveBottomSheet(context) {
+    showModalBottomSheet(
+      isDismissible: false,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            padding: EdgeInsets.all(10),
+            height: 280,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(15.0),
+                    topRight: const Radius.circular(15.0))),
+            child: Column(
+              
+              children: [
+               Text("Save as Text"),
+               Text("Save as Pdf"),
+                  
+              ],
+            ),
+          );
+        });
+  }
+  void shareBottomSheet(context) {
+    showModalBottomSheet(
+      isDismissible: false,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        context: context,
+        builder: (BuildContext bc) {
+          return Container(
+            padding: EdgeInsets.all(10),
+            height: 280,
+            decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: new BorderRadius.only(
+                    topLeft: const Radius.circular(15.0),
+                    topRight: const Radius.circular(15.0))),
+            child: Column(
+              
+              children: [
+               Text("Share as Text"),
+               Text("Share as Pdf"),
+                  
+              ],
+            ),
+          );
+        });
   }
 }
