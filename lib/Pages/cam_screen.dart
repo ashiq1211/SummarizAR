@@ -117,7 +117,7 @@ class _CameraScreenState extends State<CameraScreen> {
     return Expanded(
       child: Align(
         alignment: Alignment.centerLeft,
-        child: IconButton(
+        child:Column(children:[IconButton(
           onPressed: () {
             pickImage();
           },
@@ -126,7 +126,9 @@ class _CameraScreenState extends State<CameraScreen> {
             color: Colors.white,
             size: 40,
           ),
-        ),
+          
+        ),SizedBox(height: 10,),
+        Text("Import", style: TextStyle(color: Colors.white),)]) 
       ),
     );
   }
@@ -211,11 +213,51 @@ class _CameraScreenState extends State<CameraScreen> {
       ),
     );
   });}
-Widget summaryButton(Mainmodel model){
-  return IconButton(icon: Icon(Icons.notes), onPressed: (){
-      model.getSummary(model.recognizedTxt);
-  });
-}
+ Widget libraryButton() {
+    if (cameras == null || cameras.isEmpty) {
+      return Spacer();
+    }
+
+    return Expanded(
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Column(children:[IconButton(icon: Icon(Icons.folder_open,color: Colors.white,
+            size: 40),
+             onPressed: (){
+               Navigator.popAndPushNamed(this.context, "/homePage");
+             }),SizedBox(height: 10,),Text("  Library", style: TextStyle(color: Colors.white),)]  ,
+      ),
+    ));
+  }
+Widget summaryButton(model) {
+    
+
+    return Expanded(
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Column(children:[IconButton(icon: Icon(Octicons.note,color: Colors.white,
+            size: 40),
+             onPressed: (){
+              model.getSummary(model.recognizedTxt);
+             }),SizedBox(height: 10,),Text("Summarize", style: TextStyle(color: Colors.white),)]  ,
+      ),
+    ));
+  }
+Widget retakeButton(Mainmodel model) {
+    
+
+    return Expanded(
+      child: Align(
+        alignment: Alignment.centerRight,
+        child: Column(children:[IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,color: Colors.white,
+            size: 40),
+             onPressed: (){
+              model.setRecoTxt=" ";
+             }),SizedBox(height: 10,),Text("  Library", style: TextStyle(color: Colors.white),)]  ,
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
@@ -248,19 +290,21 @@ Widget summaryButton(Mainmodel model){
               child: Container(
                 height: 120,
                 width: double.infinity,
-                padding: EdgeInsets.all(15),
+                padding: EdgeInsets.symmetric(horizontal:30, vertical: 17),
                 color: Color.fromRGBO(00, 00, 00, 0.7),
                 child: model.loading? Center(child:CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.white))):model.recognizedTxt==" " ?Row(
+                  
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     pickFromGalley(),
                     cameraControl(context,model),
-                    flashControl()
+                    libraryButton()
+                    // flashControl()
                   ],
                 ):Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: <Widget>[
-                    // retakeButton(),
+                    retakeButton(model),
                     summaryButton(model),
         
                   ],
