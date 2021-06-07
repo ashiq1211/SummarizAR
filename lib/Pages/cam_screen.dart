@@ -225,7 +225,7 @@ class _CameraScreenState extends State<CameraScreen> {
             size: 40),
              onPressed: (){
                Navigator.popAndPushNamed(this.context, "/homePage");
-             })]  ,
+             }),SizedBox(height: 10,),Text("  Library", style: TextStyle(color: Colors.white),)]  ,
       ),
     ));
   }
@@ -253,7 +253,7 @@ Widget retakeButton(Mainmodel model) {
             size: 40),
              onPressed: (){
               model.setRecoTxt=" ";
-             }),SizedBox(height: 10,),Text("  Library", style: TextStyle(color: Colors.white),)]  ,
+             })]  ,
       ),
     ));
   }
@@ -302,11 +302,11 @@ Widget retakeButton(Mainmodel model) {
                     // flashControl()
                   ],
                 ):Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
-                    
-                    summaryButton(model),
+                     summaryButton(model),
                     retakeButton(model),
+                   
         
                   ],
                 ),
