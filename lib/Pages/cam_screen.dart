@@ -234,7 +234,7 @@ Widget summaryButton(model) {
 
     return Expanded(
       child: Align(
-        alignment: Alignment.center,
+        alignment: Alignment.bottomCenter,
         child: Column(children:[IconButton(icon: Icon(Octicons.note,color: Colors.white,
             size: 40),
              onPressed: (){
@@ -299,7 +299,7 @@ Widget retakeButton(Mainmodel model) {
                     pickFromGalley(),
                     cameraControl(context,model),
                  
-                    // libraryButton()
+                    libraryButton()
                     // flashControl()
                   ],
                 ):Row(
