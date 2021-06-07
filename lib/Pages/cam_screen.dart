@@ -232,30 +232,27 @@ class _CameraScreenState extends State<CameraScreen> {
 Widget summaryButton(model) {
     
 
-    return Expanded(
-      child: Align(
-        alignment: Alignment.bottomCenter,
-        child: Column(children:[IconButton(icon: Icon(Octicons.note,color: Colors.white,
+  
+     
+       
+      return Column(children:[IconButton(icon: Icon(Octicons.note,color: Colors.white,
             size: 40),
              onPressed: (){
               model.getSummary(model.recognizedTxt);
              }),SizedBox(height: 10,),Text("Summarize", style: TextStyle(color: Colors.white),)]  ,
-      ),
-    ));
+      );
   }
 Widget retakeButton(Mainmodel model) {
     
 
-    return Expanded(
-      child: Align(
-        alignment: Alignment.bottomLeft,
-        child: Column(children:[IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,color: Colors.white,
+
+return
+
+IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,color: Colors.white,
             size: 40),
              onPressed: (){
               model.setRecoTxt=" ";
-             })]  ,
-      ),
-    ));
+             });
   }
 
   @override
@@ -306,8 +303,8 @@ Widget retakeButton(Mainmodel model) {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                      
-                    IconButton(icon: Icon(Icons.ac_unit), onPressed: (){}),
-                    IconButton(icon: Icon(Icons.ac_unit), onPressed: (){})
+                    retakeButton(model),
+summaryButton(model)
         
                   ],
                 ),
