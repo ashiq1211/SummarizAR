@@ -247,12 +247,12 @@ Widget retakeButton(Mainmodel model) {
 
 
 return
-
-IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,color: Colors.white,
+Column(children: [IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,color: Colors.white,
             size: 40),
              onPressed: (){
               model.setRecoTxt=" ";
-             });
+             }),SizedBox(height: 10,),Text("Retake", style: TextStyle(color: Colors.white),)],);
+
   }
 
   @override
@@ -284,6 +284,7 @@ IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,color: Colors.white,
           ),
             Align(
               alignment: Alignment.bottomCenter,
+              
               child: Container(
                 height: 120,
                 width: double.infinity,
@@ -301,12 +302,12 @@ IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,color: Colors.white,
                   ],
                 ):Row(
                   
-                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                      
                     retakeButton(model),
                
-                    SizedBox(width: 20,),
+                    
 summaryButton(model)
         
                   ],
