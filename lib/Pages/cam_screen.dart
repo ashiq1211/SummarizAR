@@ -276,10 +276,10 @@ Column(children: [IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,col
               
             ],
           ):new Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
+            
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
-              Expanded(child:SingleChildScrollView(child:rectShapeContainer(model.sumTxt) ,) )
+              rectShapeContainer(model.sumTxt) ,
               
             ],
           ),
