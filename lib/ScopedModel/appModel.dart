@@ -192,6 +192,7 @@ class DocumentModel extends AppModel {
 
  set setStr(str){
    recognizedText=str;
+   notifyListeners();
  }
   int isAppend = 0;
 
