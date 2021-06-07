@@ -236,7 +236,7 @@ Widget summaryButton(model) {
       child: Align(
         alignment: Alignment.center,
         child: Column(children:[IconButton(icon: Icon(Octicons.note,color: Colors.white,
-            size: 48),
+            size: 40),
              onPressed: (){
               model.getSummary(model.recognizedTxt);
              }),SizedBox(height: 10,),Text("Summarize", style: TextStyle(color: Colors.white),)]  ,
@@ -294,20 +294,21 @@ Widget retakeButton(Mainmodel model) {
                 color: Color.fromRGBO(00, 00, 00, 0.7),
                 child: model.loading? Center(child:CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.white))):model.recognizedTxt==" " ?Row(
                   
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                     pickFromGalley(),
                     cameraControl(context,model),
-                    libraryButton()
+                 
+                    // libraryButton()
                     // flashControl()
                   ],
                 ):Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: <Widget>[
                      
                     retakeButton(model),
                     summaryButton(model),
-                    Container()
+               
         
                   ],
                 ),
