@@ -191,7 +191,7 @@ class DocumentModel extends AppModel {
   }
 
  set setStr(str){
-   recognizedText=" ";
+   recognizedText=str;
  }
   int isAppend = 0;
 

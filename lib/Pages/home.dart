@@ -98,6 +98,7 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.white,
               child: Icon(Icons.camera_alt,color: Colors.black,),
               onPressed: () async {
+                model.setStr=" ";
                 // final pickedFile = await picker.getImage(source: ImageSource.camera);
                 Navigator.of(context).pushNamed("/cameraPage");
               },
