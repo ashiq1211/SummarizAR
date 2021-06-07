@@ -274,7 +274,7 @@ Widget saveButton(Mainmodel model){
             icon: Icon(Feather.save,
                 color: Colors.white, size: 40),
             onPressed: () {
-             saveBottomSheet(context);
+             saveBottomSheet(this.context);
              }
             ),
         SizedBox(
@@ -294,7 +294,7 @@ Widget shareButton(Mainmodel model){
             icon: Icon(MaterialCommunityIcons.share,
                 color: Colors.white, size: 40),
             onPressed: () {
-              shareBottomSheet(context);
+              shareBottomSheet(this.context);
              
             }),
         SizedBox(
@@ -504,7 +504,7 @@ Widget shareButton(Mainmodel model){
       });
     }
   }
-   void saveBottomSheet(context) {
+   void saveBottomSheet(BuildContext context) {
     showModalBottomSheet(
       isDismissible: false,
         shape: RoundedRectangleBorder(
@@ -531,7 +531,7 @@ Widget shareButton(Mainmodel model){
           );
         });
   }
-  void shareBottomSheet(context) {
+  void shareBottomSheet(BuildContext context) {
     showModalBottomSheet(
       isDismissible: false,
         shape: RoundedRectangleBorder(
