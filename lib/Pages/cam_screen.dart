@@ -190,7 +190,7 @@ class _CameraScreenState extends State<CameraScreen> {
         //below line is for rectangular shape
         shape: BoxShape.rectangle,
         //you can change opacity with color here(I used black) for rect
-        color: Colors.black.withOpacity(0.2),
+        color: Colors.black.withOpacity(0.1),
         //I added some shadow, but you can remove boxShadow also.
         boxShadow: <BoxShadow>[
           new BoxShadow(
@@ -276,6 +276,7 @@ Column(children: [IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,col
               
             ],
           ):new Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisAlignment: MainAxisAlignment.center,
             children: <Widget>[
               Expanded(child:SingleChildScrollView(child:rectShapeContainer(model.sumTxt) ,) )
@@ -286,7 +287,7 @@ Column(children: [IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,col
               alignment: Alignment.bottomCenter,
               
               child: Container(
-                height: 120,
+                height: 110,
                 width: double.infinity,
                 padding: EdgeInsets.symmetric(horizontal:30, vertical: 17),
                 color: Color.fromRGBO(00, 00, 00, 0.7),
