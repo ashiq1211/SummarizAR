@@ -300,11 +300,13 @@ IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,color: Colors.white,
                     // flashControl()
                   ],
                 ):Row(
+                  
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: <Widget>[
                      
                     retakeButton(model),
-                    Spacer(),
+               
+                    SizedBox(width: 20,),
 summaryButton(model)
         
                   ],
