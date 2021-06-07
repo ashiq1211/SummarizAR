@@ -43,7 +43,8 @@ class _HomePageState extends State<HomePage> {
     
      
     Mainmodel model = ScopedModel.of(this.context);
-    model.setStr=" ";
+    model.setRecoTxt=" ";
+    model.setSumTxt=" ";
     model.isAppend = 0;
 
    model.getDoc().then((value) {
@@ -98,7 +99,8 @@ class _HomePageState extends State<HomePage> {
               backgroundColor: Colors.white,
               child: Icon(Icons.camera_alt,color: Colors.black,),
               onPressed: () async {
-                model.setStr=" ";
+                model.setRecoTxt=" ";
+                model.setSumTxt=" ";
                 // final pickedFile = await picker.getImage(source: ImageSource.camera);
                 Navigator.of(context).pushNamed("/cameraPage");
               },

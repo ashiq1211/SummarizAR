@@ -29,6 +29,10 @@ class SummaryModel extends AppModel{
   String get sumTxt{
     return summaryText;
   }
+   set setSumTxt(str){
+   summaryText=str;
+   notifyListeners();
+ }
   String url="http://192.168.43.117:5000/";
   Future<Map<String,dynamic>> getSummary(String text)async{
     loading=true;
@@ -190,7 +194,7 @@ class DocumentModel extends AppModel {
     return List.from(itemList);
   }
 
- set setStr(str){
+ set setRecoTxt(str){
    recognizedText=str;
    notifyListeners();
  }
