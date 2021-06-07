@@ -304,6 +304,7 @@ IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,color: Colors.white,
                   children: <Widget>[
                      
                     retakeButton(model),
+                    Spacer(),
 summaryButton(model)
         
                   ],
