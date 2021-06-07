@@ -506,7 +506,7 @@ Widget shareButton(Mainmodel model){
   }
    void saveBottomSheet(BuildContext context) {
     showModalBottomSheet(
-      isDismissible: false,
+      isDismissible: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
@@ -514,7 +514,7 @@ Widget shareButton(Mainmodel model){
         builder: (BuildContext bc) {
           return Container(
             padding: EdgeInsets.all(10),
-            height: 280,
+            height: 100,
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: new BorderRadius.only(
@@ -523,8 +523,10 @@ Widget shareButton(Mainmodel model){
             child: Column(
               
               children: [
-               Text("Save as Text"),
-               Text("Save as Pdf"),
+                ListTile(title: Text("Save as Text"),leading: Icon(MaterialCommunityIcons.format_text),),
+                ListTile(title:  Text("Save as Pdf"),leading:Icon(MaterialCommunityIcons.file_pdf))
+               
+              
                   
               ],
             ),
@@ -533,7 +535,7 @@ Widget shareButton(Mainmodel model){
   }
   void shareBottomSheet(BuildContext context) {
     showModalBottomSheet(
-      isDismissible: false,
+      isDismissible: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
@@ -541,7 +543,7 @@ Widget shareButton(Mainmodel model){
         builder: (BuildContext bc) {
           return Container(
             padding: EdgeInsets.all(10),
-            height: 280,
+            height: 100,
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: new BorderRadius.only(
@@ -550,8 +552,8 @@ Widget shareButton(Mainmodel model){
             child: Column(
               
               children: [
-               Text("Share as Text"),
-               Text("Share as Pdf"),
+               ListTile(title: Text("Share as Text"),leading: Icon(MaterialCommunityIcons.format_text),),
+                ListTile(title:  Text("Share as Pdf"),leading:Icon(MaterialCommunityIcons.file_pdf))
                   
               ],
             ),
