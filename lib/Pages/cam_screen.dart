@@ -303,7 +303,7 @@ Widget retakeButton(Mainmodel model) {
                     // flashControl()
                   ],
                 ):Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                      
                     retakeButton(model),
