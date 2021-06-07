@@ -221,7 +221,7 @@ class DocumentModel extends AppModel {
         recognizedText = " ";
         print("xzbjkxcbcxjk");
       } else if (visionText.blocks.isEmpty) {
-        recognizedText = "Something went wrong...";
+        recognizedText = " ";
         print("uoo");
         haserror = true;
         notifyListeners();
@@ -248,8 +248,8 @@ class DocumentModel extends AppModel {
         haserror = true;
       }
     } catch (e) {}
-    // loading = false;
-    // notifyListeners();
+    loading = false;
+    notifyListeners();
     print(message);
     return {
       "message": message,

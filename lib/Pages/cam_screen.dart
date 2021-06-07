@@ -10,6 +10,8 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:project/Pages/preview_screen_recognized.dart';
 import 'package:project/ScopedModel/appModel.dart';
+import 'package:project/ScopedModel/main.dart';
+import 'package:scoped_model/scoped_model.dart';
 
 class CameraScreen extends StatefulWidget {
   // const CameraScreen({Key key, this.user},this._model) : super(key: key);
@@ -83,7 +85,7 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 
-  Widget cameraControl(context) {
+  Widget cameraControl(context,model) {
     return Expanded(
       child: Align(
         alignment: Alignment.center,
@@ -98,7 +100,7 @@ class _CameraScreenState extends State<CameraScreen> {
               ),
               backgroundColor: Colors.white,
               onPressed: () {
-                onCapture(context);
+                onCapture(context,model);
               },
             )
           ],
@@ -174,9 +176,45 @@ class _CameraScreenState extends State<CameraScreen> {
       print('Error : ${e.code}');
     });
   }
+  Widget rectShapeContainer() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10.0),
+      padding: const EdgeInsets.all(15.0),
+      decoration: new BoxDecoration(
+        //you can get rid of below line also
+        borderRadius: new BorderRadius.circular(10.0),
+        //below line is for rectangular shape
+        shape: BoxShape.rectangle,
+        //you can change opacity with color here(I used black) for rect
+        color: Colors.black.withOpacity(0.2),
+        //I added some shadow, but you can remove boxShadow also.
+        boxShadow: <BoxShadow>[
+          new BoxShadow(
+            color: Colors.black26,
+            blurRadius: 5.0,
+            offset: new Offset(5.0, 5.0),
+          ),
+        ],
+      ),
+      child: new Column(
+        children: <Widget>[
+          new Text(
+            'There\'s only one corner of the universe you can be certain of improving and that\'s your own self.',
+            style: new TextStyle(
+              color: Colors.white,
+              fontSize: 20.0,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    return ScopedModelDescendant<Mainmodel>(
+        builder: (BuildContext context, Widget child, Mainmodel model) {
+   
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -186,6 +224,12 @@ class _CameraScreenState extends State<CameraScreen> {
               alignment: Alignment.center,
               child: cameraPreview(),
             ),
+           model.recognizedTxt==" "?Container(): new Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              rectShapeContainer(),
+            ],
+          ),
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
@@ -193,11 +237,11 @@ class _CameraScreenState extends State<CameraScreen> {
                 width: double.infinity,
                 padding: EdgeInsets.all(15),
                 color: Color.fromRGBO(00, 00, 00, 0.7),
-                child: Row(
+                child: model.loading? Center(child:CircularProgressIndicator(valueColor: new AlwaysStoppedAnimation<Color>(Colors.white))): Row(
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: <Widget>[
                     pickFromGalley(),
-                    cameraControl(context),
+                    cameraControl(context,model),
                     flashControl()
                   ],
                 ),
@@ -208,8 +252,9 @@ class _CameraScreenState extends State<CameraScreen> {
       ),
     );
   }
+    );}
 
-  onCapture(context) async {
+  onCapture(context,Mainmodel model) async {
     try {
       final name = DateTime.now();
       var imagePath = join((await getApplicationDocumentsDirectory()).path,
@@ -222,8 +267,9 @@ class _CameraScreenState extends State<CameraScreen> {
           print(imagePath);
         });
       });
-
-      _cropImage(_image.path);
+    model.recognizeText(_image);
+      // _cropImage(_image.path);
+      
       // Navigator.push(
       //     context,
       //     MaterialPageRoute(
