@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
 
           // home: CameraScreen(),
           // home: LoginPage(),
-          home:  HomePage(),
+          home:  SubscriptionPage(),
           routes: {
             "/signup": (BuildContext context) => SignUp(model),
             "/login": (BuildContext context) => LoginPage(model),

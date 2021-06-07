@@ -136,24 +136,19 @@ class UserModel extends AppModel {
     print("object");
   }
 
-   Future<Map<dynamic, dynamic>> uploadPack(var plan) async {
+   Future<Map<dynamic, dynamic>> uploadPack(plan) async {
+     print("object");
     haserror = false;
     loading = true;
     notifyListeners();
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId = prefs.getString("userId");
     final firestoreInstance = FirebaseFirestore.instance;
- 
+
     try {
-    firestoreInstance.collection("$userId/Subsciprtion")
-          .add({
-            'plan':"plan" , // John Doe
-            'days': "company", // Stokes and Sons
-            'age': "age" // 42
-          })
-          .then((value) => print("User Added"))
-          .catchError((error) => print("Failed to add user: $error"));
-      
+   
+         
+       print("hii");
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         message = ('No user found for that email.');
@@ -173,6 +168,13 @@ class UserModel extends AppModel {
         }
       }
     } catch (e) {}
+     firestoreInstance.collection("$userId/Subsciprtion")
+          .add({
+            'plan':"plan" , // John Doe
+            'days': "company", // Stokes and Sons
+            'age': "age" // 42
+          });
+     print("hiii");
     loading = false;
     notifyListeners();
     print(message);
