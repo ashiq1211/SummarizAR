@@ -234,7 +234,7 @@ Widget summaryButton(model) {
 
     return Expanded(
       child: Align(
-        alignment: Alignment.centerRight,
+        alignment: Alignment.center,
         child: Column(children:[IconButton(icon: Icon(Octicons.note,color: Colors.white,
             size: 48),
              onPressed: (){
@@ -248,7 +248,7 @@ Widget retakeButton(Mainmodel model) {
 
     return Expanded(
       child: Align(
-        alignment: Alignment.centerRight,
+        alignment: Alignment.bottomLeft,
         child: Column(children:[IconButton(icon: Icon(MaterialCommunityIcons.camera_retake,color: Colors.white,
             size: 40),
              onPressed: (){
