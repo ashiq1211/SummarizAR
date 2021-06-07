@@ -177,6 +177,8 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
   Widget rectShapeContainer() {
+     return ScopedModelDescendant<Mainmodel>(
+        builder: (BuildContext context, Widget child, Mainmodel model) {
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10.0),
       padding: const EdgeInsets.all(15.0),
@@ -198,8 +200,8 @@ class _CameraScreenState extends State<CameraScreen> {
       ),
       child: new Column(
         children: <Widget>[
-          new Text(
-            'There\'s only one corner of the universe you can be certain of improving and that\'s your own self.',
+          new Text(model.recognizedTxt,
+                 
             style: new TextStyle(
               color: Colors.white,
               fontSize: 20.0,
@@ -208,7 +210,7 @@ class _CameraScreenState extends State<CameraScreen> {
         ],
       ),
     );
-  }
+  });}
 
   @override
   Widget build(BuildContext context) {
