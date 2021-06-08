@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
 import 'package:project/Pages/cam_screen.dart';
+import 'package:project/Pages/edit_text.dart';
 import 'package:project/Pages/home.dart';
 import 'package:project/Pages/login.dart';
 import 'package:project/Pages/preview_screen_recognized.dart';
@@ -73,6 +74,7 @@ class MyApp extends StatelessWidget {
              "/preview": (BuildContext context) => PreviewScreen(model),
              "/previewPdf": (BuildContext context) => PdfPreview(),
               "/subscription": (BuildContext context) => SubscriptionPage(),
+               "/editText": (BuildContext context) => EditText(),
           },
         ));
   }

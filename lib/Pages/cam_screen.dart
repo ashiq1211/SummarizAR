@@ -8,6 +8,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:project/Pages/edit_text.dart';
 import 'package:project/Pages/preview_screen_recognized.dart';
 import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
@@ -189,9 +190,16 @@ class _CameraScreenState extends State<CameraScreen> {
   Widget rectShapeContainer(String str) {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
-      return Container(
-        margin: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 10.0),
-        padding: const EdgeInsets.all(15.0),
+      return 
+      GestureDetector(
+        onTap: (){
+           Navigator.push(context,  MaterialPageRoute(
+                              builder: (context) => EditText(str),));
+
+        },
+        child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
+        padding: const EdgeInsets.only(left:15.0, bottom: 15),
         decoration: new BoxDecoration(
           //you can get rid of below line also
           borderRadius: new BorderRadius.circular(10.0),
@@ -209,7 +217,14 @@ class _CameraScreenState extends State<CameraScreen> {
           ],
         ),
         child: new Column(
+          
           children: <Widget>[
+            Align(alignment: Alignment.topRight,child:OutlinedButton(child: Icon(AntDesign.edit,color: Colors.white,), onPressed: (){
+              
+               Navigator.push(context,  MaterialPageRoute(
+                              builder: (context) => EditText(str),));
+
+            })),
             new Text(
               str,
               style: new TextStyle(
@@ -219,7 +234,8 @@ class _CameraScreenState extends State<CameraScreen> {
             ),
           ],
         ),
-      );
+      ));
+     
     });
   }
 
@@ -236,7 +252,7 @@ class _CameraScreenState extends State<CameraScreen> {
           IconButton(
               icon: Icon(Icons.folder_open, color: Colors.white, size: 40),
               onPressed: () {
-                Navigator.popAndPushNamed(this.context, "/homePage");
+                 
               }),
           SizedBox(
             height: 10,
@@ -269,7 +285,7 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 Widget saveButton(Mainmodel model){
-   return Column(
+   return  Container(child: Column(mainAxisAlignment: MainAxisAlignment.center ,
       children: [
         IconButton(
             icon: Icon(Feather.save,
@@ -282,14 +298,17 @@ Widget saveButton(Mainmodel model){
           height: 10,
         ),
         Text(
-          "Save",
+          "  Save",
           style: TextStyle(color: Colors.white),
         )
       ],
-    );
+    ));
 }
 Widget shareButton(Mainmodel model){
-  return Column(
+  return 
+  Container(child: 
+  Column(
+    mainAxisAlignment: MainAxisAlignment.center ,
       children: [
         IconButton(
             icon: Icon(MaterialCommunityIcons.share,
@@ -306,7 +325,31 @@ Widget shareButton(Mainmodel model){
           style: TextStyle(color: Colors.white),
         )
       ],
-    );
+    ));
+}
+Widget libButton(Mainmodel model){
+  return 
+  Container(child: 
+  Column(
+    
+          mainAxisAlignment: MainAxisAlignment.center ,
+      children: [
+        IconButton(
+            icon: Icon(Icons.folder_open,
+                color: Colors.white, size: 40),
+            onPressed: () {
+              Navigator.popAndPushNamed(this.context, "/homePage");
+             
+            }),
+        SizedBox(
+          height: 10,
+        ),
+        Text(
+          "  Library",
+          style: TextStyle(color: Colors.white),
+        )
+      ],
+    ));
 }
   Widget retakeButton(Mainmodel model) {
     return Column(
@@ -327,7 +370,13 @@ Widget shareButton(Mainmodel model){
       ],
     );
   }
+void createText(){
 
+}
+void createPdf(){
+
+}
+void sharePdf(){}
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
@@ -373,8 +422,9 @@ Widget shareButton(Mainmodel model){
                                   Colors.white)))
                       : model.recognizedTxt == " "
                           ? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
+                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
+                                
                                 pickFromGalley(),
                                 cameraControl(context, model),
 
@@ -389,10 +439,13 @@ Widget shareButton(Mainmodel model){
                                 summaryButton(model)
                               ],
                             ):Row(
+                        
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: <Widget>[
-                                  
-                                libraryButton(),
+                                // Icon(Icons.book),
+                                //    Icon(Icons.book),
+                                //       Icon(Icons.book)  
+                                libButton(model),
                                 saveButton(model),
                                 shareButton(model)
                               ],
