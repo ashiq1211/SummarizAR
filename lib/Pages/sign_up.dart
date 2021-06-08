@@ -126,7 +126,7 @@ bool isHeNew=false;
                   height: 30,
                 ),
                 buildSigninInSignup(model),
-                isHeNew==null? TextButton(
+               TextButton(
             child: Text('Skip Now!',
                 style: TextStyle(fontSize: 14.0, color: Colors.black)),
             onPressed: ()async {
@@ -134,14 +134,15 @@ bool isHeNew=false;
                 return null;
               } else {
                   SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setBool("isHeNew", true);
+                  if(prefs.getBool("isHeNew")==null){prefs.setBool("isHeNew", true);}
+                
                 Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) => SubscriptionPage(),
                         fullscreenDialog: true));
               }
-            }):Container()
+            })
                   
               ])));
     });

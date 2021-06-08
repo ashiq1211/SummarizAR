@@ -380,6 +380,10 @@ class DocumentModel extends AppModel {
 
       notifyListeners();
     }
+
+      loading = false;
+
+      notifyListeners();
     print("sdbhds");
     print(haserror);
     return {"message": message, "error": haserror};
