@@ -496,6 +496,9 @@ void sharePdf(){}
         });
       });
       model.recognizeText(_image);
+      setState(() {
+        retake=false;
+      });
       // _cropImage(_image.path);
 
       // Navigator.push(
