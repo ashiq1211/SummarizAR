@@ -153,6 +153,7 @@ class _CameraScreenState extends State<CameraScreen> {
             color: Colors.white,
             size: 40,
           ),
+          
           onPressed: () {
             setState(() {
               flash = !flash;
@@ -390,6 +391,8 @@ Widget shareButton(Mainmodel model){
                             ):Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
+
+                                libraryButton(),
                                 saveButton(model),
                                 shareButton(model)
                               ],
