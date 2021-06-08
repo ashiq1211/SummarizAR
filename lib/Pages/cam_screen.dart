@@ -391,10 +391,21 @@ Widget shareButton(Mainmodel model){
                             ):Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-
-                                libraryButton(),
-                                saveButton(model),
-                                shareButton(model)
+                                  Expanded(
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child:
+                                libraryButton())),
+                                Expanded(
+      child: Align(
+        alignment: Alignment.center,
+        child:
+                                saveButton(model))),
+                                Expanded(
+      child: Align(
+        alignment: Alignment.centerRight,
+        child:
+                                shareButton(model)))
                               ],
                             ),
                 ),
