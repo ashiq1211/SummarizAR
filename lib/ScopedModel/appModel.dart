@@ -225,7 +225,7 @@ class DocumentModel extends AppModel {
 
       if (visionText.blocks.isNotEmpty && isAppend == 0) {
 
-       
+        recognizedText = " ";
         print("xzbjkxcbcxjk");
       } else if (visionText.blocks.isEmpty) {
         recognizedText = " ";

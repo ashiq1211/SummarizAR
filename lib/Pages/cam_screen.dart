@@ -379,6 +379,7 @@ Widget libButton(Mainmodel model){
                 color: Colors.white, size: 35),
             onPressed: () {
               setState(() {
+                model.isAppend=1;
                 retake=true;
               });
             }),
