@@ -19,7 +19,7 @@ import 'Pages/pdf_preview.dart';
 import 'Pages/welcome_page.dart';
 
 bool isAuth = false;
- 
+ bool isHeNew;
 void main() async {
 
   //  await FirebaseAuth.instance.signOut();
@@ -32,6 +32,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SharedPreferences prefs = await SharedPreferences.getInstance();
+   isHeNew=prefs.getBool("isHeNew");
   FirebaseAuth.instance.authStateChanges().listen((User user) {
     if (user == null) {
       isAuth = false;
@@ -65,7 +66,7 @@ class MyApp extends StatelessWidget {
 
           // home: CameraScreen(),
           // home: LoginPage(),
-          home:  SubscriptionPage(),
+          home: isHeNew==null? SignUp():HomePage(),
           routes: {
             "/signup": (BuildContext context) => SignUp(model),
             "/login": (BuildContext context) => LoginPage(model),

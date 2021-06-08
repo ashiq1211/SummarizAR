@@ -110,9 +110,15 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                           onPrimary: Colors.white, // foreground
                         ),
                         onPressed: () async{
-                     model.uploadPack("sdjd");    
-                 Navigator.of(context).pop();
-                 Navigator.pushNamed(context, "/homePage");
+                    //  model.uploadPack("sdjd"); 
+                     if(_selected==plan.planFree){
+ Navigator.of(context).pop();
+                 Navigator.pushNamed(context, "/cameraPage");
+                     } else{
+                       Navigator.of(context).pop();
+                 Navigator.pushNamed(context, "/signup");
+                     }  
+                
 
                         },
                         child: Text('Continue'))

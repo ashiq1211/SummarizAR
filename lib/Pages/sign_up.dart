@@ -5,6 +5,7 @@ import 'package:flutter_icons/flutter_icons.dart';
 
 import 'package:project/Pages/login.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:project/Pages/subscription_page.dart';
 import 'package:project/ScopedModel/main.dart';
 import 'package:project/Widget/alert.dart';
 import 'package:project/Widget/loading.dart';
@@ -12,6 +13,7 @@ import 'package:scoped_model/scoped_model.dart';
 
 import 'package:project/Pages/login.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'cam_screen.dart';
 
@@ -31,6 +33,20 @@ class _SignUpState extends State<SignUp> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   bool _isObscured = true;
   Color _eyeButton = Colors.grey;
+bool isHeNew=false;
+  @override
+  void initState() {
+     SharedPreferences.getInstance().then((value) {
+       setState(() {
+          isHeNew=value.getBool("isHeNew");
+       });
+      
+       print(isHeNew);
+     });
+   
+    // TODO: implement initState
+    super.initState();
+  }
   @override
   Padding buildTitleLine() {
     return Padding(
@@ -70,7 +86,7 @@ class _SignUpState extends State<SignUp> {
                   children: <TextSpan>[])),
         ),
         TextButton(
-            child: Text('SignIn',
+            child: Text('Sign In',
                 style: TextStyle(fontSize: 14.0, color: Colors.black)),
             onPressed: () {
               if (model.load) {
@@ -107,9 +123,26 @@ class _SignUpState extends State<SignUp> {
                 SizedBox(height: 70),
                 signUpForm(),
                 SizedBox(
-                  height: 70,
+                  height: 30,
                 ),
-                buildSigninInSignup(model)
+                buildSigninInSignup(model),
+                isHeNew==null? TextButton(
+            child: Text('Skip Now!',
+                style: TextStyle(fontSize: 14.0, color: Colors.black)),
+            onPressed: ()async {
+              if (model.load) {
+                return null;
+              } else {
+                  SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setBool("isHeNew", true);
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => SubscriptionPage(),
+                        fullscreenDialog: true));
+              }
+            }):Container()
+                  
               ])));
     });
   }
@@ -226,6 +259,8 @@ class _SignUpState extends State<SignUp> {
                         onPressed: () {
                           FocusScope.of(context).requestFocus(FocusNode());
                           _submitform(model);
+                          Navigator.of(context).pop();
+                 Navigator.pushNamed(context, "/cameraPage");
                         } ,
                         child: Text('Sign Up'),
                       ),

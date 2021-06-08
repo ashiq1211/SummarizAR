@@ -30,16 +30,16 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
- SharedPreferences prefs;
-      SharedPreferences.getInstance().then((value) {
-        setState(() {
-           prefs = value;
-        });
+//  SharedPreferences prefs;
+//       SharedPreferences.getInstance().then((value) {
+//         setState(() {
+//            prefs = value;
+//         });
       
-         if(prefs.getBool("isHeNew")==null){
-       loginBottomSheet(context);
-     }
-      });
+//          if(prefs.getBool("isHeNew")==null){
+//        loginBottomSheet(context);
+//      }
+//       });
     
      
     Mainmodel model = ScopedModel.of(this.context);
