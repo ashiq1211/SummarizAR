@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'dart:math';
+import 'package:flutter_quill/widgets/controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:connectivity/connectivity.dart';
@@ -202,6 +203,7 @@ class DocumentModel extends AppModel {
 
   int flag = 0;
   double cur = 0.0;
+  QuillController controller = QuillController.basic();
   String get recognizedTxt {
     return recognizedText;
   }
@@ -224,7 +226,7 @@ class DocumentModel extends AppModel {
           await textRecognizer.processImage(visionImage);
 
       if (visionText.blocks.isNotEmpty && isAppend == 0) {
-
+        this.controller = QuillController.basic();
         recognizedText = " ";
         print("xzbjkxcbcxjk");
       } else if (visionText.blocks.isEmpty) {
@@ -247,6 +249,8 @@ class DocumentModel extends AppModel {
           flag = 1;
         }
       }
+      controller = QuillController.basic();
+      controller.document.insert(0, recognizedText);
         recognizedText += "\n";
         notifyListeners();
     } on FirebaseException catch (e) {
