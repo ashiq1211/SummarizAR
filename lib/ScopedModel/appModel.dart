@@ -188,7 +188,7 @@ class UserModel extends AppModel {
 
 
 class DocumentModel extends AppModel {
-  String recognizedText = "Text refers to the actual words written in a book, newspaper, blog post, or any other written work. Pictures, charts, and other images are not text. ";
+  String recognizedText = " ";
   List<Doc> itemList = [];
   List<Doc> get doclist {
     return List.from(itemList);

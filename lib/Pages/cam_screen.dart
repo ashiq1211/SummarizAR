@@ -31,6 +31,7 @@ class _CameraScreenState extends State<CameraScreen> {
   bool flash = true;
   double zoom = 0.0;
   File _image;
+  bool retake=false;
   final picker = ImagePicker();
   Future initCamera(CameraDescription cameraDescription) async {
     if (cameraController != null) {
@@ -278,7 +279,7 @@ class _CameraScreenState extends State<CameraScreen> {
           height: 10,
         ),
         Text(
-          "Summarize",
+          "  Summarize",
           style: TextStyle(color: Colors.white),
         )
       ],
@@ -370,6 +371,27 @@ Widget libButton(Mainmodel model){
       ],
     );
   }
+ Widget addText(Mainmodel model) {
+    return Column(
+      children: [
+        IconButton(
+            icon: Icon(AntDesign.addfile,
+                color: Colors.white, size: 35),
+            onPressed: () {
+              setState(() {
+                retake=true;
+              });
+            }),
+        SizedBox(
+          height: 10,
+        ),
+        Text(
+          "  Add Text",
+          style: TextStyle(color: Colors.white),
+        )
+      ],
+    );
+  }  
 void createText(){
 
 }
@@ -390,7 +412,7 @@ void sharePdf(){}
                 alignment: Alignment.center,
                 child: cameraPreview(),
               ),
-              model.recognizedTxt == " "
+              (model.recognizedTxt == " " || (model.recognizedTxt!=" " && retake))
                   ? Container()
                   : model.sumTxt == " "
                       ? new Column(
@@ -420,7 +442,7 @@ void sharePdf(){}
                           child: CircularProgressIndicator(
                               valueColor: new AlwaysStoppedAnimation<Color>(
                                   Colors.white)))
-                      : model.recognizedTxt == " "
+                      : (model.recognizedTxt == " " || (model.recognizedTxt!=" " && retake))
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
@@ -433,10 +455,11 @@ void sharePdf(){}
                               ],
                             )
                           :model.sumTxt==" "? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                              mainAxisAlignment: MainAxisAlignment.spaceAround,
                               children: <Widget>[
                                 retakeButton(model),
-                                summaryButton(model)
+                                summaryButton(model),
+                                addText(model)
                               ],
                             ):Row(
                         
