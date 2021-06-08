@@ -25,7 +25,7 @@ class AppModel extends Model {
   String userId = " ";
 }
 class SummaryModel extends AppModel{
-  String summaryText=" ";
+  String summaryText="Text refers to the actual words written in a book, newspaper, blog post, or any other written work. Pictures, charts, and other images are not text. ";
   String get sumTxt{
     return summaryText;
   }
@@ -188,7 +188,7 @@ class UserModel extends AppModel {
 
 
 class DocumentModel extends AppModel {
-  String recognizedText = " ";
+  String recognizedText = "Text refers to the actual words written in a book, newspaper, blog post, or any other written work. Pictures, charts, and other images are not text. ";
   List<Doc> itemList = [];
   List<Doc> get doclist {
     return List.from(itemList);
