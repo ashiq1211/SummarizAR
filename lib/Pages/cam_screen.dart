@@ -513,8 +513,8 @@ Widget shareButton(Mainmodel model){
         context: context,
         builder: (BuildContext bc) {
           return Container(
-            padding: EdgeInsets.all(10),
-            height: 100,
+            padding: EdgeInsets.symmetric(vertical:10,horizontal: 30),
+            height: 140,
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: new BorderRadius.only(
@@ -542,8 +542,8 @@ Widget shareButton(Mainmodel model){
         context: context,
         builder: (BuildContext bc) {
           return Container(
-            padding: EdgeInsets.all(10),
-            height: 100,
+            padding: EdgeInsets.symmetric(vertical:10,horizontal: 30),
+            height: 140,
             decoration: BoxDecoration(
                 color: Colors.white,
                 borderRadius: new BorderRadius.only(
