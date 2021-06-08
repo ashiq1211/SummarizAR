@@ -225,7 +225,7 @@ class DocumentModel extends AppModel {
 
       if (visionText.blocks.isNotEmpty && isAppend == 0) {
 
-        recognizedText = " ";
+       
         print("xzbjkxcbcxjk");
       } else if (visionText.blocks.isEmpty) {
         recognizedText = " ";
@@ -248,6 +248,7 @@ class DocumentModel extends AppModel {
         }
       }
         recognizedText += "\n";
+        notifyListeners();
     } on FirebaseException catch (e) {
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.none) {
