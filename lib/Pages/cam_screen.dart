@@ -253,7 +253,8 @@ class _CameraScreenState extends State<CameraScreen> {
           IconButton(
               icon: Icon(Icons.folder_open, color: Colors.white, size: 40),
               onPressed: () {
-                 
+                  Navigator.popAndPushNamed(this.context, "/homePage");
+             
               }),
           SizedBox(
             height: 10,

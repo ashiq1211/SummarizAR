@@ -25,7 +25,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   final picker = ImagePicker();
-
+TabController _tabController;
   List<DocumentModel> itemList = [];
 
   @override
@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
 //      }
 //       });
     
-     
+   
     Mainmodel model = ScopedModel.of(this.context);
     model.setRecoTxt=" ";
     model.setSumTxt=" ";
@@ -94,7 +94,8 @@ class _HomePageState extends State<HomePage> {
       return RefreshIndicator(
           color: Colors.black,
           onRefresh: model.refreshDoc,
-          child: Scaffold(
+          child: 
+          DefaultTabController(length: 2,child: Scaffold(
             floatingActionButton: FloatingActionButton(
               backgroundColor: Colors.white,
               child: Icon(Icons.camera_alt,color: Colors.black,),
@@ -106,6 +107,17 @@ class _HomePageState extends State<HomePage> {
               },
             ),
             appBar: AppBar(
+              bottom: TabBar(
+                indicatorColor: Colors.black,
+                labelPadding: EdgeInsets.symmetric(horizontal: 50),
+                labelColor: Colors.black,
+              isScrollable: true,
+              tabs:<Widget> [
+                Tab(text: 'Actual Text', ),
+                
+                Tab(text: 'Summary', ),
+              ],
+            ),
               title: Text(
                 "Home",
 
@@ -144,7 +156,11 @@ class _HomePageState extends State<HomePage> {
               ],
             ),
             drawer: Drawer(),
-            body: model.load
+            body: TabBarView(
+            children: [
+              
+
+                 model.load
                 ? Center(child: LoadingWidget())
                 : model.doclist.length == 0
                     ? Center(
@@ -174,7 +190,43 @@ class _HomePageState extends State<HomePage> {
                         ),
 
                       ),
-          ));
+                       model.load
+                ? Center(child: LoadingWidget())
+                : model.doclist.length == 0
+                    ? Center(
+                        child: Text(
+                        "Nothing Found!!. \n Add some Docs.",
+                        style: GoogleFonts.lato(
+                            textStyle: TextStyle(
+                          fontSize: 14.0,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        )),
+                      ))
+
+                    : Container(
+                        color: Colors.black,
+                        child: ListView.separated(
+                          separatorBuilder: (_, __) => Divider(
+                            height: 10.0,
+                            thickness: 0.7,
+                          ),
+                          padding: const EdgeInsets.all(16.0),
+                          itemCount: model.doclist.length,
+                          physics: BouncingScrollPhysics(),
+                          itemBuilder: (context, index) {
+                            return ListTileWidget(model.doclist[index]);
+                          },
+                        ),
+
+                      ),
+            
+            ],
+          ),
+            
+           
+          ) ,)
+         );
     });
   }
  void _settingModalBottomSheet(context) {
