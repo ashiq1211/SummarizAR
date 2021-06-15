@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'dart:math';
+import 'package:device_info/device_info.dart';
 import 'package:flutter_quill/widgets/controller.dart';
 import 'package:http/http.dart' as http;
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -63,6 +64,7 @@ class SummaryModel extends AppModel{
   }
 }
 class UserModel extends AppModel {
+ 
   bool get load {
     return loading;
   }
@@ -190,6 +192,7 @@ class UserModel extends AppModel {
 
 class DocumentModel extends AppModel {
   String recognizedText = " ";
+   final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
   List<Doc> itemList = [];
   List<Doc> get doclist {
     return List.from(itemList);
@@ -271,9 +274,20 @@ class DocumentModel extends AppModel {
   }
 
   Future<Map<dynamic, dynamic>> putDoc(List<int> asset, DateTime date) async {
+
     String formattedDate = DateFormat('dd-MM-yy kk:mm').format(date);
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId = prefs.getString("userId");
+    if(userId==null){
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        var deviceName = build.model;
+        var deviceVersion = build.version.toString();
+        var identifier = build.androidId;  //UUID for Android
+        userId=identifier;
+      }
+      
+    }
     final mainReference =
         FirebaseDatabase.instance.reference().child('$userId/Documents');
     haserror = false;
@@ -334,6 +348,15 @@ class DocumentModel extends AppModel {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId = prefs.getString("userId");
+     if(userId==null){
+      if (Platform.isAndroid) {
+        var build = await deviceInfoPlugin.androidInfo;
+        var deviceName = build.model;
+        var deviceVersion = build.version.toString();
+        var identifier = build.androidId;  //UUID for Android
+        userId=identifier;
+      }}
+
     final mainReference =
         FirebaseDatabase.instance.reference().child('$userId/Documents');
 

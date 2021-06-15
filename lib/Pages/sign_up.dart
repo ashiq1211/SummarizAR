@@ -261,6 +261,7 @@ bool isHeNew=false;
                           FocusScope.of(context).requestFocus(FocusNode());
                           _submitform(model);
                           Navigator.of(context).pop();
+                          
                  Navigator.pushNamed(context, "/cameraPage");
                         } ,
                         child: Text('Sign Up'),
