@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class User {
+class Cuser {
   final String id;
   final String userId;
   final String email;
   final int mobile;
-  final String type;
-  User(
+   var plan;
+  Cuser(
       {@required this.id,
       @required this.userId,
       @required this.email,
       @required this.mobile,
-      @required this.type});
+      @required this.plan});
 }

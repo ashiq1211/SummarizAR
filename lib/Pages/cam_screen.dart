@@ -3,6 +3,8 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:pdf/pdf.dart';
+import 'package:pdf/widgets.dart' as pw;
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:image_picker/image_picker.dart';
@@ -27,6 +29,12 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
   CameraController cameraController;
   List cameras;
+   int flag = 0;
+  var imagePath;
+
+  File file;
+  final pdf = pw.Document();
+  DateTime date = DateTime.now();
   int selectedCameraIndex;
   bool flash = true;
   double zoom = 0.0;
@@ -268,12 +276,15 @@ class _CameraScreenState extends State<CameraScreen> {
     ));
   }
 
-  Widget summaryButton(model) {
+  Widget summaryButton(Mainmodel model) {
     return Column(
       children: [
         IconButton(
             icon: Icon(Octicons.note, color: Colors.white, size: 40),
             onPressed: () {
+              createPdf(model.recognizedTxt).then((value) {
+                   model.putDoc(file.readAsBytesSync(), date);
+              });
               model.getSummary(model.recognizedTxt);
             }),
         SizedBox(
@@ -397,9 +408,22 @@ Widget libButton(Mainmodel model){
 void createText(){
       
 }
-void createPdf(){
+Future createPdf(String recognizedText) async {
+    date = DateTime.now();
+    pdf.addPage(pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Text(recognizedText),
+          );
+        }));
+    imagePath =
+        join((await getApplicationDocumentsDirectory()).path, '${date}.pdf');
 
-}
+    file = File(imagePath);
+    file.writeAsBytesSync(await pdf.save());
+    print(file);
+  }
 void sharePdf(){}
   @override
   Widget build(BuildContext context) {

@@ -64,12 +64,18 @@ class SummaryModel extends AppModel{
   }
 }
 class UserModel extends AppModel {
- 
+ Cuser currentUser;
+ Cuser get currUser{
+   return currentUser;
+ }
   bool get load {
     return loading;
   }
 
   Future<Map<dynamic, dynamic>> signup(String email, String password) async {
+    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+      var build = await deviceInfoPlugin.androidInfo;
+      String id=build.androidId;
     haserror = false;
     loading = true;
     notifyListeners();
@@ -77,7 +83,29 @@ class UserModel extends AppModel {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       SharedPreferences prefs = await SharedPreferences.getInstance();
-
+      currentUser=Cuser(email: email);
+         final mainReference =
+        FirebaseDatabase.instance.reference().child('$id/Documents');
+mainReference.once().then((snap) {
+  var data = snap.value;
+ if(data==null){
+   return;
+ }else{
+    
+     data.forEach((key, value) {
+     
+          var newData = {
+              "PDF": value['PDF'],
+              "FileName": value['FileName'],
+              "Date": value['Date'],
+              "ActualDate": value["ActualDate"]};
+   FirebaseDatabase.instance.reference().child('${FirebaseAuth.instance.currentUser.uid}/Documents').set(newData);
+   mainReference.remove();
+          // notifyListeners();
+        });
+ }
+  
+});
       prefs.setString('userId', FirebaseAuth.instance.currentUser.uid);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -104,6 +132,9 @@ class UserModel extends AppModel {
   }
 
   Future<Map<dynamic, dynamic>> signin(String email, String password) async {
+     final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+      var build = await deviceInfoPlugin.androidInfo;
+      String id=build.androidId;
     haserror = false;
     loading = true;
     notifyListeners();
@@ -113,6 +144,28 @@ class UserModel extends AppModel {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('userId', FirebaseAuth.instance.currentUser.uid);
+     final mainReference =
+        FirebaseDatabase.instance.reference().child('$id/Documents');
+mainReference.once().then((snap) {
+  var data = snap.value;
+ if(data==null){
+   return;
+ }else{
+    
+     data.forEach((key, value) {
+     
+          var newData = {
+              "PDF": value['PDF'],
+              "FileName": value['FileName'],
+              "Date": value['Date'],
+              "ActualDate": value["ActualDate"]};
+   FirebaseDatabase.instance.reference().child('${FirebaseAuth.instance.currentUser.uid}/Documents').set(newData);
+   mainReference.remove();
+          // notifyListeners();
+        });
+ }
+  
+});
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         message = ('No user found for that email.');
@@ -193,7 +246,7 @@ class UserModel extends AppModel {
 class DocumentModel extends AppModel {
   String recognizedText = " ";
    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
-  List<Doc> itemList = [];
+  List<Doc> itemList=[];
   List<Doc> get doclist {
     return List.from(itemList);
   }
@@ -341,11 +394,12 @@ class DocumentModel extends AppModel {
   }
 
   Future<Map<dynamic, dynamic>> getDoc() async {
-    itemList = [];
+    print(itemList.length);
     haserror = false;
     loading = true;
+    
     notifyListeners();
-
+  
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId = prefs.getString("userId");
      if(userId==null){
@@ -360,8 +414,9 @@ class DocumentModel extends AppModel {
     final mainReference =
         FirebaseDatabase.instance.reference().child('$userId/Documents');
 
- print("there");
+
     try {
+       itemList = [];
       mainReference.once().then((DataSnapshot snap) {
 
      

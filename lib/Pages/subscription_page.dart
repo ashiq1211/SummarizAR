@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:project/Model/user.dart';
 import 'package:project/ScopedModel/main.dart';
 import 'package:project/plan.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -110,14 +111,18 @@ class _SubscriptionPageState extends State<SubscriptionPage> {
                           onPrimary: Colors.white, // foreground
                         ),
                         onPressed: () async{
+                          model.currentUser=Cuser(plan: _selected);
                     //  model.uploadPack("sdjd"); 
                      if(_selected==plan.planFree){
  Navigator.of(context).pop();
                  Navigator.pushNamed(context, "/cameraPage");
-                     } else{
+                     } else if (_selected!=plan.planFree && model.currentUser.email==null && model.currentUser.plan!=null){
                        Navigator.of(context).pop();
                  Navigator.pushNamed(context, "/signup");
-                     }  
+                     } else{print(model.currentUser.plan);
+                        Navigator.of(context).pop();
+                 Navigator.pushNamed(context, "/cameraPage");
+                     } 
                 
 
                         },

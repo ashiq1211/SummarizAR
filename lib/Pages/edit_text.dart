@@ -1,39 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
-import 'dart:async';
-import 'dart:io';
-import 'dart:math';
-import 'dart:typed_data';
-import 'dart:convert';
-import 'package:firebase_database/firebase_database.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter_quill/models/rules/insert.dart';
-import 'package:flutter_quill/widgets/controller.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:path/path.dart';
-import 'package:pdf/pdf.dart';
-import 'package:pdf/widgets.dart' as pw;
-import 'package:firebase_ml_vision/firebase_ml_vision.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter_quill/widgets/controller.dart';
 import 'package:flutter_quill/widgets/editor.dart';
 import 'package:flutter_quill/widgets/toolbar.dart';
-import 'package:flutter_quill/flutter_quill.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:flutter_icons/flutter_icons.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:permission_handler/permission_handler.dart';
-import 'package:project/Pages/cam_screen.dart';
-import 'package:project/Pages/home.dart';
-import 'package:project/Pages/summary.dart';
-import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
-import 'package:project/Widget/alert.dart';
-import 'package:project/Widget/loading.dart';
 import 'package:scoped_model/scoped_model.dart';
-import 'package:share/share.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 
 class EditText extends StatefulWidget {
   final String text;
@@ -49,28 +21,52 @@ class _EditTextState extends State<EditText> {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
       return Scaffold(
-          appBar: AppBar(),
-          body: Column(
-            children: [
-              QuillToolbar.basic(controller: model.controller),
-              Expanded(
-                child: Container(
-                  child: QuillEditor.basic(
-                    controller: model.controller,
-                    readOnly: false, // true for view only mode
-                  ),
+          appBar: AppBar(
+            backgroundColor: Color.fromRGBO(64, 75, 96, .9),
+            actions: <Widget>[
+              IconButton(
+                icon: Icon(
+                  Icons.check_circle,
+                  color: Colors.white,
                 ),
+                onPressed: () {
+                  // do something
+                  model.recognizedText =
+                      model.controller.document.toPlainText();
+                  Navigator.of(context).pushNamed("/cameraPage");
+                },
               )
-              // QuillToolbar.basic(controller: controller),
-              // Expanded(
-              //   child: Container(
-              //     child: QuillEditor.basic(
-              //       controller: controller,
-              //       readOnly: false, // true for view only mode
-              //     ),
-              //   ),
-              // )
             ],
+          ),
+          body: Container(
+            padding: EdgeInsets.only(
+              top: 14.0,
+              bottom: 14.0,
+              left: 14.0,
+              right: 14.0,
+            ),
+            child: Column(
+              children: [
+                QuillToolbar.basic(controller: model.controller),
+                Expanded(
+                  child: Container(
+                    child: QuillEditor.basic(
+                      controller: model.controller,
+                      readOnly: false, // true for view only mode
+                    ),
+                  ),
+                )
+                // QuillToolbar.basic(controller: controller),
+                // Expanded(
+                //   child: Container(
+                //     child: QuillEditor.basic(
+                //       controller: controller,
+                //       readOnly: false, // true for view only mode
+                //     ),
+                //   ),
+                // )
+              ],
+            ),
           ));
     }
 

@@ -260,9 +260,9 @@ bool isHeNew=false;
                         onPressed: () {
                           FocusScope.of(context).requestFocus(FocusNode());
                           _submitform(model);
-                          Navigator.of(context).pop();
-                          
-                 Navigator.pushNamed(context, "/cameraPage");
+                         
+                        
+                 
                         } ,
                         child: Text('Sign Up'),
                       ),
@@ -288,7 +288,15 @@ bool isHeNew=false;
     )
         .then((response) {
       if (!response['error']) {
-        Navigator.pushReplacementNamed(context, '/subscription');
+        
+       if (model.currentUser!=null){
+          Navigator.pushNamed(context, "/cameraPage");
+                         
+                        }  else{
+                          Navigator.pushNamed(context, "/subscription");
+                          
+                        }
+                          
       } else {
         showDialog(
             context: context,
