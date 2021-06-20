@@ -18,8 +18,7 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
-  Mainmodel model;
-  HomePage([this.model]);
+ 
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -43,8 +42,8 @@ class _HomePageState extends State<HomePage> {
 //       });
 
     Mainmodel model = ScopedModel.of(this.context);
-    model.setRecoTxt = " ";
-    model.setSumTxt = " ";
+    // model.setRecoTxt = " ";
+    // model.setSumTxt = " ";
     model.isAppend = 0;
 
     model.getDoc().then((value) {
@@ -89,10 +88,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
-      return RefreshIndicator(
-          color: Colors.black,
-          onRefresh: model.refreshDoc,
-          child: DefaultTabController(
+      return  DefaultTabController(
             length: 2,
             child: Scaffold(
               floatingActionButton: FloatingActionButton(
@@ -102,8 +98,8 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.black,
                 ),
                 onPressed: () async {
-                  model.setRecoTxt = " ";
-                  model.setSumTxt = " ";
+                  // model.setRecoTxt = " ";
+                  // model.setSumTxt = " ";
                   // final pickedFile = await picker.getImage(source: ImageSource.camera);
                   Navigator.of(context).popAndPushNamed("/cameraPage");
                 },
@@ -161,22 +157,12 @@ class _HomePageState extends State<HomePage> {
               body: TabBarView(
                 children: [
                   model.load
-                      ? Center(child: LoadingWidget())
-                      : model.doclist.length == 0
-                          ? Center(
-                              child: Text(
-                              "Nothing Found!!. \n Add some Docs.",
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black,
-                              )),
-                            ))
-                          : 
-                         
-                          
-                          Scaffold(
+                      ? Center(child:CircularProgressIndicator())
+                      : model.doclist.length != 0
+                          ? RefreshIndicator(
+          color: Colors.black,
+          onRefresh: model.refreshDoc,
+          child:Scaffold(
                               backgroundColor: Colors.black,
                               body: ListView.separated(
                                 separatorBuilder: (_, __) => Divider(
@@ -190,7 +176,20 @@ class _HomePageState extends State<HomePage> {
                                   return ListTileWidget(model.doclist[index]);
                                 },
                               ),
-                            ),
+                            )):Center(
+                              child: Text(
+                              "Nothing Found!!. \n Add some Docs.",
+                              style: GoogleFonts.lato(
+                                  textStyle: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black,
+                              )),
+                            ))
+                          ,
+                         
+                          
+                          
                             Center(child:Text("ddbdbd"))
                   // model.load
                   //     ? Center(child: LoadingWidget())
@@ -223,7 +222,7 @@ class _HomePageState extends State<HomePage> {
                 ],
               ),
             ),
-          ));
+          );
     });
   }
 

@@ -8,6 +8,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -47,7 +48,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   File file;
   final pdf = pw.Document();
   DateTime date = DateTime.now();
-
+  final picker = ImagePicker();
 
   Future createPdf(String recognizedText) async {
     date = DateTime.now();
@@ -97,8 +98,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
         createPdf(value["TextRecognized"]).then((value) {
           print("ashi");
           model.putDoc(file.readAsBytesSync(), date).then((value) {
-            print(value["link"]);
-            loadDocument(value["link"]);
+            setState(() {
+              document=value["document"];
+            });
             if (value["error"]) {
               showDialog(
                   context: this.context,
@@ -161,21 +163,18 @@ class _PreviewScreenState extends State<PreviewScreen> {
                   FloatingActionButton(
                     heroTag: "btn2",
                     child: Icon(
-                      Icons.add_a_photo_outlined,
+                     Feather.file_plus,
                     ),
                     backgroundColor: Theme.of(context).primaryColor,
                     onPressed: () async {
+                      if(model.load){
+                        return ;
+                      }
                       model.isAppend = 1;
-                      // final pickedFile = await picker.getImage(source: ImageSource.camera);
-                      Navigator.of(context).pushNamed("/cameraPage");
-                      //             Navigator.pushAndRemoveUntil(
-                      //   this.context,
-                      //   MaterialPageRoute(
-                      //       builder: (context) => CameraScreen(
-                      //             model.recognizedTxt
-                      //           )),
-                      //   (Route<dynamic> route) => false,
-                      // );
+                      final pickedFile = await picker.getImage(source: ImageSource.gallery);
+                      model.recognizeText(File(pickedFile.path));
+                      
+           
                     },
                   )
                 ],
@@ -228,6 +227,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       }
 
                       print(imagePath);
+                    
                       Share.shareFiles([imagePath], subject: "Document");
                     },
                     icon: new Icon(Icons.share),
@@ -251,59 +251,59 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   Widget body(Mainmodel model, BuildContext context) {
     if (model.load) {
-
-      return showLoadingIndicator(context);
+        return Center(child: LoadingWidget());
+      // return showLoadingIndicator(context);
     } else {
-      return PDFViewer( document: document ,zoomSteps: 1,);
+      return 
       
-      // Container(
-      //   child: Container(
-      //     margin: const EdgeInsets.all(15.0),
-      //     // adding padding
+      Container(
+        child: Container(
+          margin: const EdgeInsets.all(15.0),
+          // adding padding
 
-      //     padding: const EdgeInsets.all(3.0),
-      //     decoration: BoxDecoration(
-      //       // adding borders around the widget
-      //       border: Border.all(
-      //         color: Color.fromRGBO(64, 75, 96, .9),
-      //         width: 5.0,
-      //       ),
-      //     ),
-      //     child: Column(
-      //       crossAxisAlignment: CrossAxisAlignment.start,
-      //       children: <Widget>[
-      //         Expanded(
-      //           flex: 1,
-      //           child: SingleChildScrollView(
-      //             padding: EdgeInsets.all(10.0),
-      //             scrollDirection: Axis.vertical,
-      //             child: Text(
-      //               model.recognizedTxt,
-      //               style: TextStyle(
-      //                 color: Colors.black,
-      //                 // fontWeight: FontWeight.bold,
-      //                 fontSize: 15.0,
-      //                 // letterSpacing: 3,
-      //                 // wordSpacing: 2,
-      //               ),
+          padding: const EdgeInsets.all(3.0),
+          decoration: BoxDecoration(
+            // adding borders around the widget
+            border: Border.all(
+              color: Color.fromRGBO(64, 75, 96, .9),
+              width: 5.0,
+            ),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child: SingleChildScrollView(
+                  padding: EdgeInsets.all(10.0),
+                  scrollDirection: Axis.vertical,
+                  child: Text(
+                    model.recognizedTxt,
+                    style: TextStyle(
+                      color: Colors.black,
+                      // fontWeight: FontWeight.bold,
+                      fontSize: 15.0,
+                      // letterSpacing: 3,
+                      // wordSpacing: 2,
+                    ),
 
-      //             ),
-      //           ),
+                  ),
+                ),
                 
-      //         ),
+              ),
 
-      //       ],
-      //     ),
+            ],
+          ),
 
-      //   ),
-      // );
+        ),
+      );
     }
   }
-loadDocument(url) async {
-    document = await PDFDocument.fromURL(url);
+// loadDocument(url) async {
+   
 
    
-  }
+//   }
   Widget showLoadingIndicator(BuildContext context) {
     return WillPopScope(
         onWillPop: () async => false,

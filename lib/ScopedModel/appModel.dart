@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'dart:math';
+import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter_quill/widgets/controller.dart';
 import 'package:http/http.dart' as http;
@@ -25,10 +26,13 @@ class AppModel extends Model {
   bool haserror = false;
   String message = 'Something wrong';
   String userId = " ";
+    bool get load {
+    return loading;
+  }
 }
 
 class SummaryModel extends AppModel {
-  String summaryText = " ";
+  String summaryText = " The selected imageFormatGroup is not supported by Android. Defaulting to yuv420";
   String get sumTxt {
     return summaryText;
   }
@@ -70,9 +74,7 @@ class UserModel extends AppModel {
     return currentUser;
   }
 
-  bool get load {
-    return loading;
-  }
+
 
   Future<Map<dynamic, dynamic>> signup(String email, String password) async {
     final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
@@ -245,7 +247,7 @@ class UserModel extends AppModel {
 
 class DocumentModel extends AppModel {
 
-  String recognizedText = " ";
+  String recognizedText = " In literary theory, a text is any object that can be  , whether this object is a work of literature, a street sign, an arrangement of buildings on a city block, or styles of clothing. It is a coherent set of signs that transmits some kind of informative message.";
   final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
   List<Doc> itemList =[];
   List<Doc> get doclist {
@@ -288,12 +290,12 @@ class DocumentModel extends AppModel {
         this.controller = QuillController.basic();
         recognizedText = " ";
         print("xzbjkxcbcxjk");
-      } else if (visionText.blocks.isEmpty) {
-        recognizedText = " ";
+      } else if (visionText.text.isEmpty) {
+        
         print("uoo");
         haserror = true;
         notifyListeners();
-        return null;
+
       }
       for (TextBlock block in visionText.blocks) {
         for (TextLine line in block.lines) {
@@ -385,10 +387,11 @@ class DocumentModel extends AppModel {
         notifyListeners();
       }
     } catch (e) {}
+     PDFDocument document = await PDFDocument.fromURL(url);
     loading = false;
     notifyListeners();
     print(message);
-    return {"message": message, "error": haserror,"link":url};
+    return {"message": message, "error": haserror,"document":document};
   }
 
   Future<void> refreshDoc() async {
@@ -399,21 +402,21 @@ class DocumentModel extends AppModel {
     print(itemList.length);
     haserror = false;
     loading = true;
-
     notifyListeners();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId = prefs.getString("userId");
-    if (userId == null) {
+    if (userId != null) {
       if (Platform.isAndroid) {
         var build = await deviceInfoPlugin.androidInfo;
         var deviceName = build.model;
         var deviceVersion = build.version.toString();
         var identifier = build.androidId; //UUID for Android
-        userId = identifier;
+ prefs.setString("userId", identifier);
       }
     }
-
+    userId=prefs.getString("userId");
+print (userId);
     final mainReference =
         FirebaseDatabase.instance.reference().child('$userId/Documents');
 
