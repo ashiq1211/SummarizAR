@@ -26,7 +26,7 @@ class _ListTileWidgetState extends State<ListTileWidget> {
                   fullscreenDialog: true));
         },
         minLeadingWidth: 16.0,
-        tileColor: Colors.white,
+        tileColor: Color.fromRGBO(64, 75, 96, .9),
         leading: Icon(
           MaterialCommunityIcons.pdf_box,
           color: Colors.white,

@@ -173,9 +173,12 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.black,
                               )),
                             ))
-                          : Container(
-                              color: Colors.black,
-                              child: ListView.separated(
+                          : 
+                         
+                          
+                          Scaffold(
+                              backgroundColor: Colors.black,
+                              body: ListView.separated(
                                 separatorBuilder: (_, __) => Divider(
                                   height: 10.0,
                                   thickness: 0.7,
