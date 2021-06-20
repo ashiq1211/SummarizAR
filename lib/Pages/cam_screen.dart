@@ -316,9 +316,15 @@ class _CameraScreenState extends State<CameraScreen> {
             icon: Icon(Octicons.note, color: Colors.white, size: 40),
             onPressed: () {
               createPdf(model.recognizedTxt).then((value) {
-                model.putDoc(file.readAsBytesSync(), date);
+                model.putDoc(file.readAsBytesSync(), date,"actualText");
+                file.delete();
               });
-              model.getSummary(model.recognizedTxt);
+              model.getSummary(model.recognizedTxt).then((value) {
+                  createPdf(model.sumTxt).then((value) {
+                model.putDoc(file.readAsBytesSync(), date,"summary");
+                file.delete();
+              });
+              });
             }),
         SizedBox(
           height: 10,
@@ -577,6 +583,7 @@ Widget addNew(Mainmodel model){
       model.recognizeText(_image);
       setState(() {
         retake = false;
+        file.delete();
       });
       // _cropImage(_image.path);
 

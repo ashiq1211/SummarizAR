@@ -97,7 +97,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         print(value["error"]);
         createPdf(value["TextRecognized"]).then((value) {
           print("ashi");
-          model.putDoc(file.readAsBytesSync(), date).then((value) {
+          model.putDoc(file.readAsBytesSync(), date,"actualText").then((value) {
             setState(() {
               document=value["document"];
             });

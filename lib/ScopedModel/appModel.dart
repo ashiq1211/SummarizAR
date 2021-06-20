@@ -29,10 +29,18 @@ class AppModel extends Model {
     bool get load {
     return loading;
   }
+  List<Doc> itemList =[];
+  List<Doc> get doclist {
+    return List.from(itemList);
+  }
+   List<Doc> summList =[];
+  List<Doc> get getsumlist {
+    return List.from(summList);
+  }
 }
 
 class SummaryModel extends AppModel {
-  String summaryText = " The selected imageFormatGroup is not supported by Android. Defaulting to yuv420";
+  String summaryText = " ";
   String get sumTxt {
     return summaryText;
   }
@@ -247,12 +255,8 @@ class UserModel extends AppModel {
 
 class DocumentModel extends AppModel {
 
-  String recognizedText = " In literary theory, a text is any object that can be  , whether this object is a work of literature, a street sign, an arrangement of buildings on a city block, or styles of clothing. It is a coherent set of signs that transmits some kind of informative message.";
+  String recognizedText = " ";
   final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
-  List<Doc> itemList =[];
-  List<Doc> get doclist {
-    return List.from(itemList);
-  }
 
   set setRecoTxt(str) {
     
@@ -331,9 +335,11 @@ class DocumentModel extends AppModel {
     };
   }
 
-  Future<Map<dynamic, dynamic>> putDoc(List<int> asset, DateTime date) async {
+  Future<Map<dynamic, dynamic>> putDoc(List<int> asset, DateTime date,String type) async {
     String formattedDate = DateFormat('dd-MM-yy kk:mm').format(date);
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    var mainReference;
+    var reference;
     var url;
     userId = prefs.getString("userId");
     if (userId == null) {
@@ -345,8 +351,14 @@ class DocumentModel extends AppModel {
         userId = identifier;
       }
     }
-    final mainReference =
-        FirebaseDatabase.instance.reference().child('$userId/Documents');
+    if(type=="actualText"){
+       mainReference =
+        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+    }else{
+       mainReference =
+        FirebaseDatabase.instance.reference().child('$userId/Documents/Summary');
+    }
+    
     haserror = false;
     loading = true;
     notifyListeners();
@@ -369,9 +381,16 @@ class DocumentModel extends AppModel {
           print(str);
         });
       }
-
-      Reference reference =
-          FirebaseStorage.instance.ref().child("$userId/Documents/$date");
+ if(type=="actualText"){
+     reference =
+          FirebaseStorage.instance.ref().child("$userId/Documents/ActualText/$date");
+      
+    }else{
+        reference =
+          FirebaseStorage.instance.ref().child("$userId/Documents/Summary/$date");
+     
+    }
+     
 
       UploadTask uploadTask = reference.putData(asset);
 
@@ -417,12 +436,14 @@ class DocumentModel extends AppModel {
     }
     userId=prefs.getString("userId");
 print (userId);
-    final mainReference =
-        FirebaseDatabase.instance.reference().child('$userId/Documents');
+    final mainReferenceText =
+        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+        final mainReferenceSummary =
+        FirebaseDatabase.instance.reference().child('$userId/Documents/Summary');
 
     try {
       itemList = [];
-      mainReference.once().then((DataSnapshot snap) {
+      mainReferenceText.once().then((DataSnapshot snap) {
         if (snap.value == null) {
           loading = false;
           notifyListeners();
@@ -445,12 +466,41 @@ print (userId);
         itemList.sort((a, b) => a.name.compareTo(b.name));
         itemList = itemList.reversed.toList();
         notifyListeners();
-        print(itemList);
-        print("kooy");
+        
         loading = false;
 
         notifyListeners();
         print(message);
+      });
+      mainReferenceSummary.once().then((DataSnapshot snap) {
+        if (snap.value == null) {
+          loading = false;
+          notifyListeners();
+          return null;
+        }
+      
+
+        var data = snap.value;
+
+
+        data.forEach((key, value) {
+          Doc m = new Doc(
+              link: value['PDF'],
+              name: value['FileName'],
+              date: value['Date'],
+              path: value["ActualDate"]);
+          summList.add(m);
+          // notifyListeners();
+        });
+        summList.sort((a, b) => a.name.compareTo(b.name));
+        summList = itemList.reversed.toList();
+        notifyListeners();
+   
+
+        loading = false;
+
+        notifyListeners();
+
       });
     } on FirebaseException catch (e) {} catch (e) {
       loading = false;
@@ -468,8 +518,7 @@ print (userId);
     loading = false;
 
     notifyListeners();
-    print("sdbhds");
-    print(haserror);
+  
     return {"message": message, "error": haserror};
   }
 

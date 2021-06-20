@@ -42,8 +42,8 @@ class _HomePageState extends State<HomePage> {
 //       });
 
     Mainmodel model = ScopedModel.of(this.context);
-    // model.setRecoTxt = " ";
-    // model.setSumTxt = " ";
+    model.setRecoTxt = " ";
+    model.setSumTxt = " ";
     model.isAppend = 0;
 
     model.getDoc().then((value) {
@@ -98,8 +98,8 @@ class _HomePageState extends State<HomePage> {
                   color: Colors.black,
                 ),
                 onPressed: () async {
-                  // model.setRecoTxt = " ";
-                  // model.setSumTxt = " ";
+                  model.setRecoTxt = " ";
+                  model.setSumTxt = " ";
                   // final pickedFile = await picker.getImage(source: ImageSource.camera);
                   Navigator.of(context).popAndPushNamed("/cameraPage");
                 },
@@ -189,8 +189,37 @@ class _HomePageState extends State<HomePage> {
                           ,
                          
                           
-                          
-                            Center(child:Text("ddbdbd"))
+                    model.load
+                      ? Center(child:CircularProgressIndicator())
+                      : model.doclist.length != 0
+                          ? RefreshIndicator(
+          color: Colors.black,
+          onRefresh: model.refreshDoc,
+          child:Scaffold(
+                              backgroundColor: Colors.black,
+                              body: ListView.separated(
+                                separatorBuilder: (_, __) => Divider(
+                                  height: 10.0,
+                                  thickness: 0.7,
+                                ),
+                                padding: const EdgeInsets.all(16.0),
+                                itemCount: model.getsumlist.length,
+                                physics: BouncingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return ListTileWidget(model.getsumlist[index]);
+                                },
+                              ),
+                            )):Center(
+                              child: Text(
+                              "Nothing Found!!. \n Add some Docs.",
+                              style: GoogleFonts.lato(
+                                  textStyle: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.black,
+                              )),
+                            ))
+                          ,
                   // model.load
                   //     ? Center(child: LoadingWidget())
                   //     : model.doclist.length == 0
