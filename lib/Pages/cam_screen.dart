@@ -29,7 +29,7 @@ class CameraScreen extends StatefulWidget {
 class _CameraScreenState extends State<CameraScreen> {
   CameraController cameraController;
   List cameras;
-   int flag = 0;
+  int flag = 0;
   var imagePath;
 
   File file;
@@ -39,7 +39,7 @@ class _CameraScreenState extends State<CameraScreen> {
   bool flash = true;
   double zoom = 0.0;
   File _image;
-  bool retake=false;
+  bool retake = false;
   final picker = ImagePicker();
   Future initCamera(CameraDescription cameraDescription) async {
     if (cameraController != null) {
@@ -163,7 +163,6 @@ class _CameraScreenState extends State<CameraScreen> {
             color: Colors.white,
             size: 40,
           ),
-          
           onPressed: () {
             setState(() {
               flash = !flash;
@@ -196,55 +195,61 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
-  Widget rectShapeContainer(String str) {
+  Widget rectShapeARContainer(String str) {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
-      return 
-      GestureDetector(
-        onTap: (){
-           Navigator.push(context,  MaterialPageRoute(
-                              builder: (context) => EditText(str),));
-
-        },
-        child: Container(
-        margin: const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
-        padding: const EdgeInsets.only(left:15.0, bottom: 15),
-        decoration: new BoxDecoration(
-          //you can get rid of below line also
-          borderRadius: new BorderRadius.circular(10.0),
-          //below line is for rectangular shape
-          shape: BoxShape.rectangle,
-          //you can change opacity with color here(I used black) for rect
-          color: Colors.black.withOpacity(0.2),
-          //I added some shadow, but you can remove boxShadow also.
-          boxShadow: <BoxShadow>[
-            new BoxShadow(
-              color: Colors.black26,
-              blurRadius: 5.0,
-              offset: new Offset(5.0, 5.0),
+      return GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditText(str),
+                ));
+          },
+          child: Container(
+            margin:
+                const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
+            padding: const EdgeInsets.only(left: 15.0, bottom: 15),
+            decoration: new BoxDecoration(
+              borderRadius: new BorderRadius.circular(10.0),
+              //below line is for rectangular shape
+              shape: BoxShape.rectangle,
+              color: Colors.black.withOpacity(0.2),
+              //added some shadow
+              boxShadow: <BoxShadow>[
+                new BoxShadow(
+                  color: Colors.black26,
+                  blurRadius: 5.0,
+                  offset: new Offset(5.0, 5.0),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: new Column(
-          
-          children: <Widget>[
-            Align(alignment: Alignment.topRight,child:OutlinedButton(child: Icon(AntDesign.edit,color: Colors.white,), onPressed: (){
-              
-               Navigator.push(context,  MaterialPageRoute(
-                              builder: (context) => EditText(str),));
-
-            })),
-            new Text(
-              str,
-              style: new TextStyle(
-                color: Colors.white,
-                fontSize: 20.0,
-              ),
+            child: new Column(
+              children: <Widget>[
+                Align(
+                    alignment: Alignment.topRight,
+                    child: OutlinedButton(
+                        child: Icon(
+                          AntDesign.edit,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                          Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => EditText(str),
+                              ));
+                        })),
+                new Text(
+                  str,
+                  style: new TextStyle(
+                    color: Colors.white,
+                    fontSize: 20.0,
+                  ),
+                ),
+              ],
             ),
-          ],
-        ),
-      ));
-     
+          ));
     });
   }
 
@@ -261,8 +266,7 @@ class _CameraScreenState extends State<CameraScreen> {
           IconButton(
               icon: Icon(Icons.folder_open, color: Colors.white, size: 40),
               onPressed: () {
-                  Navigator.popAndPushNamed(this.context, "/homePage");
-             
+                Navigator.popAndPushNamed(this.context, "/homePage");
               }),
           SizedBox(
             height: 10,
@@ -283,7 +287,7 @@ class _CameraScreenState extends State<CameraScreen> {
             icon: Icon(Octicons.note, color: Colors.white, size: 40),
             onPressed: () {
               createPdf(model.recognizedTxt).then((value) {
-                   model.putDoc(file.readAsBytesSync(), date);
+                model.putDoc(file.readAsBytesSync(), date);
               });
               model.getSummary(model.recognizedTxt);
             }),
@@ -297,16 +301,17 @@ class _CameraScreenState extends State<CameraScreen> {
       ],
     );
   }
-Widget saveButton(Mainmodel model){
-   return  Container(child: Column(mainAxisAlignment: MainAxisAlignment.center ,
+
+  Widget saveButton(Mainmodel model) {
+    return Container(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-            icon: Icon(Feather.save,
-                color: Colors.white, size: 40),
+            icon: Icon(Feather.save, color: Colors.white, size: 40),
             onPressed: () {
-             saveBottomSheet(this.context);
-             }
-            ),
+              saveBottomSheet(this.context);
+            }),
         SizedBox(
           height: 10,
         ),
@@ -316,19 +321,18 @@ Widget saveButton(Mainmodel model){
         )
       ],
     ));
-}
-Widget shareButton(Mainmodel model){
-  return 
-  Container(child: 
-  Column(
-    mainAxisAlignment: MainAxisAlignment.center ,
+  }
+
+  Widget shareButton(Mainmodel model) {
+    return Container(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
             icon: Icon(MaterialCommunityIcons.share,
                 color: Colors.white, size: 40),
             onPressed: () {
               shareBottomSheet(this.context);
-             
             }),
         SizedBox(
           height: 10,
@@ -339,20 +343,17 @@ Widget shareButton(Mainmodel model){
         )
       ],
     ));
-}
-Widget libButton(Mainmodel model){
-  return 
-  Container(child: 
-  Column(
-    
-          mainAxisAlignment: MainAxisAlignment.center ,
+  }
+
+  Widget libButton(Mainmodel model) {
+    return Container(
+        child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         IconButton(
-            icon: Icon(Icons.folder_open,
-                color: Colors.white, size: 40),
+            icon: Icon(Icons.folder_open, color: Colors.white, size: 40),
             onPressed: () {
               Navigator.popAndPushNamed(this.context, "/homePage");
-             
             }),
         SizedBox(
           height: 10,
@@ -363,7 +364,8 @@ Widget libButton(Mainmodel model){
         )
       ],
     ));
-}
+  }
+
   Widget retakeButton(Mainmodel model) {
     return Column(
       children: [
@@ -383,16 +385,16 @@ Widget libButton(Mainmodel model){
       ],
     );
   }
- Widget addText(Mainmodel model) {
+
+  Widget addText(Mainmodel model) {
     return Column(
       children: [
         IconButton(
-            icon: Icon(AntDesign.addfile,
-                color: Colors.white, size: 35),
+            icon: Icon(AntDesign.addfile, color: Colors.white, size: 35),
             onPressed: () {
               setState(() {
-                model.isAppend=1;
-                retake=true;
+                model.isAppend = 1;
+                retake = true;
               });
             }),
         SizedBox(
@@ -404,11 +406,10 @@ Widget libButton(Mainmodel model){
         )
       ],
     );
-  }  
-void createText(){
-      
-}
-Future createPdf(String recognizedText) async {
+  }
+
+  void createText() {}
+  Future createPdf(String recognizedText) async {
     date = DateTime.now();
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -424,7 +425,8 @@ Future createPdf(String recognizedText) async {
     file.writeAsBytesSync(await pdf.save());
     print(file);
   }
-void sharePdf(){}
+
+  void sharePdf() {}
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
@@ -438,7 +440,8 @@ void sharePdf(){}
                 alignment: Alignment.center,
                 child: cameraPreview(),
               ),
-              (model.recognizedTxt == " " || (model.recognizedTxt!=" " && retake))
+              (model.recognizedTxt == " " ||
+                      (model.recognizedTxt != " " && retake))
                   ? Container()
                   : model.sumTxt == " "
                       ? new Column(
@@ -446,14 +449,14 @@ void sharePdf(){}
                           children: <Widget>[
                             Expanded(
                                 child: SingleChildScrollView(
-                              child: rectShapeContainer(model.recognizedTxt),
+                              child: rectShapeARContainer(model.recognizedTxt),
                             ))
                           ],
                         )
                       : new Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            rectShapeContainer(model.sumTxt),
+                            rectShapeARContainer(model.sumTxt),
                           ],
                         ),
               Align(
@@ -468,11 +471,11 @@ void sharePdf(){}
                           child: CircularProgressIndicator(
                               valueColor: new AlwaysStoppedAnimation<Color>(
                                   Colors.white)))
-                      : (model.recognizedTxt == " " || (model.recognizedTxt!=" " && retake))
+                      : (model.recognizedTxt == " " ||
+                              (model.recognizedTxt != " " && retake))
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                
                                 pickFromGalley(),
                                 cameraControl(context, model),
 
@@ -480,25 +483,28 @@ void sharePdf(){}
                                 // flashControl()
                               ],
                             )
-                          :model.sumTxt==" "? Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceAround,
-                              children: <Widget>[
-                                retakeButton(model),
-                                summaryButton(model),
-                                addText(model)
-                              ],
-                            ):Row(
-                        
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: <Widget>[
-                                // Icon(Icons.book),
-                                //    Icon(Icons.book),
-                                //       Icon(Icons.book)  
-                                libButton(model),
-                                saveButton(model),
-                                shareButton(model)
-                              ],
-                            ),
+                          : model.sumTxt == " "
+                              ? Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceAround,
+                                  children: <Widget>[
+                                    retakeButton(model),
+                                    summaryButton(model),
+                                    addText(model)
+                                  ],
+                                )
+                              : Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    // Icon(Icons.book),
+                                    //    Icon(Icons.book),
+                                    //       Icon(Icons.book)
+                                    libButton(model),
+                                    saveButton(model),
+                                    shareButton(model)
+                                  ],
+                                ),
                 ),
               )
             ],
@@ -523,7 +529,7 @@ void sharePdf(){}
       });
       model.recognizeText(_image);
       setState(() {
-        retake=false;
+        retake = false;
       });
       // _cropImage(_image.path);
 
@@ -612,16 +618,17 @@ void sharePdf(){}
       });
     }
   }
-   void saveBottomSheet(BuildContext context) {
+
+  void saveBottomSheet(BuildContext context) {
     showModalBottomSheet(
-      isDismissible: true,
+        isDismissible: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
         context: context,
         builder: (BuildContext bc) {
           return Container(
-            padding: EdgeInsets.symmetric(vertical:10,horizontal: 30),
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
             height: 140,
             decoration: BoxDecoration(
                 color: Colors.white,
@@ -629,28 +636,30 @@ void sharePdf(){}
                     topLeft: const Radius.circular(15.0),
                     topRight: const Radius.circular(15.0))),
             child: Column(
-              
               children: [
-                ListTile(title: Text("Save as Text"),leading: Icon(MaterialCommunityIcons.format_text),),
-                ListTile(title:  Text("Save as Pdf"),leading:Icon(MaterialCommunityIcons.file_pdf))
-               
-              
-                  
+                ListTile(
+                  title: Text("Save as Text"),
+                  leading: Icon(MaterialCommunityIcons.format_text),
+                ),
+                ListTile(
+                    title: Text("Save as Pdf"),
+                    leading: Icon(MaterialCommunityIcons.file_pdf))
               ],
             ),
           );
         });
   }
+
   void shareBottomSheet(BuildContext context) {
     showModalBottomSheet(
-      isDismissible: true,
+        isDismissible: true,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(15.0),
         ),
         context: context,
         builder: (BuildContext bc) {
           return Container(
-            padding: EdgeInsets.symmetric(vertical:10,horizontal: 30),
+            padding: EdgeInsets.symmetric(vertical: 10, horizontal: 30),
             height: 140,
             decoration: BoxDecoration(
                 color: Colors.white,
@@ -658,11 +667,14 @@ void sharePdf(){}
                     topLeft: const Radius.circular(15.0),
                     topRight: const Radius.circular(15.0))),
             child: Column(
-              
               children: [
-               ListTile(title: Text("Share as Text"),leading: Icon(MaterialCommunityIcons.format_text),),
-                ListTile(title:  Text("Share as Pdf"),leading:Icon(MaterialCommunityIcons.file_pdf))
-                  
+                ListTile(
+                  title: Text("Share as Text"),
+                  leading: Icon(MaterialCommunityIcons.format_text),
+                ),
+                ListTile(
+                    title: Text("Share as Pdf"),
+                    leading: Icon(MaterialCommunityIcons.file_pdf))
               ],
             ),
           );

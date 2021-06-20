@@ -290,10 +290,10 @@ bool isHeNew=false;
       if (!response['error']) {
         
        if (model.currentUser!=null){
-          Navigator.pushNamed(context, "/cameraPage");
+          Navigator.popAndPushNamed(context, "/cameraPage");
                          
                         }  else{
-                          Navigator.pushNamed(context, "/subscription");
+                          Navigator.popAndPushNamed(context, "/subscription");
                           
                         }
                           

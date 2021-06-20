@@ -9,6 +9,7 @@ import 'package:project/Pages/home.dart';
 import 'package:project/Pages/login.dart';
 import 'package:project/Pages/preview_screen_recognized.dart';
 import 'package:project/Pages/sign_up.dart';
+import 'package:project/Pages/splash_screen.dart';
 import 'package:project/Pages/subscription_page.dart';
 import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
@@ -66,7 +67,8 @@ class MyApp extends StatelessWidget {
 
           // home: CameraScreen(),
           // home: LoginPage(),
-          home: isHeNew==null? SignUp():HomePage(),
+          home: WelcomeSplash(isHeNew),
+          // isHeNew==null? SignUp():HomePage(),
           routes: {
             "/signup": (BuildContext context) => SignUp(model),
             "/login": (BuildContext context) => LoginPage(model),

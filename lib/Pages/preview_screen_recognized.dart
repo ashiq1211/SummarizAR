@@ -3,6 +3,7 @@ import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
 import 'dart:convert';
+import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -42,7 +43,7 @@ class PreviewScreen extends StatefulWidget {
 class _PreviewScreenState extends State<PreviewScreen> {
   int flag = 0;
   var imagePath;
-
+ PDFDocument document;
   File file;
   final pdf = pw.Document();
   DateTime date = DateTime.now();
@@ -96,6 +97,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
         createPdf(value["TextRecognized"]).then((value) {
           print("ashi");
           model.putDoc(file.readAsBytesSync(), date).then((value) {
+            print(value["link"]);
+            loadDocument(value["link"]);
             if (value["error"]) {
               showDialog(
                   context: this.context,
@@ -231,7 +234,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                   ),
                 ],
               ),
-              body: body(model, context)),
+              body:body(model, context)) ,
           onWillPop: () async {
             if (flag == 0) {
               file.delete();
@@ -251,50 +254,56 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
       return showLoadingIndicator(context);
     } else {
-      return Container(
-        child: Container(
-          margin: const EdgeInsets.all(15.0),
-          // adding padding
+      return PDFViewer( document: document ,zoomSteps: 1,);
+      
+      // Container(
+      //   child: Container(
+      //     margin: const EdgeInsets.all(15.0),
+      //     // adding padding
 
-          padding: const EdgeInsets.all(3.0),
-          decoration: BoxDecoration(
-            // adding borders around the widget
-            border: Border.all(
-              color: Color.fromRGBO(64, 75, 96, .9),
-              width: 5.0,
-            ),
-          ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: <Widget>[
-              Expanded(
-                flex: 1,
-                child: SingleChildScrollView(
-                  padding: EdgeInsets.all(10.0),
-                  scrollDirection: Axis.vertical,
-                  child: Text(
-                    model.recognizedTxt,
-                    style: TextStyle(
-                      color: Colors.black,
-                      // fontWeight: FontWeight.bold,
-                      fontSize: 15.0,
-                      // letterSpacing: 3,
-                      // wordSpacing: 2,
-                    ),
+      //     padding: const EdgeInsets.all(3.0),
+      //     decoration: BoxDecoration(
+      //       // adding borders around the widget
+      //       border: Border.all(
+      //         color: Color.fromRGBO(64, 75, 96, .9),
+      //         width: 5.0,
+      //       ),
+      //     ),
+      //     child: Column(
+      //       crossAxisAlignment: CrossAxisAlignment.start,
+      //       children: <Widget>[
+      //         Expanded(
+      //           flex: 1,
+      //           child: SingleChildScrollView(
+      //             padding: EdgeInsets.all(10.0),
+      //             scrollDirection: Axis.vertical,
+      //             child: Text(
+      //               model.recognizedTxt,
+      //               style: TextStyle(
+      //                 color: Colors.black,
+      //                 // fontWeight: FontWeight.bold,
+      //                 fontSize: 15.0,
+      //                 // letterSpacing: 3,
+      //                 // wordSpacing: 2,
+      //               ),
 
-                  ),
-                ),
+      //             ),
+      //           ),
                 
-              ),
+      //         ),
 
-            ],
-          ),
+      //       ],
+      //     ),
 
-        ),
-      );
+      //   ),
+      // );
     }
   }
+loadDocument(url) async {
+    document = await PDFDocument.fromURL(url);
 
+   
+  }
   Widget showLoadingIndicator(BuildContext context) {
     return WillPopScope(
         onWillPop: () async => false,

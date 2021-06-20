@@ -26,56 +26,58 @@ class AppModel extends Model {
   String message = 'Something wrong';
   String userId = " ";
 }
-class SummaryModel extends AppModel{
-  String summaryText=" ";
-  String get sumTxt{
+
+class SummaryModel extends AppModel {
+  String summaryText = " ";
+  String get sumTxt {
     return summaryText;
   }
-   set setSumTxt(str){
-   summaryText=str;
-   notifyListeners();
- }
-  String url="http://192.168.43.117:5000/";
-  Future<Map<String,dynamic>> getSummary(String text)async{
-    loading=true;
+
+  set setSumTxt(str) {
+    summaryText = str;
+    notifyListeners();
+  }
+
+  String url = "http://192.168.43.117:5000/";
+  Future<Map<String, dynamic>> getSummary(String text) async {
+    loading = true;
     notifyListeners();
     print("clicked");
-  var response=await http.post(
-   Uri.parse(url), body: jsonEncode(<String, String>{
-      'actualText':text,
-    }),
-    headers: { 'Content-Type': 'application/json'},
-     
- 
-    
-  );
-  var responseData=json.decode(response.body);
-  summaryText=responseData["summary"];
-  loading=false;
+    var response = await http.post(
+      Uri.parse(url),
+      body: jsonEncode(<String, String>{
+        'actualText': text,
+      }),
+      headers: {'Content-Type': 'application/json'},
+    );
+    var responseData = json.decode(response.body);
+    summaryText = responseData["summary"];
+    loading = false;
     notifyListeners();
-  return{"error":false};
-  // var response=await http.get(Uri.parse(url),headers: {
-      
-  //       'Content-Type': 'application/json'
-  //     });
-  //    print(response);
-  //    print(response.body);
-   
+    return {"error": false};
+    // var response=await http.get(Uri.parse(url),headers: {
+
+    //       'Content-Type': 'application/json'
+    //     });
+    //    print(response);
+    //    print(response.body);
   }
 }
+
 class UserModel extends AppModel {
- Cuser currentUser;
- Cuser get currUser{
-   return currentUser;
- }
+  Cuser currentUser;
+  Cuser get currUser {
+    return currentUser;
+  }
+
   bool get load {
     return loading;
   }
 
   Future<Map<dynamic, dynamic>> signup(String email, String password) async {
     final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
-      var build = await deviceInfoPlugin.androidInfo;
-      String id=build.androidId;
+    var build = await deviceInfoPlugin.androidInfo;
+    String id = build.androidId;
     haserror = false;
     loading = true;
     notifyListeners();
@@ -83,29 +85,30 @@ class UserModel extends AppModel {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      currentUser=Cuser(email: email);
-         final mainReference =
-        FirebaseDatabase.instance.reference().child('$id/Documents');
-mainReference.once().then((snap) {
-  var data = snap.value;
- if(data==null){
-   return;
- }else{
-    
-     data.forEach((key, value) {
-     
-          var newData = {
+      currentUser = Cuser(email: email);
+      final mainReference =
+          FirebaseDatabase.instance.reference().child('$id/Documents');
+      mainReference.once().then((snap) {
+        var data = snap.value;
+        if (data == null) {
+          return;
+        } else {
+          data.forEach((key, value) {
+            var newData = {
               "PDF": value['PDF'],
               "FileName": value['FileName'],
               "Date": value['Date'],
-              "ActualDate": value["ActualDate"]};
-   FirebaseDatabase.instance.reference().child('${FirebaseAuth.instance.currentUser.uid}/Documents').set(newData);
-   mainReference.remove();
-          // notifyListeners();
-        });
- }
-  
-});
+              "ActualDate": value["ActualDate"]
+            };
+            FirebaseDatabase.instance
+                .reference()
+                .child('${FirebaseAuth.instance.currentUser.uid}/Documents')
+                .set(newData);
+            mainReference.remove();
+            // notifyListeners();
+          });
+        }
+      });
       prefs.setString('userId', FirebaseAuth.instance.currentUser.uid);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
@@ -132,9 +135,9 @@ mainReference.once().then((snap) {
   }
 
   Future<Map<dynamic, dynamic>> signin(String email, String password) async {
-     final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
-      var build = await deviceInfoPlugin.androidInfo;
-      String id=build.androidId;
+    final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+    var build = await deviceInfoPlugin.androidInfo;
+    String id = build.androidId;
     haserror = false;
     loading = true;
     notifyListeners();
@@ -144,28 +147,29 @@ mainReference.once().then((snap) {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('userId', FirebaseAuth.instance.currentUser.uid);
-     final mainReference =
-        FirebaseDatabase.instance.reference().child('$id/Documents');
-mainReference.once().then((snap) {
-  var data = snap.value;
- if(data==null){
-   return;
- }else{
-    
-     data.forEach((key, value) {
-     
-          var newData = {
+      final mainReference =
+          FirebaseDatabase.instance.reference().child('$id/Documents');
+      mainReference.once().then((snap) {
+        var data = snap.value;
+        if (data == null) {
+          return;
+        } else {
+          data.forEach((key, value) {
+            var newData = {
               "PDF": value['PDF'],
               "FileName": value['FileName'],
               "Date": value['Date'],
-              "ActualDate": value["ActualDate"]};
-   FirebaseDatabase.instance.reference().child('${FirebaseAuth.instance.currentUser.uid}/Documents').set(newData);
-   mainReference.remove();
-          // notifyListeners();
-        });
- }
-  
-});
+              "ActualDate": value["ActualDate"]
+            };
+            FirebaseDatabase.instance
+                .reference()
+                .child('${FirebaseAuth.instance.currentUser.uid}/Documents')
+                .set(newData);
+            mainReference.remove();
+            // notifyListeners();
+          });
+        }
+      });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         message = ('No user found for that email.');
@@ -196,8 +200,8 @@ mainReference.once().then((snap) {
     print("object");
   }
 
-   Future<Map<dynamic, dynamic>> uploadPack(plan) async {
-     print("object");
+  Future<Map<dynamic, dynamic>> uploadPack(plan) async {
+    print("object");
     haserror = false;
     loading = true;
     notifyListeners();
@@ -206,9 +210,7 @@ mainReference.once().then((snap) {
     final firestoreInstance = FirebaseFirestore.instance;
 
     try {
-   
-         
-       print("hii");
+      print("hii");
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
         message = ('No user found for that email.');
@@ -228,13 +230,12 @@ mainReference.once().then((snap) {
         }
       }
     } catch (e) {}
-     firestoreInstance.collection("$userId/Subsciprtion")
-          .add({
-            'plan':"plan" , // John Doe
-            'days': "company", // Stokes and Sons
-            'age': "age" // 42
-          });
-     print("hiii");
+    firestoreInstance.collection("$userId/Subsciprtion").add({
+      'plan': "plan", // John Doe
+      'days': "company", // Stokes and Sons
+      'age': "age" // 42
+    });
+    print("hiii");
     loading = false;
     notifyListeners();
     print(message);
@@ -242,19 +243,21 @@ mainReference.once().then((snap) {
   }
 }
 
-
 class DocumentModel extends AppModel {
+
   String recognizedText = " ";
-   final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
-  List<Doc> itemList=[];
+  final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
+  List<Doc> itemList =[];
   List<Doc> get doclist {
     return List.from(itemList);
   }
 
- set setRecoTxt(str){
-   recognizedText=str;
-   notifyListeners();
- }
+  set setRecoTxt(str) {
+    
+    recognizedText = str;
+    notifyListeners();
+  }
+
   int isAppend = 0;
 
   int flag = 0;
@@ -307,8 +310,8 @@ class DocumentModel extends AppModel {
       }
       controller = QuillController.basic();
       controller.document.insert(0, recognizedText);
-        recognizedText += "\n";
-        notifyListeners();
+      recognizedText += "\n";
+      notifyListeners();
     } on FirebaseException catch (e) {
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.none) {
@@ -327,19 +330,18 @@ class DocumentModel extends AppModel {
   }
 
   Future<Map<dynamic, dynamic>> putDoc(List<int> asset, DateTime date) async {
-
     String formattedDate = DateFormat('dd-MM-yy kk:mm').format(date);
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    var url;
     userId = prefs.getString("userId");
-    if(userId==null){
+    if (userId == null) {
       if (Platform.isAndroid) {
         var build = await deviceInfoPlugin.androidInfo;
         var deviceName = build.model;
         var deviceVersion = build.version.toString();
-        var identifier = build.androidId;  //UUID for Android
-        userId=identifier;
+        var identifier = build.androidId; //UUID for Android
+        userId = identifier;
       }
-      
     }
     final mainReference =
         FirebaseDatabase.instance.reference().child('$userId/Documents');
@@ -372,7 +374,7 @@ class DocumentModel extends AppModel {
       UploadTask uploadTask = reference.putData(asset);
 
       var imageUrl = await (await uploadTask).ref.getDownloadURL();
-      final url = imageUrl.toString();
+       url = imageUrl.toString();
       print(url);
       documentFileUpload(url, date.toString());
     } on FirebaseException catch (e) {
@@ -386,7 +388,7 @@ class DocumentModel extends AppModel {
     loading = false;
     notifyListeners();
     print(message);
-    return {"message": message, "error": haserror};
+    return {"message": message, "error": haserror,"link":url};
   }
 
   Future<void> refreshDoc() async {
@@ -397,29 +399,27 @@ class DocumentModel extends AppModel {
     print(itemList.length);
     haserror = false;
     loading = true;
-    
+
     notifyListeners();
-  
+
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId = prefs.getString("userId");
-     if(userId==null){
+    if (userId == null) {
       if (Platform.isAndroid) {
         var build = await deviceInfoPlugin.androidInfo;
         var deviceName = build.model;
         var deviceVersion = build.version.toString();
-        var identifier = build.androidId;  //UUID for Android
-        userId=identifier;
-      }}
+        var identifier = build.androidId; //UUID for Android
+        userId = identifier;
+      }
+    }
 
     final mainReference =
         FirebaseDatabase.instance.reference().child('$userId/Documents');
 
-
     try {
-       itemList = [];
+      itemList = [];
       mainReference.once().then((DataSnapshot snap) {
-
-     
         if (snap.value == null) {
           loading = false;
           notifyListeners();
@@ -446,7 +446,6 @@ class DocumentModel extends AppModel {
         print("kooy");
         loading = false;
 
-
         notifyListeners();
         print(message);
       });
@@ -463,13 +462,14 @@ class DocumentModel extends AppModel {
       notifyListeners();
     }
 
-      loading = false;
+    loading = false;
 
-      notifyListeners();
+    notifyListeners();
     print("sdbhds");
     print(haserror);
     return {"message": message, "error": haserror};
   }
+
   Future<Map<dynamic, dynamic>> updateDoc() async {
     itemList = [];
     haserror = false;
@@ -526,6 +526,7 @@ class DocumentModel extends AppModel {
     print(haserror);
     return {"message": message, "error": haserror};
   }
+
   Future<Map<dynamic, dynamic>> deleteDoc() async {
     itemList = [];
     haserror = false;

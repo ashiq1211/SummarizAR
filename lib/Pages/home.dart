@@ -105,7 +105,7 @@ class _HomePageState extends State<HomePage> {
                   model.setRecoTxt = " ";
                   model.setSumTxt = " ";
                   // final pickedFile = await picker.getImage(source: ImageSource.camera);
-                  Navigator.of(context).pushNamed("/cameraPage");
+                  Navigator.of(context).popAndPushNamed("/cameraPage");
                 },
               ),
               appBar: AppBar(
@@ -188,34 +188,35 @@ class _HomePageState extends State<HomePage> {
                                 },
                               ),
                             ),
-                  model.load
-                      ? Center(child: LoadingWidget())
-                      : model.doclist.length == 0
-                          ? Center(
-                              child: Text(
-                              "Nothing Found!!. \n Add some Docs.",
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black,
-                              )),
-                            ))
-                          : Container(
-                              color: Colors.black,
-                              child: ListView.separated(
-                                separatorBuilder: (_, __) => Divider(
-                                  height: 10.0,
-                                  thickness: 0.7,
-                                ),
-                                padding: const EdgeInsets.all(16.0),
-                                itemCount: model.doclist.length,
-                                physics: BouncingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return ListTileWidget(model.doclist[index]);
-                                },
-                              ),
-                            ),
+                            Center(child:Text("ddbdbd"))
+                  // model.load
+                  //     ? Center(child: LoadingWidget())
+                  //     : model.doclist.length == 0
+                  //         ? Center(
+                  //             child: Text(
+                  //             "Nothing Found!!. \n Add some Docs.",
+                  //             style: GoogleFonts.lato(
+                  //                 textStyle: TextStyle(
+                  //               fontSize: 14.0,
+                  //               fontWeight: FontWeight.w700,
+                  //               color: Colors.black,
+                  //             )),
+                  //           ))
+                  //         : Container(
+                  //             color: Colors.black,
+                  //             child: ListView.separated(
+                  //               separatorBuilder: (_, __) => Divider(
+                  //                 height: 10.0,
+                  //                 thickness: 0.7,
+                  //               ),
+                  //               padding: const EdgeInsets.all(16.0),
+                  //               itemCount: model.doclist.length,
+                  //               physics: BouncingScrollPhysics(),
+                  //               itemBuilder: (context, index) {
+                  //                 return ListTileWidget(model.doclist[index]);
+                  //               },
+                  //             ),
+                  //           ),
                 ],
               ),
             ),

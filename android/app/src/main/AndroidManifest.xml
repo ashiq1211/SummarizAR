@@ -6,7 +6,7 @@
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"></uses-permission>
    <application
         android:usesCleartextTraffic="true"
-        android:label="SummarizAR"
+        android:label="Gist"
         android:icon="@mipmap/launcher_icon">
 
         android:requestLegacyExternalStorage="true">

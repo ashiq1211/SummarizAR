@@ -1,17 +1,21 @@
 import 'dart:io';
+import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:pdf/pdf.dart';
 import 'package:project/Model/doc.dart';
 import 'package:project/Pages/settings.dart';
+import 'package:project/Widget/loading.dart';
 import 'package:share/share.dart';
 import 'dart:io' as io;
 import 'package:http/http.dart' as http;
-import 'package:syncfusion_flutter_pdfviewer/pdfviewer.dart';
+
 
 class PdfPreview extends StatefulWidget {
   final Doc doc;
+  
   PdfPreview([this.doc]);
   @override
   _PdfPreviewState createState() => _PdfPreviewState();
@@ -30,11 +34,18 @@ class _PdfPreviewState extends State<PdfPreview> {
   //     });
   //   }
   // }
-
+ PDFDocument document;
+ bool load=true;
   Future<void> _signOut(BuildContext context) async {
     await FirebaseAuth.instance.signOut().then((value) {
       Navigator.pushReplacementNamed(context, "/login");
     });
+  }
+@override
+  void initState() {
+    super.initState();
+      print(widget.doc.link);
+    loadDocument();
   }
 
   @override
@@ -83,10 +94,18 @@ class _PdfPreviewState extends State<PdfPreview> {
           ),
         ],
       ),
-      body: SfPdfViewer.network(widget.doc.link),
+      body:load?Center(child:LoadingWidget()) :Container(child:PDFViewer(document: document ,)) ,
     );
   }
+loadDocument() async {
+  print(widget.doc.link);
+    document = await PDFDocument.fromURL(widget.doc.link);
+    setState(() {
+      load=false;
+    });
 
+   
+  }
   void _settingModalBottomSheet(context) {
     showModalBottomSheet(
         shape: RoundedRectangleBorder(

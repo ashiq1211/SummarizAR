@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:project/Pages/login.dart';
 import 'package:project/Pages/sign_up.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:share/share.dart';
 
 class WelcomePage extends StatefulWidget {
   @override
@@ -16,6 +17,7 @@ class _WelcomePageState extends State<WelcomePage> {
     return Padding(
       padding: const EdgeInsets.all(8.0),
       child: Text(
+      
         'Welcome to SummarizAR',
         style: GoogleFonts.lato(
             textStyle: TextStyle(
