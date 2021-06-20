@@ -191,7 +191,7 @@ class _HomePageState extends State<HomePage> {
                           
                     model.load
                       ? Center(child:CircularProgressIndicator())
-                      : model.doclist.length != 0
+                      : model.getsumlist.length != 0
                           ? RefreshIndicator(
           color: Colors.black,
           onRefresh: model.refreshDoc,
