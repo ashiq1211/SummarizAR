@@ -3,11 +3,13 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_downloader/flutter_downloader.dart';
+import 'package:project/Pages/about.dart';
 import 'package:project/Pages/cam_screen.dart';
 import 'package:project/Pages/edit_text.dart';
 import 'package:project/Pages/home.dart';
 import 'package:project/Pages/login.dart';
 import 'package:project/Pages/preview_screen_recognized.dart';
+import 'package:project/Pages/settings.dart';
 import 'package:project/Pages/sign_up.dart';
 import 'package:project/Pages/splash_screen.dart';
 import 'package:project/Pages/subscription_page.dart';
@@ -20,12 +22,11 @@ import 'Pages/pdf_preview.dart';
 import 'Pages/welcome_page.dart';
 
 bool isAuth = false;
- bool isHeNew;
+bool isHeNew;
 void main() async {
-
   //  await FirebaseAuth.instance.signOut();
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   await FlutterDownloader.initialize(
       debug: true // optional: set false to disable printing logs to console
       );
@@ -33,32 +34,26 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-   isHeNew=prefs.getBool("isHeNew");
+  isHeNew = prefs.getBool("isHeNew");
   FirebaseAuth.instance.authStateChanges().listen((User user) {
     if (user == null) {
       isAuth = false;
       prefs.setString('userId', "noUser");
     } else {
       isAuth = true;
-       prefs.setString('userId', user.uid);
+      prefs.setString('userId', user.uid);
     }
   });
-    
-runApp(MyApp());
-  
+
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
- 
- final Mainmodel model = Mainmodel();
+  final Mainmodel model = Mainmodel();
 
   @override
   Widget build(BuildContext context) {
-     
-  
-
-    return ScopedModel< Mainmodel>(
-         
+    return ScopedModel<Mainmodel>(
         model: model,
         child: MaterialApp(
           theme: ThemeData(
@@ -74,10 +69,12 @@ class MyApp extends StatelessWidget {
             "/login": (BuildContext context) => LoginPage(model),
             "/cameraPage": (BuildContext context) => CameraScreen(model),
             "/homePage": (BuildContext context) => HomePage(model),
-             "/preview": (BuildContext context) => PreviewScreen(model),
-             "/previewPdf": (BuildContext context) => PdfPreview(),
-              "/subscription": (BuildContext context) => SubscriptionPage(),
-               "/editText": (BuildContext context) => EditText(),
+            "/preview": (BuildContext context) => PreviewScreen(model),
+            "/previewPdf": (BuildContext context) => PdfPreview(),
+            "/subscription": (BuildContext context) => SubscriptionPage(),
+            "/editText": (BuildContext context) => EditText(),
+            "/about": (BuildContext context) => About(),
+            "/settings": (BuildContext context) => Settings(),
           },
         ));
   }

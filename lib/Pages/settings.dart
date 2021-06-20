@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:path/path.dart';
 import 'package:settings_ui/settings_ui.dart';
 import 'package:flutter/foundation.dart';
 
@@ -7,10 +8,9 @@ class Settings extends StatelessWidget {
   @override
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  String userEmail;
+  String userName = "Please tell us your name";
   void getCurrentUserEmail() async {
     final user = await _auth.currentUser;
-    userEmail = user.email;
   }
 
   Widget build(BuildContext context) {
@@ -29,10 +29,9 @@ class Settings extends StatelessWidget {
           SettingsSection(
             tiles: [
               SettingsTile(
-                
                 switchActiveColor: Colors.grey,
                 titleTextStyle: TextStyle(color: Colors.grey[400]),
-                title: 'Swathy M',
+                title: userName,
                 subtitleTextStyle: TextStyle(color: Colors.grey[600]),
                 subtitle: 'Free User',
                 leading: CircleAvatar(
@@ -57,46 +56,28 @@ class Settings extends StatelessWidget {
             title: 'Account',
             tiles: [
               SettingsTile(
-                  titleTextStyle: TextStyle(color: Colors.grey[400]),
-                  title: 'Phone number',
-                  leading: Icon(Icons.phone, color: Colors.grey[400])),
-              SettingsTile(
-                  titleTextStyle: TextStyle(color: Colors.grey[400]),
-                  title: "Email",
-                  subtitleTextStyle: TextStyle(color: Colors.grey[600]),
-                  subtitle: _auth.currentUser.email,
-                  leading: Icon(Icons.email, color: Colors.grey[400])),
+                titleTextStyle: TextStyle(color: Colors.grey[400]),
+                title: 'About gist',
+                leading: Icon(Icons.app_registration, color: Colors.grey[400]),
+                onPressed: (Context) {
+                  Navigator.of(context).pushNamed("/about");
+                },
+              ),
               SettingsTile(
                   titleTextStyle: TextStyle(color: Colors.grey[400]),
                   title: 'Sign out',
                   leading: Icon(Icons.exit_to_app, color: Colors.grey[400])),
+              SettingsTile(
+                titleTextStyle: TextStyle(color: Colors.grey[400]),
+                title: 'Subscriptions',
+                leading: Icon(Icons.subscriptions, color: Colors.grey[400]),
+              ),
             ],
           ),
           SettingsSection(
             titleTextStyle: TextStyle(color: Colors.grey[400]),
             title: 'Security',
             tiles: [
-              SettingsTile(
-                titleTextStyle: TextStyle(color: Colors.grey[400]),
-                title: 'Lock app in background',
-                leading: Icon(Icons.phonelink_lock, color: Colors.grey[400]),
-                // switchValue: lockInBackground,
-                // onToggle: (bool value) {
-                //   setState(() {
-                //     lockInBackground = value;
-                //     notificationsEnabled = value;
-                //   });
-                // },
-              ),
-              SettingsTile(
-                titleTextStyle: TextStyle(color: Colors.grey[400]),
-                title: 'Use fingerprint',
-                subtitleTextStyle: TextStyle(color: Colors.grey[600]),
-                subtitle: 'Allow application to access stored fingerprint IDs.',
-                leading: Icon(Icons.fingerprint, color: Colors.grey[400]),
-                // onToggle: (bool value) {},
-                // switchValue: false
-              ),
               SettingsTile(
                 titleTextStyle: TextStyle(color: Colors.grey[400]),
                 title: 'Change password',

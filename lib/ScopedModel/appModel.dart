@@ -244,16 +244,14 @@ class UserModel extends AppModel {
 }
 
 class DocumentModel extends AppModel {
-
   String recognizedText = " ";
   final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
-  List<Doc> itemList =[];
+  List<Doc> itemList = [];
   List<Doc> get doclist {
     return List.from(itemList);
   }
 
   set setRecoTxt(str) {
-    
     recognizedText = str;
     notifyListeners();
   }
@@ -374,7 +372,7 @@ class DocumentModel extends AppModel {
       UploadTask uploadTask = reference.putData(asset);
 
       var imageUrl = await (await uploadTask).ref.getDownloadURL();
-       url = imageUrl.toString();
+      url = imageUrl.toString();
       print(url);
       documentFileUpload(url, date.toString());
     } on FirebaseException catch (e) {
@@ -388,7 +386,7 @@ class DocumentModel extends AppModel {
     loading = false;
     notifyListeners();
     print(message);
-    return {"message": message, "error": haserror,"link":url};
+    return {"message": message, "error": haserror, "link": url};
   }
 
   Future<void> refreshDoc() async {
@@ -413,7 +411,7 @@ class DocumentModel extends AppModel {
         userId = identifier;
       }
     }
-
+    print(userId);
     final mainReference =
         FirebaseDatabase.instance.reference().child('$userId/Documents');
 

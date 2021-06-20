@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
+import 'package:path/path.dart';
 
 class MainDrawer extends StatelessWidget {
   const MainDrawer({Key key}) : super(key: key);
@@ -14,10 +16,13 @@ class MainDrawer extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               CircleAvatar(
-                
                 backgroundColor: Colors.grey[700],
                 radius: 40.0,
-                child: Icon(Icons.person, size: 37,color: Colors.white,),
+                child: Icon(
+                  Icons.person,
+                  size: 37,
+                  color: Colors.white,
+                ),
               ),
               SizedBox(
                 height: 5.0,
@@ -32,26 +37,24 @@ class MainDrawer extends StatelessWidget {
               SizedBox(
                 height: 20.0,
               ),
-        SizedBox(width: MediaQuery.of(context).size.width/2,
-          child:ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          shape: new RoundedRectangleBorder(
-                            borderRadius: new BorderRadius.circular(30.0),
-                            side: BorderSide(color: Colors.black)
-                          ),
-                          primary: Colors.white, // background
-                          onPrimary: Colors.black, // foreground
-                        ),
-                        onPressed: () {
-                         
-                         
-                          Navigator.of(context).pop();
-                          
-                 Navigator.pushNamed(context, "/cameraPage");
-                        } ,
-                        child: Text('Sign out'),
-                      ), )
-              
+              SizedBox(
+                width: MediaQuery.of(context).size.width / 2,
+                child: ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    shape: new RoundedRectangleBorder(
+                        borderRadius: new BorderRadius.circular(30.0),
+                        side: BorderSide(color: Colors.black)),
+                    primary: Colors.white, // background
+                    onPrimary: Colors.black, // foreground
+                  ),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+
+                    Navigator.pushNamed(context, "/cameraPage");
+                  },
+                  child: Text('Sign out'),
+                ),
+              )
             ],
           ),
         ),
@@ -61,13 +64,31 @@ class MainDrawer extends StatelessWidget {
       ),
       //Now let's Add the button for the Menu
       //and let's copy that and modify it
-      ListTile(
-        onTap: () {},
+      ExpansionTile(
+        childrenPadding: EdgeInsets.fromLTRB(20, 2, 2, 2),
         leading: Icon(
           Icons.library_books,
           color: Colors.black,
         ),
         title: Text("Your library"),
+        children: [
+          ListTile(
+            onTap: () {},
+            leading: Icon(
+              Octicons.note,
+              color: Colors.black,
+            ),
+            title: Text("Summary"),
+          ),
+          ListTile(
+            onTap: () {},
+            leading: Icon(
+              Icons.pages_outlined,
+              color: Colors.black,
+            ),
+            title: Text("Actual Text"),
+          ),
+        ],
       ),
 
       ListTile(
@@ -89,7 +110,9 @@ class MainDrawer extends StatelessWidget {
       ),
 
       ListTile(
-        onTap: () {},
+        onTap: () {
+          Navigator.of(context).pushNamed("/settings");
+        },
         leading: Icon(
           Icons.settings,
           color: Colors.black,

@@ -148,16 +148,18 @@ class _HomePageState extends State<HomePage> {
                       color: Color.fromRGBO(64, 75, 96, .9),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      _settingModalBottomSheet(context);
-                    },
-                    icon: new Icon(Icons.more_vert,
-                        color: Color.fromRGBO(64, 75, 96, .9)),
-                  ),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     _settingModalBottomSheet(context);
+                  //   },
+                  //   icon: new Icon(Icons.more_vert,
+                  //       color: Color.fromRGBO(64, 75, 96, .9)),
+                  // ),
                 ],
               ),
-              drawer: Drawer(child: MainDrawer(),),
+              drawer: Drawer(
+                child: MainDrawer(),
+              ),
               body: TabBarView(
                 children: [
                   model.load
@@ -173,10 +175,7 @@ class _HomePageState extends State<HomePage> {
                                 color: Colors.black,
                               )),
                             ))
-                          : 
-                         
-                          
-                          Scaffold(
+                          : Scaffold(
                               backgroundColor: Colors.black,
                               body: ListView.separated(
                                 separatorBuilder: (_, __) => Divider(
@@ -191,7 +190,7 @@ class _HomePageState extends State<HomePage> {
                                 },
                               ),
                             ),
-                            Center(child:Text("ddbdbd"))
+                  Center(child: Text("ddbdbd"))
                   // model.load
                   //     ? Center(child: LoadingWidget())
                   //     : model.doclist.length == 0
