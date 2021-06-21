@@ -8,6 +8,7 @@ import 'package:project/Pages/cam_screen.dart';
 import 'package:project/Pages/edit_text.dart';
 import 'package:project/Pages/home.dart';
 import 'package:project/Pages/login.dart';
+import 'package:project/Pages/notification.dart';
 import 'package:project/Pages/preview_screen_recognized.dart';
 import 'package:project/Pages/settings.dart';
 import 'package:project/Pages/sign_up.dart';
@@ -69,6 +70,9 @@ class MyApp extends StatelessWidget {
             "/signup": (BuildContext context) => SignUp(model),
             "/login": (BuildContext context) => LoginPage(model),
             "/cameraPage": (BuildContext context) => CameraScreen(model),
+
+            "/notification":(BuildContext context) => NotificationPage(),
+
             "/homePage": (BuildContext context) => HomePage(),
             "/preview": (BuildContext context) => PreviewScreen(model),
             "/previewPdf": (BuildContext context) => PdfPreview(),

@@ -120,7 +120,7 @@ class _CameraScreenState extends State<CameraScreen> {
     );
   }
 
-  Widget pickFromGalley() {
+  Widget pickFromGalley(model) {
     if (cameras == null || cameras.isEmpty) {
       return Spacer();
     }
@@ -131,7 +131,7 @@ class _CameraScreenState extends State<CameraScreen> {
           child: Column(children: [
             IconButton(
               onPressed: () {
-                pickImage();
+                pickImage(model);
               },
               icon: Icon(
                 Ionicons.md_image,
@@ -512,7 +512,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           ? Row(
                               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                               children: <Widget>[
-                                pickFromGalley(),
+                                pickFromGalley(model),
                                 cameraControl(context, model),
 
                                 libraryButton()
@@ -603,7 +603,7 @@ Widget addNew(Mainmodel model){
 
   void showCameraException(e) {}
 
-  pickImage() async {
+  pickImage(model) async {
     final pickedFile = await picker.getImage(
       source: ImageSource.gallery,
       maxWidth: 1800,
@@ -615,10 +615,10 @@ Widget addNew(Mainmodel model){
     //   height: 300,
     // );
     print("image picked");
-    _cropImage(pickedFile.path);
+    _cropImage(pickedFile.path,model);
   }
 
-  _cropImage(filePath) async {
+   _cropImage(filePath,Mainmodel model) async {
     final name = DateTime.now();
     print("started");
     File croppedImage = await ImageCropper.cropImage(
@@ -645,8 +645,9 @@ Widget addNew(Mainmodel model){
             ],
       androidUiSettings: AndroidUiSettings(
           toolbarTitle: 'Cropper',
-          toolbarColor: Colors.deepOrange,
-          toolbarWidgetColor: Colors.white,
+          toolbarColor: Colors.white30,
+          backgroundColor: Colors.black,
+          toolbarWidgetColor: Colors.black,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false),
     );
@@ -660,7 +661,7 @@ Widget addNew(Mainmodel model){
             this.context,
             MaterialPageRoute(
                 builder: (context) => PreviewScreen(
-                      widget._model,
+                      model,
                       _image,
                       "$name.png",
                     )),
@@ -672,6 +673,7 @@ Widget addNew(Mainmodel model){
       });
     }
   }
+
 
   void saveBottomSheet(BuildContext context) {
     showModalBottomSheet(

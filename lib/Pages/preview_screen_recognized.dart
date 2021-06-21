@@ -6,8 +6,10 @@ import 'dart:convert';
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:firebase_storage/firebase_storage.dart';
+import 'package:floating_action_row/floating_action_row.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:path/path.dart';
 import 'package:pdf/pdf.dart';
@@ -49,7 +51,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
   final pdf = pw.Document();
   DateTime date = DateTime.now();
   final picker = ImagePicker();
-
+ File _image;
   Future createPdf(String recognizedText) async {
     date = DateTime.now();
     pdf.addPage(pw.Page(
@@ -135,15 +137,41 @@ class _PreviewScreenState extends State<PreviewScreen> {
         builder: (BuildContext context, Widget child, Mainmodel model) {
       return WillPopScope(
           child: Scaffold(
+            floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
 
               // floatingActionButtonLocation:
               //     FloatingActionButtonLocation.centerDocked,
-              floatingActionButton: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  FloatingActionButton.extended(
-                    heroTag: "btn1",
-                    onPressed: () {
+              floatingActionButton: Padding(padding: EdgeInsets.symmetric(vertical: 35),
+              child:                     FloatingActionRow(
+                    
+                
+    color: Colors.white,
+    children: <Widget>[
+        
+        
+        FloatingActionRowButton(
+           
+               
+                    icon: Icon(
+                     Feather.file_plus,color: Colors.black
+                    ),
+                    
+                    onTap: () async {
+                      if(model.load){
+                        return ;
+                      }
+                      model.isAppend = 1;
+                      pickImage(model);
+                     
+                      
+                      
+           
+                    },
+        ),
+        FloatingActionRowDivider(color: Colors.black,),
+        FloatingActionRowButton(
+           
+                    onTap: () {
                       if (model.load) {
                         return;
                       }
@@ -153,33 +181,13 @@ class _PreviewScreenState extends State<PreviewScreen> {
                           MaterialPageRoute(
                               builder: (context) => SummaryPage(imagePath)));
                     },
-                    icon: Icon(Octicons.note),
-                    label: Text("Summary"),
-                    backgroundColor: Theme.of(context).primaryColor,
-                  ),
-                  SizedBox(
-                    width: 50,
-                  ),
-                  FloatingActionButton(
-                    heroTag: "btn2",
-                    child: Icon(
-                     Feather.file_plus,
-                    ),
-                    backgroundColor: Theme.of(context).primaryColor,
-                    onPressed: () async {
-                      if(model.load){
-                        return ;
-                      }
-                      model.isAppend = 1;
-                      final pickedFile = await picker.getImage(source: ImageSource.gallery);
-                      model.recognizeText(File(pickedFile.path));
-                      
-           
-                    },
-                  )
-                ],
-
-              ),
+                    icon: Icon(Octicons.note,color: Colors.black,),
+                    
+        ),
+    ],
+),),
+   
+              
               appBar: AppBar(
                 leading: IconButton(
                   onPressed: () {
@@ -266,7 +274,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
             // adding borders around the widget
             border: Border.all(
               color: Color.fromRGBO(64, 75, 96, .9),
-              width: 5.0,
+              width: 2.0,
             ),
           ),
           child: Column(
@@ -300,9 +308,69 @@ class _PreviewScreenState extends State<PreviewScreen> {
     }
   }
 // loadDocument(url) async {
-   
+   pickImage(Mainmodel model) async {
+    final pickedFile = await picker.getImage(
+      source: ImageSource.gallery,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    File img = File(pickedFile.path);
+    // return Container(
+    //   child: img == Null ? Text("No image selected yet") : Image.file(img),
+    //   height: 300,
+    // );
+    print("image picked");
+    _cropImage(pickedFile.path,model);
+  }
 
-   
+    _cropImage(filePath,Mainmodel model) async {
+    final name = DateTime.now();
+    print("started");
+    File croppedImage = await ImageCropper.cropImage(
+      sourcePath: filePath,
+      maxWidth: 1080,
+      maxHeight: 1080,
+      aspectRatioPresets: Platform.isAndroid
+          ? [
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio16x9
+            ]
+          : [
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio5x3,
+              CropAspectRatioPreset.ratio5x4,
+              CropAspectRatioPreset.ratio7x5,
+              CropAspectRatioPreset.ratio16x9
+            ],
+      androidUiSettings: AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: Colors.white30,
+          backgroundColor: Colors.black,
+          toolbarWidgetColor: Colors.black,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false),
+    );
+    print("suceess");
+    if (croppedImage != null) {
+      // File imageFile = croppedImage;
+      setState(() {
+        if (croppedImage != null) {
+          _image = File(croppedImage.path);
+         model.recognizeText(_image);
+        } else {
+          print('No image selected.');
+        }
+      });
+    }
+  }
+
+
 //   }
   Widget showLoadingIndicator(BuildContext context) {
     return WillPopScope(
