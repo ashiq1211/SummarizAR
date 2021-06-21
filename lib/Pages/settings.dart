@@ -71,6 +71,9 @@ class Settings extends StatelessWidget {
                 titleTextStyle: TextStyle(color: Colors.grey[400]),
                 title: 'Subscriptions',
                 leading: Icon(Icons.subscriptions, color: Colors.grey[400]),
+                onPressed: (Context) {
+                  Navigator.of(context).pushNamed("/sub");
+                },
               ),
             ],
           ),

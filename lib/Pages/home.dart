@@ -206,8 +206,9 @@ int currIndex=0;
     }
   }
 
-  Widget tab2(Mainmodel model){
+  Widget tab2(Mainmodel model) {
     print(model.load);
+
    if( model.load==true){
 
      return Center(child:CircularProgressIndicator(color: Colors.white,));
@@ -239,6 +240,7 @@ return Center(
                               }
                       
                             
+
   }
   void updateSearchQuery(String newQuery) {
 if(newQuery!=" "){setState(() {
@@ -350,6 +352,7 @@ Widget _buildSearchField() {
           ),
           appBar: AppBar(
             bottom: TabBar(
+
               onTap: (index) {
         print(index);
         setState(() {
@@ -399,8 +402,9 @@ Widget _buildSearchField() {
                       });
                     },
                         color: Color.fromRGBO(64, 75, 96, .9)),
+
                   ),
-                  Padding(
+                 Padding(
                     padding: EdgeInsets.all(8.0),
                     child: IconButton(
                       onPressed: () {
@@ -412,6 +416,7 @@ Widget _buildSearchField() {
                       color: Color.fromRGBO(64, 75, 96, .9),
                     ),
                   ),
+
                   // IconButton(
                   //   onPressed: () {
                   //     _settingModalBottomSheet(context);
@@ -430,70 +435,54 @@ leading:_isSearching ?  BackButton(onPressed:(){
               ),
               
           drawer:_isSearching?null: Drawer(
+
             child: MainDrawer(),
           ),
-          
-              body: TabBarView(
-                children: [
+          body: TabBarView(
+            children: [
+              RefreshIndicator(
+                  color: Colors.black,
+                  onRefresh: model.refreshDoc,
+                  child: Scaffold(
+                      backgroundColor: Colors.black, body: tab1(model))),
+              RefreshIndicator(
+                  color: Colors.black,
+                  onRefresh: model.refreshDoc,
+                  child: Scaffold(
+                      backgroundColor: Colors.black, body: tab2(model)))
 
-                 
-                           RefreshIndicator(
-          color: Colors.black,
-          onRefresh: model.refreshDoc,
-          child:Scaffold(
-                              backgroundColor: Colors.black,
-                              body: tab1(model)
-                       
-                            )
-                            
-                            )
-                          ,
-                           RefreshIndicator(
-          color: Colors.black,
-          onRefresh: model.refreshDoc,
-          child:Scaffold(
-                              backgroundColor: Colors.black,
-                              body: tab2(model)
-                       
-                            )
-                            
-                            )
-                         
-                          
-                    
-                  // model.load
-                  //     ? Center(child: LoadingWidget())
-                  //     : model.doclist.length == 0
-                  //         ? Center(
-                  //             child: Text(
-                  //             "Nothing Found!!. \n Add some Docs.",
-                  //             style: GoogleFonts.lato(
-                  //                 textStyle: TextStyle(
-                  //               fontSize: 14.0,
-                  //               fontWeight: FontWeight.w700,
-                  //               color: Colors.black,
-                  //             )),
-                  //           ))
-                  //         : Container(
-                  //             color: Colors.black,
-                  //             child: ListView.separated(
-                  //               separatorBuilder: (_, __) => Divider(
-                  //                 height: 10.0,
-                  //                 thickness: 0.7,
-                  //               ),
-                  //               padding: const EdgeInsets.all(16.0),
-                  //               itemCount: model.doclist.length,
-                  //               physics: BouncingScrollPhysics(),
-                  //               itemBuilder: (context, index) {
-                  //                 return ListTileWidget(model.doclist[index]);
-                  //               },
-                  //             ),
-                  //           ),
-                ],
-              ),
-            ),
-          );
-
+              // model.load
+              //     ? Center(child: LoadingWidget())
+              //     : model.doclist.length == 0
+              //         ? Center(
+              //             child: Text(
+              //             "Nothing Found!!. \n Add some Docs.",
+              //             style: GoogleFonts.lato(
+              //                 textStyle: TextStyle(
+              //               fontSize: 14.0,
+              //               fontWeight: FontWeight.w700,
+              //               color: Colors.black,
+              //             )),
+              //           ))
+              //         : Container(
+              //             color: Colors.black,
+              //             child: ListView.separated(
+              //               separatorBuilder: (_, __) => Divider(
+              //                 height: 10.0,
+              //                 thickness: 0.7,
+              //               ),
+              //               padding: const EdgeInsets.all(16.0),
+              //               itemCount: model.doclist.length,
+              //               physics: BouncingScrollPhysics(),
+              //               itemBuilder: (context, index) {
+              //                 return ListTileWidget(model.doclist[index]);
+              //               },
+              //             ),
+              //           ),
+            ],
+          ),
+        ),
+      );
     });
   }
 

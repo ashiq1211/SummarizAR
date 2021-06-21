@@ -122,12 +122,14 @@ class _MainDrawerState extends State<MainDrawer> {
       ),
 
       ListTile(
-        onTap: () {},
         leading: Icon(
           Icons.notification_important,
           color: Colors.black,
         ),
         title: Text("Notifications"),
+        onTap: () {
+          Navigator.of(context).pushNamed("/notification");
+        },
       ),
 
       ListTile(
