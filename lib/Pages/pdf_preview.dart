@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_icons/flutter_icons.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart';
@@ -114,7 +115,7 @@ loadDocument() async {
         context: context,
         builder: (BuildContext bc) {
           return Container(
-            height: 280,
+            height: 230,
             decoration: BoxDecoration(
                 color: Colors.grey[850],
                 borderRadius: new BorderRadius.only(
@@ -130,26 +131,26 @@ loadDocument() async {
                 new Wrap(
                   children: <Widget>[
                     new ListTile(
-                        leading: new Icon(Icons.image, color: Colors.white),
+                        leading: new Icon(Icons.delete, color: Colors.white),
                         title: new Text(
-                          'Import Image',
+                          "Delete",
                           style: TextStyle(
                               color: Colors.white, letterSpacing: 0.8),
                         ),
                         onTap: () => {}),
                     new ListTile(
-                      leading: new Icon(Icons.star, color: Colors.white),
+                      leading: new Icon(MaterialCommunityIcons.rename_box, color: Colors.white),
                       title: new Text(
-                        'Premium',
+                        'Rename',
                         style:
                             TextStyle(color: Colors.white, letterSpacing: 0.8),
                       ),
                       onTap: () => {},
                     ),
                     new ListTile(
-                      leading: new Icon(Icons.settings, color: Colors.white),
+                      leading: new Icon(Octicons.note, color: Colors.white),
                       title: new Text(
-                        'Settings',
+                        'Summary',
                         style:
                             TextStyle(color: Colors.white, letterSpacing: 0.8),
                       ),
@@ -159,15 +160,7 @@ loadDocument() async {
                               builder: (context) => Settings(),
                               fullscreenDialog: true)),
                     ),
-                    new ListTile(
-                      leading: new Icon(Icons.logout, color: Colors.white),
-                      title: new Text(
-                        'Logout',
-                        style:
-                            TextStyle(color: Colors.white, letterSpacing: 0.8),
-                      ),
-                      onTap: () => _signOut(context),
-                    ),
+                    
                   ],
                 ),
               ],

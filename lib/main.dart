@@ -69,7 +69,7 @@ class MyApp extends StatelessWidget {
             "/login": (BuildContext context) => LoginPage(model),
             "/cameraPage": (BuildContext context) => CameraScreen(model),
 
-            "/homePage": (BuildContext context) => HomePage(model),
+            "/homePage": (BuildContext context) => HomePage(),
             "/preview": (BuildContext context) => PreviewScreen(model),
             "/previewPdf": (BuildContext context) => PdfPreview(),
             "/subscription": (BuildContext context) => SubscriptionPage(),

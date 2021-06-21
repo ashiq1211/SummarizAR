@@ -121,8 +121,9 @@ pickImage(Mainmodel model) async {
             ],
       androidUiSettings: AndroidUiSettings(
           toolbarTitle: 'Cropper',
-          toolbarColor: Colors.deepOrange,
-          toolbarWidgetColor: Colors.white,
+          toolbarColor: Colors.white30,
+          backgroundColor: Colors.black,
+          toolbarWidgetColor: Colors.black,
           initAspectRatio: CropAspectRatioPreset.original,
           lockAspectRatio: false),
     );
@@ -177,6 +178,40 @@ pickImage(Mainmodel model) async {
                                 physics: BouncingScrollPhysics(),
                                 itemBuilder: (context, index) {
                                   return ListTileWidget(model.doclist[index]);
+                                },
+                              );}
+                              else{
+return Center(
+                              child: Text(
+                              "Nothing Found!!. \n Add some Docs.",
+                              style: GoogleFonts.lato(
+                                  textStyle: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              )),
+                            ));
+                              }
+                      
+                            
+  }
+  Widget tab2(Mainmodel model){
+    print(model.load);
+   if( model.load==true){
+
+     return Center(child:CircularProgressIndicator(color: Colors.white,));
+   }else if (model.doclist.length != 0){
+     
+     return ListView.separated(
+                                separatorBuilder: (_, __) => Divider(
+                                  height: 10.0,
+                                  thickness: 0.7,
+                                ),
+                                padding: const EdgeInsets.all(16.0),
+                                itemCount: model.getsumlist.length,
+                                physics: BouncingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return ListTileWidget(model.getsumlist[index]);
                                 },
                               );}
                               else{
@@ -300,42 +335,19 @@ return Center(
                             
                             )
                           ,
-                         
-                          
-                    model.load
-                      ? Center(child:CircularProgressIndicator())
-                      : model.getsumlist.length != 0
-                          ? RefreshIndicator(
+                           RefreshIndicator(
           color: Colors.black,
           onRefresh: model.refreshDoc,
           child:Scaffold(
-
                               backgroundColor: Colors.black,
-                              body: ListView.separated(
-                                separatorBuilder: (_, __) => Divider(
-                                  height: 10.0,
-                                  thickness: 0.7,
-                                ),
-                                padding: const EdgeInsets.all(16.0),
-                                itemCount: model.getsumlist.length,
-                                physics: BouncingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return ListTileWidget(model.getsumlist[index]);
-                                },
-                              ),
-
-                            )):Center(
-                              child: Text(
-                              "Nothing Found!!. \n Add some Docs.",
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black,
-                              )),
-                            ))
-                          ,
-
+                              body: tab2(model)
+                       
+                            )
+                            
+                            )
+                         
+                          
+                    
                   // model.load
                   //     ? Center(child: LoadingWidget())
                   //     : model.doclist.length == 0
