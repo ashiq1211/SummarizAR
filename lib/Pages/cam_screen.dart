@@ -15,6 +15,7 @@ import 'package:project/Pages/preview_screen_recognized.dart';
 import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
 import 'package:scoped_model/scoped_model.dart';
+import 'package:share/share.dart';
 
 class CameraScreen extends StatefulWidget {
   // const CameraScreen({Key key, this.user},this._model) : super(key: key);
@@ -195,18 +196,10 @@ class _CameraScreenState extends State<CameraScreen> {
     });
   }
 
-  Widget rectShapeARContainer(String str) {
+  Widget rectShapeARContainer(String str,String sub) {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
-      return GestureDetector(
-          onTap: () {
-            Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => EditText(str),
-                ));
-          },
-          child: Container(
+      return  Container(
             margin:
                 const EdgeInsets.symmetric(horizontal: 40.0, vertical: 20.0),
             padding: const EdgeInsets.only(left: 15.0, bottom: 15),
@@ -226,8 +219,11 @@ class _CameraScreenState extends State<CameraScreen> {
             ),
             child: new Column(
               children: <Widget>[
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
                 Align(
-                    alignment: Alignment.topRight,
+                    alignment: Alignment.topLeft,
                     child: OutlinedButton(
                         child: Icon(
                           AntDesign.edit,
@@ -239,17 +235,50 @@ class _CameraScreenState extends State<CameraScreen> {
                               MaterialPageRoute(
                                 builder: (context) => EditText(str),
                               ));
-                        })),
-                new Text(
+                          
+                        })),SizedBox(width: 10,),
+                        Align(
+                    alignment: Alignment.topRight,
+                    child: OutlinedButton(
+                        child: Icon(
+                          Icons.save,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                           createPdf(str);
+                          
+                        })),SizedBox(width: 10,),
+                        
+                        Align(
+                    alignment: Alignment.topRight,
+                    child: OutlinedButton(
+                        child: Icon(
+                          Icons.share,
+                          color: Colors.white,
+                        ),
+                        onPressed: () {
+                            Share.share(str,subject: sub);
+                          
+                        })),],),
+                
+                new GestureDetector(
+          onTap: () {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => EditText(str),
+                ));
+          },
+          child:Text(
                   str,
                   style: new TextStyle(
                     color: Colors.white,
                     fontSize: 20.0,
                   ),
                 ),
-              ],
+                 ) ]
             ),
-          ));
+          );
     });
   }
 
@@ -287,9 +316,15 @@ class _CameraScreenState extends State<CameraScreen> {
             icon: Icon(Octicons.note, color: Colors.white, size: 40),
             onPressed: () {
               createPdf(model.recognizedTxt).then((value) {
-                model.putDoc(file.readAsBytesSync(), date);
+                model.putDoc(file.readAsBytesSync(), date,"actualText");
+                file.delete();
               });
-              model.getSummary(model.recognizedTxt);
+              model.getSummary(model.recognizedTxt).then((value) {
+                  createPdf(model.sumTxt).then((value) {
+                model.putDoc(file.readAsBytesSync(), date,"summary");
+                file.delete();
+              });
+              });
             }),
         SizedBox(
           height: 10,
@@ -332,7 +367,7 @@ class _CameraScreenState extends State<CameraScreen> {
             icon: Icon(MaterialCommunityIcons.share,
                 color: Colors.white, size: 40),
             onPressed: () {
-              shareBottomSheet(this.context);
+              shareBottomSheet(this.context,model.recognizedTxt);
             }),
         SizedBox(
           height: 10,
@@ -419,10 +454,11 @@ class _CameraScreenState extends State<CameraScreen> {
           );
         }));
     imagePath =
-        join((await getApplicationDocumentsDirectory()).path, '${date}.pdf');
+        join((await getExternalStorageDirectory()).path, '${date}.pdf');
 
     file = File(imagePath);
     file.writeAsBytesSync(await pdf.save());
+ 
     print(file);
   }
 
@@ -449,14 +485,14 @@ class _CameraScreenState extends State<CameraScreen> {
                           children: <Widget>[
                             Expanded(
                                 child: SingleChildScrollView(
-                              child: rectShapeARContainer(model.recognizedTxt),
+                              child: rectShapeARContainer(model.recognizedTxt,"Actual Text"),
                             ))
                           ],
                         )
                       : new Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            rectShapeARContainer(model.sumTxt),
+                            rectShapeARContainer(model.sumTxt,"summary"),
                           ],
                         ),
               Align(
@@ -486,7 +522,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           : model.sumTxt == " "
                               ? Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceAround,
+                                      MainAxisAlignment.spaceBetween,
                                   children: <Widget>[
                                     retakeButton(model),
                                     summaryButton(model),
@@ -495,14 +531,13 @@ class _CameraScreenState extends State<CameraScreen> {
                                 )
                               : Row(
                                   mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                      MainAxisAlignment.spaceAround,
                                   children: <Widget>[
                                     // Icon(Icons.book),
                                     //    Icon(Icons.book),
                                     //       Icon(Icons.book)
                                     libButton(model),
-                                    saveButton(model),
-                                    shareButton(model)
+                                    addNew(model)
                                   ],
                                 ),
                 ),
@@ -513,7 +548,25 @@ class _CameraScreenState extends State<CameraScreen> {
       );
     });
   }
+Widget addNew(Mainmodel model){
+  return Column(
 
+    children: [
+
+    IconButton(onPressed: (){
+      model.setRecoTxt = " ";
+      model.setSumTxt=" ";
+
+    }, icon: Icon(Feather.camera,color: Colors.white, size: 40)),
+    SizedBox(
+          height: 10,
+        ),
+        Text(
+          "Take New",
+          style: TextStyle(color: Colors.white),
+        )
+  ],);
+} 
   onCapture(context, Mainmodel model) async {
     try {
       final name = DateTime.now();
@@ -530,6 +583,7 @@ class _CameraScreenState extends State<CameraScreen> {
       model.recognizeText(_image);
       setState(() {
         retake = false;
+        file.delete();
       });
       // _cropImage(_image.path);
 
@@ -650,7 +704,7 @@ class _CameraScreenState extends State<CameraScreen> {
         });
   }
 
-  void shareBottomSheet(BuildContext context) {
+  void shareBottomSheet(BuildContext context,text) {
     showModalBottomSheet(
         isDismissible: true,
         shape: RoundedRectangleBorder(
@@ -670,6 +724,9 @@ class _CameraScreenState extends State<CameraScreen> {
               children: [
                 ListTile(
                   title: Text("Share as Text"),
+                  onTap: (){
+                  
+                  },
                   leading: Icon(MaterialCommunityIcons.format_text),
                 ),
                 ListTile(

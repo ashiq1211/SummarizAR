@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'dart:math';
+import 'package:advance_pdf_viewer/advance_pdf_viewer.dart';
 import 'package:device_info/device_info.dart';
 import 'package:flutter_quill/widgets/controller.dart';
 import 'package:http/http.dart' as http;
@@ -25,6 +26,17 @@ class AppModel extends Model {
   bool haserror = false;
   String message = 'Something wrong';
   String userId = " ";
+    bool get load {
+    return loading;
+  }
+  List<Doc> itemList =[];
+  List<Doc> get doclist {
+    return List.from(itemList);
+  }
+   List<Doc> summList =[];
+  List<Doc> get getsumlist {
+    return List.from(summList);
+  }
 }
 
 class SummaryModel extends AppModel {
@@ -70,9 +82,7 @@ class UserModel extends AppModel {
     return currentUser;
   }
 
-  bool get load {
-    return loading;
-  }
+
 
   Future<Map<dynamic, dynamic>> signup(String email, String password) async {
     final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
@@ -246,16 +256,13 @@ class UserModel extends AppModel {
 class DocumentModel extends AppModel {
   String recognizedText = " ";
   final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
-  List<Doc> itemList = [];
-  List<Doc> get doclist {
-    return List.from(itemList);
-  }
+
 
   set setRecoTxt(str) {
     recognizedText = str;
     notifyListeners();
   }
-
+ 
   int isAppend = 0;
 
   int flag = 0;
@@ -286,12 +293,12 @@ class DocumentModel extends AppModel {
         this.controller = QuillController.basic();
         recognizedText = " ";
         print("xzbjkxcbcxjk");
-      } else if (visionText.blocks.isEmpty) {
-        recognizedText = " ";
+      } else if (visionText.text.isEmpty) {
+        
         print("uoo");
         haserror = true;
         notifyListeners();
-        return null;
+
       }
       for (TextBlock block in visionText.blocks) {
         for (TextLine line in block.lines) {
@@ -327,9 +334,11 @@ class DocumentModel extends AppModel {
     };
   }
 
-  Future<Map<dynamic, dynamic>> putDoc(List<int> asset, DateTime date) async {
+  Future<Map<dynamic, dynamic>> putDoc(List<int> asset, DateTime date,String type) async {
     String formattedDate = DateFormat('dd-MM-yy kk:mm').format(date);
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    var mainReference;
+    var reference;
     var url;
     userId = prefs.getString("userId");
     if (userId == null) {
@@ -341,8 +350,14 @@ class DocumentModel extends AppModel {
         userId = identifier;
       }
     }
-    final mainReference =
-        FirebaseDatabase.instance.reference().child('$userId/Documents');
+    if(type=="actualText"){
+       mainReference =
+        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+    }else{
+       mainReference =
+        FirebaseDatabase.instance.reference().child('$userId/Documents/Summary');
+    }
+    
     haserror = false;
     loading = true;
     notifyListeners();
@@ -365,9 +380,16 @@ class DocumentModel extends AppModel {
           print(str);
         });
       }
-
-      Reference reference =
-          FirebaseStorage.instance.ref().child("$userId/Documents/$date");
+ if(type=="actualText"){
+     reference =
+          FirebaseStorage.instance.ref().child("$userId/Documents/ActualText/$date");
+      
+    }else{
+        reference =
+          FirebaseStorage.instance.ref().child("$userId/Documents/Summary/$date");
+     
+    }
+     
 
       UploadTask uploadTask = reference.putData(asset);
 
@@ -383,10 +405,13 @@ class DocumentModel extends AppModel {
         notifyListeners();
       }
     } catch (e) {}
+     PDFDocument document = await PDFDocument.fromURL(url);
     loading = false;
     notifyListeners();
     print(message);
-    return {"message": message, "error": haserror, "link": url};
+
+    return {"message": message, "error": haserror,"document":document};
+
   }
 
   Future<void> refreshDoc() async {
@@ -394,39 +419,45 @@ class DocumentModel extends AppModel {
   }
 
   Future<Map<dynamic, dynamic>> getDoc() async {
+    print(loading);
     print(itemList.length);
     haserror = false;
     loading = true;
-
     notifyListeners();
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId = prefs.getString("userId");
-    if (userId == null) {
+    if (userId != null) {
       if (Platform.isAndroid) {
         var build = await deviceInfoPlugin.androidInfo;
         var deviceName = build.model;
         var deviceVersion = build.version.toString();
         var identifier = build.androidId; //UUID for Android
-        userId = identifier;
+ prefs.setString("userId", identifier);
       }
     }
-    print(userId);
-    final mainReference =
-        FirebaseDatabase.instance.reference().child('$userId/Documents');
+
+    userId=prefs.getString("userId");
+print (userId);
+    final mainReferenceText =
+        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+        final mainReferenceSummary =
+        FirebaseDatabase.instance.reference().child('$userId/Documents/Summary');
+
+
 
     try {
       itemList = [];
-      mainReference.once().then((DataSnapshot snap) {
+      mainReferenceText.once().then((DataSnapshot snap) {
         if (snap.value == null) {
           loading = false;
           notifyListeners();
           return null;
         }
-        print("Swaty");
+
 
         var data = snap.value;
-        print(data);
+        // print(data);
 
         data.forEach((key, value) {
           Doc m = new Doc(
@@ -439,13 +470,42 @@ class DocumentModel extends AppModel {
         });
         itemList.sort((a, b) => a.name.compareTo(b.name));
         itemList = itemList.reversed.toList();
-        notifyListeners();
-        print(itemList);
-        print("kooy");
-        loading = false;
+        // notifyListeners();
+        
+        // loading = false;
+   print("dsd");
+        // notifyListeners();
+        // print(loading);
+      });
+      mainReferenceSummary.once().then((DataSnapshot snap) {
+        if (snap.value == null) {
+          loading = false;
+          notifyListeners();
+          return null;
+        }
+      
 
-        notifyListeners();
-        print(message);
+        var data = snap.value;
+
+
+        data.forEach((key, value) {
+          Doc m = new Doc(
+              link: value['PDF'],
+              name: value['FileName'],
+              date: value['Date'],
+              path: value["ActualDate"]);
+          summList.add(m);
+          // notifyListeners();
+        });
+        summList.sort((a, b) => a.name.compareTo(b.name));
+        summList = itemList.reversed.toList();
+ 
+
+
+     print(loading);
+
+
+
       });
     } on FirebaseException catch (e) {} catch (e) {
       loading = false;
@@ -463,8 +523,7 @@ class DocumentModel extends AppModel {
     loading = false;
 
     notifyListeners();
-    print("sdbhds");
-    print(haserror);
+  
     return {"message": message, "error": haserror};
   }
 
