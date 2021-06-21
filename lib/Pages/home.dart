@@ -276,7 +276,7 @@ return Center(
                 Tab(
                   text: 'Summary',
                 ),
-
+               ] ),
                 elevation: 10,
                 iconTheme: IconThemeData(color: Color.fromRGBO(64, 75, 96, .9)),
                 backgroundColor: Colors.white30,
@@ -308,27 +308,7 @@ return Center(
                 ],
 
               ),
-              Padding(
-                padding: EdgeInsets.all(8.0),
-                child: IconButton(
-                  onPressed: () {
-                    // print("object");
-                    // model.getSummary("text");
-                  },
-                  icon: Icon(Icons.notifications),
-                  color: Color.fromRGBO(64, 75, 96, .9),
-                ),
-              ),
-
-              // IconButton(
-              //   onPressed: () {
-              //     _settingModalBottomSheet(context);
-              //   },
-              //   icon: new Icon(Icons.more_vert,
-              //       color: Color.fromRGBO(64, 75, 96, .9)),
-              // ),
-            ],
-          ),
+              
           drawer: Drawer(
             child: MainDrawer(),
           ),
