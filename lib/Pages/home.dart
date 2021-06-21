@@ -193,39 +193,38 @@ class _HomePageState extends State<HomePage> {
     }
   }
 
-  Widget tab2(Mainmodel model){
+  Widget tab2(Mainmodel model) {
     print(model.load);
-   if( model.load==true){
-
-     return Center(child:CircularProgressIndicator(color: Colors.white,));
-   }else if (model.doclist.length != 0){
-     
-     return ListView.separated(
-                                separatorBuilder: (_, __) => Divider(
-                                  height: 10.0,
-                                  thickness: 0.7,
-                                ),
-                                padding: const EdgeInsets.all(16.0),
-                                itemCount: model.getsumlist.length,
-                                physics: BouncingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return ListTileWidget(model.getsumlist[index]);
-                                },
-                              );}
-                              else{
-return Center(
-                              child: Text(
-                              "Nothing Found!!. \n Add some Docs.",
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              )),
-                            ));
-                              }
-                      
-                            
+    if (model.load == true) {
+      return Center(
+          child: CircularProgressIndicator(
+        backgroundColor: Colors.white,
+      ));
+    } else if (model.doclist.length != 0) {
+      return ListView.separated(
+        separatorBuilder: (_, __) => Divider(
+          height: 10.0,
+          thickness: 0.7,
+        ),
+        padding: const EdgeInsets.all(16.0),
+        itemCount: model.getsumlist.length,
+        physics: BouncingScrollPhysics(),
+        itemBuilder: (context, index) {
+          return ListTileWidget(model.getsumlist[index]);
+        },
+      );
+    } else {
+      return Center(
+          child: Text(
+        "Nothing Found!!. \n Add some Docs.",
+        style: GoogleFonts.lato(
+            textStyle: TextStyle(
+          fontSize: 14.0,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+        )),
+      ));
+    }
   }
 
   @override
@@ -265,120 +264,101 @@ return Center(
           ),
           appBar: AppBar(
             bottom: TabBar(
-              indicatorColor: Colors.black,
-              labelPadding: EdgeInsets.symmetric(horizontal: 50),
-              labelColor: Colors.black,
-              isScrollable: true,
-              tabs: <Widget>[
-                Tab(
-                  text: 'Actual Text',
-                ),
-                Tab(
-                  text: 'Summary',
-                ),
-               ] ),
-                elevation: 10,
-                title: Text(
-                  "Home",
-                  style: TextStyle(
-                      fontSize: 18, color: Color.fromRGBO(64, 75, 96, .9)),
-                ),
-                iconTheme: IconThemeData(color: Color.fromRGBO(64, 75, 96, .9)),
-                backgroundColor: Colors.white30,
-                actions: [
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(Icons.search,
-                        color: Color.fromRGBO(64, 75, 96, .9)),
+                indicatorColor: Colors.black,
+                labelPadding: EdgeInsets.symmetric(horizontal: 50),
+                labelColor: Colors.black,
+                isScrollable: true,
+                tabs: <Widget>[
+                  Tab(
+                    text: 'Actual Text',
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: IconButton(
-                      onPressed: () {
-                        Navigator.pushNamed(context, "/notification");
-                        // print("object");
-                        // model.getSummary("text");
-                      },
-                      icon: Icon(Icons.notifications),
-                      color: Color.fromRGBO(64, 75, 96, .9),
-                    ),
+                  Tab(
+                    text: 'Summary',
                   ),
-                  // IconButton(
-                  //   onPressed: () {
-                  //     _settingModalBottomSheet(context);
-                  //   },
-                  //   icon: new Icon(Icons.more_vert,
-                  //       color: Color.fromRGBO(64, 75, 96, .9)),
-                  // ),
-                ],
-
+                ]),
+            elevation: 10,
+            title: Text(
+              "Home",
+              style: TextStyle(
+                  fontSize: 18, color: Color.fromRGBO(64, 75, 96, .9)),
+            ),
+            iconTheme: IconThemeData(color: Color.fromRGBO(64, 75, 96, .9)),
+            backgroundColor: Colors.white30,
+            actions: [
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child:
+                    Icon(Icons.search, color: Color.fromRGBO(64, 75, 96, .9)),
               ),
-              
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.pushNamed(context, "/notification");
+                    // print("object");
+                    // model.getSummary("text");
+                  },
+                  icon: Icon(Icons.notifications),
+                  color: Color.fromRGBO(64, 75, 96, .9),
+                ),
+              ),
+              // IconButton(
+              //   onPressed: () {
+              //     _settingModalBottomSheet(context);
+              //   },
+              //   icon: new Icon(Icons.more_vert,
+              //       color: Color.fromRGBO(64, 75, 96, .9)),
+              // ),
+            ],
+          ),
           drawer: Drawer(
             child: MainDrawer(),
           ),
-          
-              body: TabBarView(
-                children: [
+          body: TabBarView(
+            children: [
+              RefreshIndicator(
+                  color: Colors.black,
+                  onRefresh: model.refreshDoc,
+                  child: Scaffold(
+                      backgroundColor: Colors.black, body: tab1(model))),
+              RefreshIndicator(
+                  color: Colors.black,
+                  onRefresh: model.refreshDoc,
+                  child: Scaffold(
+                      backgroundColor: Colors.black, body: tab2(model)))
 
-                 
-                           RefreshIndicator(
-          color: Colors.black,
-          onRefresh: model.refreshDoc,
-          child:Scaffold(
-                              backgroundColor: Colors.black,
-                              body: tab1(model)
-                       
-                            )
-                            
-                            )
-                          ,
-                           RefreshIndicator(
-          color: Colors.black,
-          onRefresh: model.refreshDoc,
-          child:Scaffold(
-                              backgroundColor: Colors.black,
-                              body: tab2(model)
-                       
-                            )
-                            
-                            )
-                         
-                          
-                    
-                  // model.load
-                  //     ? Center(child: LoadingWidget())
-                  //     : model.doclist.length == 0
-                  //         ? Center(
-                  //             child: Text(
-                  //             "Nothing Found!!. \n Add some Docs.",
-                  //             style: GoogleFonts.lato(
-                  //                 textStyle: TextStyle(
-                  //               fontSize: 14.0,
-                  //               fontWeight: FontWeight.w700,
-                  //               color: Colors.black,
-                  //             )),
-                  //           ))
-                  //         : Container(
-                  //             color: Colors.black,
-                  //             child: ListView.separated(
-                  //               separatorBuilder: (_, __) => Divider(
-                  //                 height: 10.0,
-                  //                 thickness: 0.7,
-                  //               ),
-                  //               padding: const EdgeInsets.all(16.0),
-                  //               itemCount: model.doclist.length,
-                  //               physics: BouncingScrollPhysics(),
-                  //               itemBuilder: (context, index) {
-                  //                 return ListTileWidget(model.doclist[index]);
-                  //               },
-                  //             ),
-                  //           ),
-                ],
-              ),
-            ),
-          );
-
+              // model.load
+              //     ? Center(child: LoadingWidget())
+              //     : model.doclist.length == 0
+              //         ? Center(
+              //             child: Text(
+              //             "Nothing Found!!. \n Add some Docs.",
+              //             style: GoogleFonts.lato(
+              //                 textStyle: TextStyle(
+              //               fontSize: 14.0,
+              //               fontWeight: FontWeight.w700,
+              //               color: Colors.black,
+              //             )),
+              //           ))
+              //         : Container(
+              //             color: Colors.black,
+              //             child: ListView.separated(
+              //               separatorBuilder: (_, __) => Divider(
+              //                 height: 10.0,
+              //                 thickness: 0.7,
+              //               ),
+              //               padding: const EdgeInsets.all(16.0),
+              //               itemCount: model.doclist.length,
+              //               physics: BouncingScrollPhysics(),
+              //               itemBuilder: (context, index) {
+              //                 return ListTileWidget(model.doclist[index]);
+              //               },
+              //             ),
+              //           ),
+            ],
+          ),
+        ),
+      );
     });
   }
 
