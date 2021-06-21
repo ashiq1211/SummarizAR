@@ -278,6 +278,11 @@ return Center(
                 ),
                ] ),
                 elevation: 10,
+                title: Text(
+                  "Home",
+                  style: TextStyle(
+                      fontSize: 18, color: Color.fromRGBO(64, 75, 96, .9)),
+                ),
                 iconTheme: IconThemeData(color: Color.fromRGBO(64, 75, 96, .9)),
                 backgroundColor: Colors.white30,
                 actions: [
