@@ -37,6 +37,10 @@ class AppModel extends Model {
   List<Doc> get getsumlist {
     return List.from(summList);
   }
+  List<Doc>searchList=[];
+  List<Doc> get searchL {
+    return List.from(searchList);
+  }
 }
 
 class SummaryModel extends AppModel {
