@@ -23,7 +23,6 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class HomePage extends StatefulWidget {
- 
   @override
   _HomePageState createState() => _HomePageState();
 }
@@ -46,11 +45,9 @@ class _HomePageState extends State<HomePage> {
 //      }
 //       });
 
-   
-
     super.initState();
-     Mainmodel model = ScopedModel.of(this.context);
-    model.loading=true;
+    Mainmodel model = ScopedModel.of(this.context);
+    model.loading = true;
 
     model.getDoc().then((value) {
       if (value["error"]) {
@@ -79,7 +76,8 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
-pickImage(Mainmodel model) async {
+
+  pickImage(Mainmodel model) async {
     final pickedFile = await picker.getImage(
       source: ImageSource.gallery,
       maxWidth: 1800,
@@ -91,10 +89,10 @@ pickImage(Mainmodel model) async {
     //   height: 300,
     // );
     print("image picked");
-    _cropImage(pickedFile.path,model);
+    _cropImage(pickedFile.path, model);
   }
 
-  _cropImage(filePath,Mainmodel model) async {
+  _cropImage(filePath, Mainmodel model) async {
     final name = DateTime.now();
     print("started");
     File croppedImage = await ImageCropper.cropImage(
@@ -160,56 +158,51 @@ pickImage(Mainmodel model) async {
   }
 
   TextEditingController _searchController = TextEditingController();
-  Widget tab1(Mainmodel model){
+  Widget tab1(Mainmodel model) {
     print(model.load);
-   if( model.load==true){
-
-     return Center(child:CircularProgressIndicator(color: Colors.white,));
-   }else if (model.doclist.length != 0){
-     
-     return ListView.separated(
-                                separatorBuilder: (_, __) => Divider(
-                                  height: 10.0,
-                                  thickness: 0.7,
-                                ),
-                                padding: const EdgeInsets.all(16.0),
-                                itemCount: model.doclist.length,
-                                physics: BouncingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return ListTileWidget(model.doclist[index]);
-                                },
-                              );}
-                              else{
-return Center(
-                              child: Text(
-                              "Nothing Found!!. \n Add some Docs.",
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.white,
-                              )),
-                            ));
-                              }
-                      
-                            
+    if (model.load == true) {
+      return Center(
+          child: CircularProgressIndicator(
+        backgroundColor: Colors.white,
+      ));
+    } else if (model.doclist.length != 0) {
+      return ListView.separated(
+        separatorBuilder: (_, __) => Divider(
+          height: 10.0,
+          thickness: 0.7,
+        ),
+        padding: const EdgeInsets.all(16.0),
+        itemCount: model.doclist.length,
+        physics: BouncingScrollPhysics(),
+        itemBuilder: (context, index) {
+          return ListTileWidget(model.doclist[index]);
+        },
+      );
+    } else {
+      return Center(
+          child: Text(
+        "Nothing Found!!. \n Add some Docs.",
+        style: GoogleFonts.lato(
+            textStyle: TextStyle(
+          fontSize: 14.0,
+          fontWeight: FontWeight.w700,
+          color: Colors.white,
+        )),
+      ));
+    }
   }
+
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
-      return  DefaultTabController(
-            length: 2,
-            child: Scaffold(
-              floatingActionButton:
-              FloatingActionRow(
-                
-    color: Colors.white,
-    children: <Widget>[
-        
-        
-        FloatingActionRowButton(
-           
+      return DefaultTabController(
+        length: 2,
+        child: Scaffold(
+          floatingActionButton: FloatingActionRow(
+            color: Colors.white,
+            children: <Widget>[
+              FloatingActionRowButton(
                 icon: Icon(
                   Icons.camera_alt,
                   color: Colors.black,
@@ -220,154 +213,144 @@ return Center(
                   // final pickedFile = await picker.getImage(source: ImageSource.camera);
                   Navigator.of(context).popAndPushNamed("/cameraPage");
                 },
-        ),
-        FloatingActionRowDivider(color: Colors.black,),
-        FloatingActionRowButton(
-            icon: Icon(Icons.image,color: Colors.black,),
-            onTap: () {
-
-              pickImage(model);
-            }
-        ),
-    ],
-),
-              
-               
-              appBar: AppBar(
-                bottom: TabBar(
-                  indicatorColor: Colors.black,
-                  labelPadding: EdgeInsets.symmetric(horizontal: 50),
-                  labelColor: Colors.black,
-                  isScrollable: true,
-                  tabs: <Widget>[
-                    Tab(
-                      text: 'Actual Text',
-                    ),
-                    Tab(
-                      text: 'Summary',
-                    ),
-                  ],
-                ),
-                title: Text(
-                  "Home",
-                  style: TextStyle(
-                      fontSize: 18, color: Color.fromRGBO(64, 75, 96, .9)),
-                ),
-                elevation: 10,
-                iconTheme: IconThemeData(color: Color.fromRGBO(64, 75, 96, .9)),
-                backgroundColor: Colors.white30,
-                actions: [
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: Icon(Icons.search,
-                        color: Color.fromRGBO(64, 75, 96, .9)),
+              ),
+              FloatingActionRowDivider(
+                color: Colors.black,
+              ),
+              FloatingActionRowButton(
+                  icon: Icon(
+                    Icons.image,
+                    color: Colors.black,
                   ),
-                  Padding(
-                    padding: EdgeInsets.all(8.0),
-                    child: IconButton(
-                      onPressed: () {
-                        // print("object");
-                        // model.getSummary("text");
-                      },
-                      icon: Icon(Icons.notifications),
-                      color: Color.fromRGBO(64, 75, 96, .9),
-                    ),
-                  ),
-                  // IconButton(
-                  //   onPressed: () {
-                  //     _settingModalBottomSheet(context);
-                  //   },
-                  //   icon: new Icon(Icons.more_vert,
-                  //       color: Color.fromRGBO(64, 75, 96, .9)),
-                  // ),
-                ],
-              ),
-              drawer: Drawer(
-                child: MainDrawer(),
-              ),
-              body: TabBarView(
-                children: [
-
-                 
-                           RefreshIndicator(
-          color: Colors.black,
-          onRefresh: model.refreshDoc,
-          child:Scaffold(
-                              backgroundColor: Colors.black,
-                              body: tab1(model)
-                       
-                            )
-                            
-                            )
-                          ,
-                         
-                          
-                    model.load
-                      ? Center(child:CircularProgressIndicator())
-                      : model.getsumlist.length != 0
-                          ? RefreshIndicator(
-          color: Colors.black,
-          onRefresh: model.refreshDoc,
-          child:Scaffold(
-
-                              backgroundColor: Colors.black,
-                              body: ListView.separated(
-                                separatorBuilder: (_, __) => Divider(
-                                  height: 10.0,
-                                  thickness: 0.7,
-                                ),
-                                padding: const EdgeInsets.all(16.0),
-                                itemCount: model.getsumlist.length,
-                                physics: BouncingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return ListTileWidget(model.getsumlist[index]);
-                                },
-                              ),
-
-                            )):Center(
-                              child: Text(
-                              "Nothing Found!!. \n Add some Docs.",
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black,
-                              )),
-                            ))
-                          ,
-
-                  // model.load
-                  //     ? Center(child: LoadingWidget())
-                  //     : model.doclist.length == 0
-                  //         ? Center(
-                  //             child: Text(
-                  //             "Nothing Found!!. \n Add some Docs.",
-                  //             style: GoogleFonts.lato(
-                  //                 textStyle: TextStyle(
-                  //               fontSize: 14.0,
-                  //               fontWeight: FontWeight.w700,
-                  //               color: Colors.black,
-                  //             )),
-                  //           ))
-                  //         : Container(
-                  //             color: Colors.black,
-                  //             child: ListView.separated(
-                  //               separatorBuilder: (_, __) => Divider(
-                  //                 height: 10.0,
-                  //                 thickness: 0.7,
-                  //               ),
-                  //               padding: const EdgeInsets.all(16.0),
-                  //               itemCount: model.doclist.length,
-                  //               physics: BouncingScrollPhysics(),
-                  //               itemBuilder: (context, index) {
-                  //                 return ListTileWidget(model.doclist[index]);
-                  //               },
-                  //             ),
-                  //           ),
-                ],
-              ),
+                  onTap: () {
+                    pickImage(model);
+                  }),
+            ],
+          ),
+          appBar: AppBar(
+            bottom: TabBar(
+              indicatorColor: Colors.black,
+              labelPadding: EdgeInsets.symmetric(horizontal: 50),
+              labelColor: Colors.black,
+              isScrollable: true,
+              tabs: <Widget>[
+                Tab(
+                  text: 'Actual Text',
+                ),
+                Tab(
+                  text: 'Summary',
+                ),
+              ],
             ),
-          );
+            title: Text(
+              "Home",
+              style: TextStyle(
+                  fontSize: 18, color: Color.fromRGBO(64, 75, 96, .9)),
+            ),
+            elevation: 10,
+            iconTheme: IconThemeData(color: Color.fromRGBO(64, 75, 96, .9)),
+            backgroundColor: Colors.white30,
+            actions: [
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child:
+                    Icon(Icons.search, color: Color.fromRGBO(64, 75, 96, .9)),
+              ),
+              Padding(
+                padding: EdgeInsets.all(8.0),
+                child: IconButton(
+                  onPressed: () {
+                    // print("object");
+                    // model.getSummary("text");
+                  },
+                  icon: Icon(Icons.notifications),
+                  color: Color.fromRGBO(64, 75, 96, .9),
+                ),
+              ),
+              // IconButton(
+              //   onPressed: () {
+              //     _settingModalBottomSheet(context);
+              //   },
+              //   icon: new Icon(Icons.more_vert,
+              //       color: Color.fromRGBO(64, 75, 96, .9)),
+              // ),
+            ],
+          ),
+          drawer: Drawer(
+            child: MainDrawer(),
+          ),
+          body: TabBarView(
+            children: [
+              RefreshIndicator(
+                  color: Colors.black,
+                  onRefresh: model.refreshDoc,
+                  child: Scaffold(
+                      backgroundColor: Colors.black, body: tab1(model))),
+
+              model.load
+                  ? Center(child: CircularProgressIndicator())
+                  : model.getsumlist.length != 0
+                      ? RefreshIndicator(
+                          color: Colors.black,
+                          onRefresh: model.refreshDoc,
+                          child: Scaffold(
+                            backgroundColor: Colors.black,
+                            body: ListView.separated(
+                              separatorBuilder: (_, __) => Divider(
+                                height: 10.0,
+                                thickness: 0.7,
+                              ),
+                              padding: const EdgeInsets.all(16.0),
+                              itemCount: model.getsumlist.length,
+                              physics: BouncingScrollPhysics(),
+                              itemBuilder: (context, index) {
+                                return ListTileWidget(model.getsumlist[index]);
+                              },
+                            ),
+                          ))
+                      : Center(
+                          child: Text(
+                          "Nothing Found!!. \n Add some Docs.",
+                          style: GoogleFonts.lato(
+                              textStyle: TextStyle(
+                            fontSize: 14.0,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          )),
+                        )),
+
+              // model.load
+              //     ? Center(child: LoadingWidget())
+              //     : model.doclist.length == 0
+              //         ? Center(
+              //             child: Text(
+              //             "Nothing Found!!. \n Add some Docs.",
+              //             style: GoogleFonts.lato(
+              //                 textStyle: TextStyle(
+              //               fontSize: 14.0,
+              //               fontWeight: FontWeight.w700,
+              //               color: Colors.black,
+              //             )),
+              //           ))
+              //         : Container(
+              //             color: Colors.black,
+              //             child: ListView.separated(
+              //               separatorBuilder: (_, __) => Divider(
+              //                 height: 10.0,
+              //                 thickness: 0.7,
+              //               ),
+              //               padding: const EdgeInsets.all(16.0),
+              //               itemCount: model.doclist.length,
+              //               physics: BouncingScrollPhysics(),
+              //               itemBuilder: (context, index) {
+              //                 return ListTileWidget(model.doclist[index]);
+              //               },
+              //             ),
+              //           ),
+            ],
+          ),
+        ),
+      );
     });
   }
 
