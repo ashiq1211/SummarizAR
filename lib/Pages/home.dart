@@ -301,6 +301,7 @@ return Center(
                     padding: EdgeInsets.all(8.0),
                     child: IconButton(
                       onPressed: () {
+                        Navigator.pushNamed(context, "/notification");
                         // print("object");
                         // model.getSummary("text");
                       },
