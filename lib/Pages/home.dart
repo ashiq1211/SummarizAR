@@ -1,12 +1,17 @@
+import 'dart:io';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_database/firebase_database.dart';
+import 'package:floating_action_row/floating_action_row.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:project/Pages/cam_screen.dart';
 import 'package:project/Pages/login.dart';
+import 'package:project/Pages/preview_screen_recognized.dart';
 import 'package:project/Pages/settings.dart';
 import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
@@ -27,7 +32,7 @@ class _HomePageState extends State<HomePage> {
   final picker = ImagePicker();
   TabController _tabController;
   List<DocumentModel> itemList = [];
-
+  File _image;
   @override
   void initState() {
 //  SharedPreferences prefs;
@@ -41,10 +46,11 @@ class _HomePageState extends State<HomePage> {
 //      }
 //       });
 
-    Mainmodel model = ScopedModel.of(this.context);
-    model.setRecoTxt = " ";
-    model.setSumTxt = " ";
-    model.isAppend = 0;
+   
+
+    super.initState();
+     Mainmodel model = ScopedModel.of(this.context);
+    model.loading=true;
 
     model.getDoc().then((value) {
       if (value["error"]) {
@@ -55,8 +61,9 @@ class _HomePageState extends State<HomePage> {
             });
       }
     });
-
-    super.initState();
+    model.setRecoTxt = " ";
+    model.setSumTxt = " ";
+    model.isAppend = 0;
   }
 
   FocusNode _focusNode = FocusNode();
@@ -72,6 +79,75 @@ class _HomePageState extends State<HomePage> {
       });
     }
   }
+pickImage(Mainmodel model) async {
+    final pickedFile = await picker.getImage(
+      source: ImageSource.gallery,
+      maxWidth: 1800,
+      maxHeight: 1800,
+    );
+    File img = File(pickedFile.path);
+    // return Container(
+    //   child: img == Null ? Text("No image selected yet") : Image.file(img),
+    //   height: 300,
+    // );
+    print("image picked");
+    _cropImage(pickedFile.path,model);
+  }
+
+  _cropImage(filePath,Mainmodel model) async {
+    final name = DateTime.now();
+    print("started");
+    File croppedImage = await ImageCropper.cropImage(
+      sourcePath: filePath,
+      maxWidth: 1080,
+      maxHeight: 1080,
+      aspectRatioPresets: Platform.isAndroid
+          ? [
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio16x9
+            ]
+          : [
+              CropAspectRatioPreset.original,
+              CropAspectRatioPreset.square,
+              CropAspectRatioPreset.ratio3x2,
+              CropAspectRatioPreset.ratio4x3,
+              CropAspectRatioPreset.ratio5x3,
+              CropAspectRatioPreset.ratio5x4,
+              CropAspectRatioPreset.ratio7x5,
+              CropAspectRatioPreset.ratio16x9
+            ],
+      androidUiSettings: AndroidUiSettings(
+          toolbarTitle: 'Cropper',
+          toolbarColor: Colors.deepOrange,
+          toolbarWidgetColor: Colors.white,
+          initAspectRatio: CropAspectRatioPreset.original,
+          lockAspectRatio: false),
+    );
+    print("suceess");
+    if (croppedImage != null) {
+      // File imageFile = croppedImage;
+      setState(() {
+        if (croppedImage != null) {
+          _image = File(croppedImage.path);
+          Navigator.pushAndRemoveUntil(
+            this.context,
+            MaterialPageRoute(
+                builder: (context) => PreviewScreen(
+                      model,
+                      _image,
+                      "$name.png",
+                    )),
+            (Route<dynamic> route) => false,
+          );
+        } else {
+          print('No image selected.');
+        }
+      });
+    }
+  }
 
   Future<void> _signOut() async {
     await FirebaseAuth.instance.signOut().then((value) {
@@ -84,6 +160,40 @@ class _HomePageState extends State<HomePage> {
   }
 
   TextEditingController _searchController = TextEditingController();
+  Widget tab1(Mainmodel model){
+    print(model.load);
+   if( model.load==true){
+
+     return Center(child:CircularProgressIndicator(color: Colors.white,));
+   }else if (model.doclist.length != 0){
+     
+     return ListView.separated(
+                                separatorBuilder: (_, __) => Divider(
+                                  height: 10.0,
+                                  thickness: 0.7,
+                                ),
+                                padding: const EdgeInsets.all(16.0),
+                                itemCount: model.doclist.length,
+                                physics: BouncingScrollPhysics(),
+                                itemBuilder: (context, index) {
+                                  return ListTileWidget(model.doclist[index]);
+                                },
+                              );}
+                              else{
+return Center(
+                              child: Text(
+                              "Nothing Found!!. \n Add some Docs.",
+                              style: GoogleFonts.lato(
+                                  textStyle: TextStyle(
+                                fontSize: 14.0,
+                                fontWeight: FontWeight.w700,
+                                color: Colors.white,
+                              )),
+                            ));
+                              }
+                      
+                            
+  }
   @override
   Widget build(BuildContext context) {
     return ScopedModelDescendant<Mainmodel>(
@@ -91,19 +201,38 @@ class _HomePageState extends State<HomePage> {
       return  DefaultTabController(
             length: 2,
             child: Scaffold(
-              floatingActionButton: FloatingActionButton(
-                backgroundColor: Colors.white,
-                child: Icon(
+              floatingActionButton:
+              FloatingActionRow(
+                
+    color: Colors.white,
+    children: <Widget>[
+        
+        
+        FloatingActionRowButton(
+           
+                icon: Icon(
                   Icons.camera_alt,
                   color: Colors.black,
                 ),
-                onPressed: () async {
+                onTap: () async {
                   model.setRecoTxt = " ";
                   model.setSumTxt = " ";
                   // final pickedFile = await picker.getImage(source: ImageSource.camera);
                   Navigator.of(context).popAndPushNamed("/cameraPage");
                 },
-              ),
+        ),
+        FloatingActionRowDivider(color: Colors.black,),
+        FloatingActionRowButton(
+            icon: Icon(Icons.image,color: Colors.black,),
+            onTap: () {
+
+              pickImage(model);
+            }
+        ),
+    ],
+),
+              
+               
               appBar: AppBar(
                 bottom: TabBar(
                   indicatorColor: Colors.black,
@@ -144,48 +273,29 @@ class _HomePageState extends State<HomePage> {
                       color: Color.fromRGBO(64, 75, 96, .9),
                     ),
                   ),
-                  IconButton(
-                    onPressed: () {
-                      _settingModalBottomSheet(context);
-                    },
-                    icon: new Icon(Icons.more_vert,
-                        color: Color.fromRGBO(64, 75, 96, .9)),
-                  ),
+                  // IconButton(
+                  //   onPressed: () {
+                  //     _settingModalBottomSheet(context);
+                  //   },
+                  //   icon: new Icon(Icons.more_vert,
+                  //       color: Color.fromRGBO(64, 75, 96, .9)),
+                  // ),
                 ],
               ),
               drawer: Drawer(child: MainDrawer(),),
               body: TabBarView(
                 children: [
-                  model.load
-                      ? Center(child:CircularProgressIndicator())
-                      : model.doclist.length != 0
-                          ? RefreshIndicator(
+                 
+                           RefreshIndicator(
           color: Colors.black,
           onRefresh: model.refreshDoc,
           child:Scaffold(
                               backgroundColor: Colors.black,
-                              body: ListView.separated(
-                                separatorBuilder: (_, __) => Divider(
-                                  height: 10.0,
-                                  thickness: 0.7,
-                                ),
-                                padding: const EdgeInsets.all(16.0),
-                                itemCount: model.doclist.length,
-                                physics: BouncingScrollPhysics(),
-                                itemBuilder: (context, index) {
-                                  return ListTileWidget(model.doclist[index]);
-                                },
-                              ),
-                            )):Center(
-                              child: Text(
-                              "Nothing Found!!. \n Add some Docs.",
-                              style: GoogleFonts.lato(
-                                  textStyle: TextStyle(
-                                fontSize: 14.0,
-                                fontWeight: FontWeight.w700,
-                                color: Colors.black,
-                              )),
-                            ))
+                              body: tab1(model)
+                       
+                            )
+                            
+                            )
                           ,
                          
                           

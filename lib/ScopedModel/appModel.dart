@@ -263,7 +263,7 @@ class DocumentModel extends AppModel {
     recognizedText = str;
     notifyListeners();
   }
-
+ 
   int isAppend = 0;
 
   int flag = 0;
@@ -418,6 +418,7 @@ class DocumentModel extends AppModel {
   }
 
   Future<Map<dynamic, dynamic>> getDoc() async {
+    print(loading);
     print(itemList.length);
     haserror = false;
     loading = true;
@@ -449,10 +450,10 @@ print (userId);
           notifyListeners();
           return null;
         }
-        print("Swaty");
+
 
         var data = snap.value;
-        print(data);
+        // print(data);
 
         data.forEach((key, value) {
           Doc m = new Doc(
@@ -465,12 +466,12 @@ print (userId);
         });
         itemList.sort((a, b) => a.name.compareTo(b.name));
         itemList = itemList.reversed.toList();
-        notifyListeners();
+        // notifyListeners();
         
-        loading = false;
-
-        notifyListeners();
-        print(message);
+        // loading = false;
+   print("dsd");
+        // notifyListeners();
+        // print(loading);
       });
       mainReferenceSummary.once().then((DataSnapshot snap) {
         if (snap.value == null) {
@@ -494,12 +495,12 @@ print (userId);
         });
         summList.sort((a, b) => a.name.compareTo(b.name));
         summList = itemList.reversed.toList();
-        notifyListeners();
-   
+ 
 
-        loading = false;
 
-        notifyListeners();
+     print(loading);
+
+
 
       });
     } on FirebaseException catch (e) {} catch (e) {
