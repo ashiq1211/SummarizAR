@@ -282,9 +282,12 @@ return Center(
                   // ),
                 ],
               ),
-              drawer: Drawer(child: MainDrawer(),),
+              drawer: Drawer(
+                child: MainDrawer(),
+              ),
               body: TabBarView(
                 children: [
+
                  
                            RefreshIndicator(
           color: Colors.black,
@@ -306,6 +309,7 @@ return Center(
           color: Colors.black,
           onRefresh: model.refreshDoc,
           child:Scaffold(
+
                               backgroundColor: Colors.black,
                               body: ListView.separated(
                                 separatorBuilder: (_, __) => Divider(
@@ -319,6 +323,7 @@ return Center(
                                   return ListTileWidget(model.getsumlist[index]);
                                 },
                               ),
+
                             )):Center(
                               child: Text(
                               "Nothing Found!!. \n Add some Docs.",
@@ -330,6 +335,7 @@ return Center(
                               )),
                             ))
                           ,
+
                   // model.load
                   //     ? Center(child: LoadingWidget())
                   //     : model.doclist.length == 0

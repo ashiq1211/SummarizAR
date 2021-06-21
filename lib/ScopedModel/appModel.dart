@@ -254,12 +254,11 @@ class UserModel extends AppModel {
 }
 
 class DocumentModel extends AppModel {
-
   String recognizedText = " ";
   final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
 
+
   set setRecoTxt(str) {
-    
     recognizedText = str;
     notifyListeners();
   }
@@ -395,7 +394,7 @@ class DocumentModel extends AppModel {
       UploadTask uploadTask = reference.putData(asset);
 
       var imageUrl = await (await uploadTask).ref.getDownloadURL();
-       url = imageUrl.toString();
+      url = imageUrl.toString();
       print(url);
       documentFileUpload(url, date.toString());
     } on FirebaseException catch (e) {
@@ -410,7 +409,9 @@ class DocumentModel extends AppModel {
     loading = false;
     notifyListeners();
     print(message);
+
     return {"message": message, "error": haserror,"document":document};
+
   }
 
   Future<void> refreshDoc() async {
@@ -435,12 +436,15 @@ class DocumentModel extends AppModel {
  prefs.setString("userId", identifier);
       }
     }
+
     userId=prefs.getString("userId");
 print (userId);
     final mainReferenceText =
         FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
         final mainReferenceSummary =
         FirebaseDatabase.instance.reference().child('$userId/Documents/Summary');
+
+
 
     try {
       itemList = [];
