@@ -30,8 +30,17 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final picker = ImagePicker();
   TabController _tabController;
+  
   List<DocumentModel> itemList = [];
   File _image;
+    TextEditingController _searchController = TextEditingController();
+
+   static final GlobalKey<ScaffoldState> scaffoldKey =
+  new GlobalKey<ScaffoldState>();
+int currIndex=0;
+  TextEditingController _searchQuery;
+  bool _isSearching = false;
+  String searchQuery = "Search query";
   @override
   void initState() {
 //  SharedPreferences prefs;
@@ -46,7 +55,9 @@ class _HomePageState extends State<HomePage> {
 //       });
 
     super.initState();
+    _searchController.text==" ";
     Mainmodel model = ScopedModel.of(this.context);
+  
     model.loading = true;
 
     model.getDoc().then((value) {
@@ -158,7 +169,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  TextEditingController _searchController = TextEditingController();
+
+
   Widget tab1(Mainmodel model) {
     print(model.load);
     if (model.load == true) {
@@ -167,16 +179,17 @@ class _HomePageState extends State<HomePage> {
         backgroundColor: Colors.white,
       ));
     } else if (model.doclist.length != 0) {
+      print(_searchController.text);
       return ListView.separated(
         separatorBuilder: (_, __) => Divider(
           height: 10.0,
           thickness: 0.7,
         ),
         padding: const EdgeInsets.all(16.0),
-        itemCount: model.doclist.length,
+        itemCount:(_isSearching==true && _searchController.text!="")?model.searchList.length: model.doclist.length,
         physics: BouncingScrollPhysics(),
         itemBuilder: (context, index) {
-          return ListTileWidget(model.doclist[index]);
+          return ListTileWidget((_isSearching==true && _searchController.text!="")?model.searchList[index]:model.doclist[index]);
         },
       );
     } else {
@@ -206,10 +219,10 @@ class _HomePageState extends State<HomePage> {
                                   thickness: 0.7,
                                 ),
                                 padding: const EdgeInsets.all(16.0),
-                                itemCount: model.getsumlist.length,
+                                itemCount:(_isSearching==true && _searchController.text!="")?model.searchList.length: model.getsumlist.length,
                                 physics: BouncingScrollPhysics(),
                                 itemBuilder: (context, index) {
-                                  return ListTileWidget(model.getsumlist[index]);
+                                  return ListTileWidget((_isSearching==true && _searchController.text!="")?model.searchList[index]: model.getsumlist[index]);
                                 },
                               );}
                               else{
@@ -227,12 +240,83 @@ return Center(
                       
                             
   }
+  void updateSearchQuery(String newQuery) {
+if(newQuery!=" "){setState(() {
+       searchQuery = newQuery;
+       filter(newQuery);
+    });
+    print("search query " + newQuery);}
+    
+   
+    // _userDetails.forEach((userDetail) {
+    //   if (userDetail.firstName.contains(text) || userDetail.lastName.contains(text))
+    //     _searchResult.add(userDetail);
+    // });
 
+}
+void filter(String query){
+   Mainmodel model = ScopedModel.of(this.context);
+   model.searchList=[];
+  
+   if(currIndex==0){
+     model.itemList.forEach((element) {
+       if (element.name.contains(query)){
+      setState(() {
+        model.searchList.add(element);
+      });
+         
+       }
+     });
+    }else{
+      model.itemList.forEach((element) {
+       if (element.name.contains(query)){
+         setState(() {
+        model.searchList.add(element);
+      });
+       }
+     });
+
+    }
+}
+// List<Widget> _buildActions() {
+
+//     if (_isSearching) {
+//       return <Widget>[
+//         new 
+//       ];
+//     }
+
+    
+//   }
+  void _clearSearchQuery() {
+    print("close search box");
+    setState(() {
+      _searchQuery.clear();
+      updateSearchQuery("Search query");
+    });
+  }
+Widget _buildSearchField() {
+    return new TextField(
+      cursorColor: Colors.black,
+      controller: _searchController,
+      autofocus: true,
+      decoration: const InputDecoration(
+        
+        hintText: 'Search...',
+        border: InputBorder.none,
+        hintStyle: const TextStyle(color: Colors.grey),
+      ),
+      style: const TextStyle(color: Colors.black, fontSize: 16.0),
+      onChanged: updateSearchQuery,
+    );
+  }
   @override
   Widget build(BuildContext context) {
+      
     return ScopedModelDescendant<Mainmodel>(
         builder: (BuildContext context, Widget child, Mainmodel model) {
       return DefaultTabController(
+        
         length: 2,
         child: Scaffold(
           floatingActionButton: FloatingActionRow(
@@ -244,6 +328,7 @@ return Center(
                   color: Colors.black,
                 ),
                 onTap: () async {
+                  
                   model.setRecoTxt = " ";
                   model.setSumTxt = " ";
                   // final pickedFile = await picker.getImage(source: ImageSource.camera);
@@ -265,6 +350,15 @@ return Center(
           ),
           appBar: AppBar(
             bottom: TabBar(
+              onTap: (index) {
+        print(index);
+        setState(() {
+          model.searchList=[];
+         _searchController.clear;
+         _isSearching=false;
+          currIndex=index;
+        });
+    },
               indicatorColor: Colors.black,
               labelPadding: EdgeInsets.symmetric(horizontal: 50),
               labelColor: Colors.black,
@@ -278,17 +372,32 @@ return Center(
                 ),
                ] ),
                 elevation: 10,
-                title: Text(
+                title:_isSearching?_buildSearchField(): Text(
                   "Home",
                   style: TextStyle(
                       fontSize: 18, color: Color.fromRGBO(64, 75, 96, .9)),
                 ),
                 iconTheme: IconThemeData(color: Color.fromRGBO(64, 75, 96, .9)),
                 backgroundColor: Colors.white30,
-                actions: [
+                actions:_isSearching?[IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+           setState(() {
+                _searchController.clear();
+           });
+      
+          },
+        )]: [
                   Padding(
                     padding: EdgeInsets.all(8.0),
-                    child: Icon(Icons.search,
+                    child: IconButton(icon:Icon(Icons.search),onPressed: (){
+                      setState(() {
+                        _searchController.text==" ";
+                        _isSearching=!_isSearching;
+                        
+                        
+                      });
+                    },
                         color: Color.fromRGBO(64, 75, 96, .9)),
                   ),
                   Padding(
@@ -311,10 +420,16 @@ return Center(
                   //       color: Color.fromRGBO(64, 75, 96, .9)),
                   // ),
                 ],
-
+leading:_isSearching ?  BackButton(onPressed:(){
+  setState(() {
+    _isSearching=!_isSearching;
+    _searchController.clear();
+    model.searchList=[];
+  });
+},) : null,
               ),
               
-          drawer: Drawer(
+          drawer:_isSearching?null: Drawer(
             child: MainDrawer(),
           ),
           
