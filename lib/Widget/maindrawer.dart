@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:path/path.dart';
 
-class MainDrawer extends StatelessWidget {
-  const MainDrawer({Key key}) : super(key: key);
+class MainDrawer extends StatefulWidget {
+  MainDrawer({Key key}) : super(key: key);
+
+  @override
+  _MainDrawerState createState() => _MainDrawerState();
+}
+
+class _MainDrawerState extends State<MainDrawer> {
+  bool press = false;
 
   @override
   Widget build(BuildContext context) {
@@ -70,10 +77,20 @@ class MainDrawer extends StatelessWidget {
           Icons.library_books,
           color: Colors.black,
         ),
-        title: Text("Your library"),
+        title: Text(
+          "Your library",
+          style: TextStyle(color: press ? Colors.grey : Colors.black),
+        ),
+        onExpansionChanged: (_) {
+          setState(() {
+            press = !press;
+          });
+        },
         children: [
           ListTile(
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).pushNamed("/home");
+            },
             leading: Icon(
               Octicons.note,
               color: Colors.black,
@@ -81,7 +98,9 @@ class MainDrawer extends StatelessWidget {
             title: Text("Summary"),
           ),
           ListTile(
-            onTap: () {},
+            onTap: () {
+              Navigator.of(context).pushNamed("/home");
+            },
             leading: Icon(
               Icons.pages_outlined,
               color: Colors.black,
@@ -92,7 +111,9 @@ class MainDrawer extends StatelessWidget {
       ),
 
       ListTile(
-        onTap: () {},
+        onTap: () {
+          Navigator.of(context).pushNamed("/sub");
+        },
         leading: Icon(
           Icons.star,
           color: Colors.black,

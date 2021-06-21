@@ -14,6 +14,7 @@ import 'package:project/Pages/settings.dart';
 import 'package:project/Pages/sign_up.dart';
 import 'package:project/Pages/splash_screen.dart';
 import 'package:project/Pages/subscription_page.dart';
+import 'package:project/Pages/subscription_user.dart';
 import 'package:project/ScopedModel/appModel.dart';
 import 'package:project/ScopedModel/main.dart';
 import 'package:scoped_model/scoped_model.dart';
@@ -69,7 +70,9 @@ class MyApp extends StatelessWidget {
             "/signup": (BuildContext context) => SignUp(model),
             "/login": (BuildContext context) => LoginPage(model),
             "/cameraPage": (BuildContext context) => CameraScreen(model),
+
             "/notification":(BuildContext context) => NotificationPage(),
+
             "/homePage": (BuildContext context) => HomePage(),
             "/preview": (BuildContext context) => PreviewScreen(model),
             "/previewPdf": (BuildContext context) => PdfPreview(),
@@ -77,7 +80,7 @@ class MyApp extends StatelessWidget {
             "/editText": (BuildContext context) => EditText(),
             "/about": (BuildContext context) => About(),
             "/settings": (BuildContext context) => Settings(),
-
+            "/sub": (BuildContext context) => Subscription(),
           },
         ));
   }
