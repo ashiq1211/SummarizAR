@@ -40,7 +40,7 @@ void main() async {
   FirebaseAuth.instance.authStateChanges().listen((User user) {
     if (user == null) {
       isAuth = false;
-      prefs.setString('userId', "noUser");
+      prefs.setString('userId', "");
     } else {
       isAuth = true;
       prefs.setString('userId', user.uid);

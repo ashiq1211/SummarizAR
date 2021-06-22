@@ -30,6 +30,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final picker = ImagePicker();
   TabController _tabController;
+  String user="noUser";
   
   List<DocumentModel> itemList = [];
   File _image;
@@ -72,6 +73,10 @@ int currIndex=0;
     model.setRecoTxt = " ";
     model.setSumTxt = " ";
     model.isAppend = 0;
+    SharedPreferences.getInstance().then((prefs) {
+       user=prefs.getString("userId");
+       print(user);
+    });
   }
 
   FocusNode _focusNode = FocusNode();

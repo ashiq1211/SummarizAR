@@ -99,10 +99,15 @@ class UserModel extends AppModel {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(email: email, password: password);
       SharedPreferences prefs = await SharedPreferences.getInstance();
-      currentUser = Cuser(email: email);
-      final mainReference =
-          FirebaseDatabase.instance.reference().child('$id/Documents');
-      mainReference.once().then((snap) {
+      currentUser = Cuser(email: email,id: FirebaseAuth.instance.currentUser.uid);
+      prefs.setString("userId",FirebaseAuth.instance.currentUser.uid );
+      final mainReferenceText =
+       
+        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+        final mainReferenceSum =
+       
+        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+      mainReferenceText.once().then((snap) {
         var data = snap.value;
         if (data == null) {
           return;
@@ -116,14 +121,34 @@ class UserModel extends AppModel {
             };
             FirebaseDatabase.instance
                 .reference()
-                .child('${FirebaseAuth.instance.currentUser.uid}/Documents')
+                .child('${FirebaseAuth.instance.currentUser.uid}/Documents/ActualText')
                 .set(newData);
-            mainReference.remove();
+            mainReferenceText.remove();
             // notifyListeners();
           });
         }
       });
-      prefs.setString('userId', FirebaseAuth.instance.currentUser.uid);
+    mainReferenceSum.once().then((snap) {
+        var data = snap.value;
+        if (data == null) {
+          return;
+        } else {
+          data.forEach((key, value) {
+            var newData = {
+              "PDF": value['PDF'],
+              "FileName": value['FileName'],
+              "Date": value['Date'],
+              "ActualDate": value["ActualDate"]
+            };
+            FirebaseDatabase.instance
+                .reference()
+                .child('${FirebaseAuth.instance.currentUser.uid}/Documents/Summary')
+                .set(newData);
+            mainReferenceSum.remove();
+            // notifyListeners();
+          });
+        }
+      });
     } on FirebaseAuthException catch (e) {
       if (e.code == 'weak-password') {
         message = 'The password provided is too weak.';
@@ -161,9 +186,13 @@ class UserModel extends AppModel {
 
       SharedPreferences prefs = await SharedPreferences.getInstance();
       prefs.setString('userId', FirebaseAuth.instance.currentUser.uid);
-      final mainReference =
-          FirebaseDatabase.instance.reference().child('$id/Documents');
-      mainReference.once().then((snap) {
+      final mainReferenceText =
+       
+        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+        final mainReferenceSum =
+       
+        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+      mainReferenceText.once().then((snap) {
         var data = snap.value;
         if (data == null) {
           return;
@@ -177,9 +206,30 @@ class UserModel extends AppModel {
             };
             FirebaseDatabase.instance
                 .reference()
-                .child('${FirebaseAuth.instance.currentUser.uid}/Documents')
+                .child('${FirebaseAuth.instance.currentUser.uid}/Documents/ActualText')
                 .set(newData);
-            mainReference.remove();
+            mainReferenceText.remove();
+            // notifyListeners();
+          });
+        }
+      });
+    mainReferenceSum.once().then((snap) {
+        var data = snap.value;
+        if (data == null) {
+          return;
+        } else {
+          data.forEach((key, value) {
+            var newData = {
+              "PDF": value['PDF'],
+              "FileName": value['FileName'],
+              "Date": value['Date'],
+              "ActualDate": value["ActualDate"]
+            };
+            FirebaseDatabase.instance
+                .reference()
+                .child('${FirebaseAuth.instance.currentUser.uid}/Documents/Summary')
+                .set(newData);
+            mainReferenceSum.remove();
             // notifyListeners();
           });
         }
@@ -211,6 +261,10 @@ class UserModel extends AppModel {
 
   Future signout() async {
     await FirebaseAuth.instance.signOut();
+     SharedPreferences prefs = await SharedPreferences.getInstance();
+     prefs.setString("userId","");
+
+    notifyListeners();
     print("object");
   }
 
@@ -345,7 +399,7 @@ class DocumentModel extends AppModel {
     var reference;
     var url;
     userId = prefs.getString("userId");
-    if (userId == null) {
+    if (userId == "") {
       if (Platform.isAndroid) {
         var build = await deviceInfoPlugin.androidInfo;
         var deviceName = build.model;
@@ -431,7 +485,7 @@ class DocumentModel extends AppModel {
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
     userId = prefs.getString("userId");
-    if (userId != null) {
+    if (userId == "") {
       if (Platform.isAndroid) {
         var build = await deviceInfoPlugin.androidInfo;
         var deviceName = build.model;

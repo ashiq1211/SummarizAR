@@ -1,9 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_icons/flutter_icons.dart';
 import 'package:path/path.dart';
+import 'package:project/ScopedModel/main.dart';
+import 'package:scoped_model/scoped_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MainDrawer extends StatefulWidget {
-  MainDrawer({Key key}) : super(key: key);
+  // final String user;
+  // MainDrawer(this.user);
 
   @override
   _MainDrawerState createState() => _MainDrawerState();
@@ -11,10 +16,23 @@ class MainDrawer extends StatefulWidget {
 
 class _MainDrawerState extends State<MainDrawer> {
   bool press = false;
-
+  String user=" ";
+@override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+SharedPreferences.getInstance().then((prefs) {
+       user=prefs.getString("userId");
+       print(user);
+    });
+  }
   @override
   Widget build(BuildContext context) {
-    return Column(children: [
+    return   ScopedModelDescendant<Mainmodel>(
+        builder: (BuildContext context, Widget child, Mainmodel model) {
+          return
+    
+    Column(children: [
       Container(
         child: Padding(
           padding: EdgeInsets.only(top: 50.0),
@@ -22,26 +40,33 @@ class _MainDrawerState extends State<MainDrawer> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              CircleAvatar(
-                backgroundColor: Colors.grey[700],
-                radius: 40.0,
-                child: Icon(
-                  Icons.person,
-                  size: 37,
-                  color: Colors.white,
-                ),
-              ),
+              Container(
+                height: 85,
+      decoration: new BoxDecoration(
+        color: Colors.white,
+        shape: BoxShape.circle,
+        border: new Border.all(
+          color: Colors.black,
+          width: 2,
+        ),
+      ),
+      child: new Center(
+        child: user==""?Icon(Icons.person_add,size: 40,): Text(
+          FirebaseAuth.instance.currentUser.email[0].toUpperCase(),style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),
+        ),
+      ),
+    ),
               SizedBox(
                 height: 5.0,
               ),
               Text(
-                "Lee Wang",
+              user==""?"":  FirebaseAuth.instance.currentUser.email.toString(),
                 style: TextStyle(
                   fontSize: 22.0,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-              SizedBox(
+            user==""?Container(): SizedBox(
                 height: 20.0,
               ),
               SizedBox(
@@ -55,23 +80,26 @@ class _MainDrawerState extends State<MainDrawer> {
                     onPrimary: Colors.black, // foreground
                   ),
                   onPressed: () {
-                    Navigator.of(context).pop();
-
-                    Navigator.pushNamed(context, "/cameraPage");
+                setState(() {
+                  user="";
+                });
+                     user==""?{Navigator.pushNamed(context, "/login"),}:{Navigator.of(context)
+    .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false),model.signout()};
                   },
-                  child: Text('Sign out'),
+                  child: user==""?Text('Sign in'):Text('Sign out'),
                 ),
               )
             ],
           ),
         ),
       ),
-      SizedBox(
-        height: 20.0,
+     SizedBox(
+        height: 15.0,
       ),
       //Now let's Add the button for the Menu
       //and let's copy that and modify it
       ExpansionTile(
+iconColor: Colors.black54,
         childrenPadding: EdgeInsets.fromLTRB(20, 2, 2, 2),
         leading: Icon(
           Icons.library_books,
@@ -151,5 +179,7 @@ class _MainDrawerState extends State<MainDrawer> {
         title: Text("Help"),
       ),
     ]);
+    });
   }
+  
 }
