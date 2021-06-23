@@ -302,7 +302,7 @@ bool recognizeloading=false;
           IconButton(
               icon: Icon(Icons.folder_open, color: Colors.white, size: 40),
               onPressed: () {
-                Navigator.popAndPushNamed(this.context, "/homePage");
+                Navigator.pop(this.context);
               }),
           SizedBox(
             height: 10,

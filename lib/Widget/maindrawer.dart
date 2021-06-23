@@ -16,7 +16,7 @@ class MainDrawer extends StatefulWidget {
 
 class _MainDrawerState extends State<MainDrawer> {
   bool press = false;
-  String user=" ";
+  String user="";
 @override
   void initState() {
     // TODO: implement initState

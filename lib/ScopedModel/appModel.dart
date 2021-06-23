@@ -68,8 +68,8 @@ class SummaryModel extends AppModel {
     );
     var responseData = json.decode(response.body);
     summaryText = responseData["summary"];
-    // loading = false;
-    // notifyListeners();
+    loading = false;
+    notifyListeners();
     return {"error": false};
     // var response=await http.get(Uri.parse(url),headers: {
 
@@ -312,7 +312,7 @@ class UserModel extends AppModel {
 }
 
 class DocumentModel extends AppModel {
-  String recognizedText = " ";
+  String recognizedText = "In literary theory, a text is any object that can be , whether this object is a work of literature, a street sign, an arrangement of buildings on a city block, or styles of clothing. It is a coherent set of signs that transmits some kind of informative message.";
   final DeviceInfoPlugin deviceInfoPlugin = new DeviceInfoPlugin();
 
 
@@ -418,7 +418,7 @@ class DocumentModel extends AppModel {
 
     
     haserror = false;
-    loading = true;
+
     notifyListeners();
     try {
       String createCryptoRandomString([int length = 32]) {
@@ -431,13 +431,13 @@ class DocumentModel extends AppModel {
       void documentFileUpload(String str1, String str2,String name) {
         var dataActual = {
           "PDF": str1,
-          "FileName": "ActualText+$name",
+          "FileName": "ActualText_$name",
           "Date": formattedDate,
           "ActualDate": date.toString()
         };
         var dataSummary = {
           "PDF": str1,
-          "FileName": "Summary+$name",
+          "FileName": "Summary_$name",
           "Date": formattedDate,
           "ActualDate": date.toString()
         };
@@ -477,7 +477,7 @@ class DocumentModel extends AppModel {
       }
     } catch (e) {}
      PDFDocument document = await PDFDocument.fromURL(url);
-    loading = false;
+
     notifyListeners();
     print(message);
 
@@ -490,8 +490,7 @@ class DocumentModel extends AppModel {
   }
 
   Future<Map<dynamic, dynamic>> getDoc() async {
-    print(loading);
-    print(itemList.length);
+    
     haserror = false;
     loading = true;
     notifyListeners();
@@ -565,11 +564,13 @@ print (userId);
               name: value['FileName'],
               date: value['Date'],
               path: value["ActualDate"]);
+              print(m.name);
           summList.add(m);
-          // notifyListeners();
+       
         });
         summList.sort((a, b) => a.name.compareTo(b.name));
-        summList = itemList.reversed.toList();
+        summList = summList.reversed.toList();
+           notifyListeners();
  
 
 
@@ -579,8 +580,7 @@ print (userId);
 
       });
     } on FirebaseException catch (e) {} catch (e) {
-      loading = false;
-      notifyListeners();
+  
     }
     var connectivityResult = await (Connectivity().checkConnectivity());
     if (connectivityResult == ConnectivityResult.none) {

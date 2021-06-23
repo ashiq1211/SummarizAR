@@ -19,6 +19,7 @@ import 'package:project/Widget/alert.dart';
 import 'package:project/Widget/loading.dart';
 import 'package:project/Widget/maindrawer.dart';
 import 'package:project/Widget/tile.dart';
+import 'package:project/Widget/tileSummary.dart';
 import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -31,11 +32,11 @@ class _HomePageState extends State<HomePage> {
   final picker = ImagePicker();
   TabController _tabController;
   String user="noUser";
-  
+  bool load=true;
   List<DocumentModel> itemList = [];
   File _image;
     TextEditingController _searchController = TextEditingController();
-
+  
    static final GlobalKey<ScaffoldState> scaffoldKey =
   new GlobalKey<ScaffoldState>();
 int currIndex=0;
@@ -59,9 +60,13 @@ int currIndex=0;
     _searchController.text==" ";
     Mainmodel model = ScopedModel.of(this.context);
   
-    model.loading = true;
+
 
     model.getDoc().then((value) {
+      setState(() {
+        
+      });
+      
       if (value["error"]) {
         showDialog(
             context: context,
@@ -70,8 +75,8 @@ int currIndex=0;
             });
       }
     });
-    model.setRecoTxt = " ";
-    model.setSumTxt = " ";
+    // model.setRecoTxt = " ";
+    // model.setSumTxt = " ";
     model.isAppend = 0;
     SharedPreferences.getInstance().then((prefs) {
        user=prefs.getString("userId");
@@ -212,12 +217,12 @@ int currIndex=0;
   }
 
   Widget tab2(Mainmodel model) {
-    print(model.load);
+
 
    if( model.load==true){
 
      return Center(child:CircularProgressIndicator(color: Colors.white,));
-   }else if (model.doclist.length != 0){
+   }else if (model.getsumlist.length != 0){
      
      return ListView.separated(
                                 separatorBuilder: (_, __) => Divider(
@@ -228,7 +233,7 @@ int currIndex=0;
                                 itemCount:(_isSearching==true && _searchController.text!="")?model.searchList.length: model.getsumlist.length,
                                 physics: BouncingScrollPhysics(),
                                 itemBuilder: (context, index) {
-                                  return ListTileWidget((_isSearching==true && _searchController.text!="")?model.searchList[index]: model.getsumlist[index]);
+                                  return ListTileSummary((_isSearching==true && _searchController.text!="")?model.searchList[index]: model.summList[index]);
                                 },
                               );}
                               else{
@@ -336,10 +341,10 @@ Widget _buildSearchField() {
                 ),
                 onTap: () async {
                   
-                  model.setRecoTxt = " ";
-                  model.setSumTxt = " ";
+                  // model.setRecoTxt = " ";
+                  // model.setSumTxt = " ";
                   // final pickedFile = await picker.getImage(source: ImageSource.camera);
-                  Navigator.of(context).popAndPushNamed("/cameraPage");
+                  Navigator.pushNamed (context,"/cameraPage");
                 },
               ),
               FloatingActionRowDivider(
