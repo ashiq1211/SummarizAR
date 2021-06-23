@@ -316,13 +316,17 @@ class _CameraScreenState extends State<CameraScreen> {
             icon: Icon(Octicons.note, color: Colors.white, size: 40),
             onPressed: () {
               createPdf(model.recognizedTxt).then((value) {
-                model.putDoc(file.readAsBytesSync(), date,"actualText");
-                file.delete();
+                model.putDoc(file.readAsBytesSync(), date,"actualText").then((value) {
+                  file.delete();
+                });
+                
               });
               model.getSummary(model.recognizedTxt).then((value) {
                   createPdf(model.sumTxt).then((value) {
-                model.putDoc(file.readAsBytesSync(), date,"summary");
+                model.putDoc(file.readAsBytesSync(), date,"summary").then((value){
                 file.delete();
+                });
+                
               });
               });
             }),

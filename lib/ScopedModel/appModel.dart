@@ -25,7 +25,7 @@ class AppModel extends Model {
   bool loading = false;
   bool haserror = false;
   String message = 'Something wrong';
-  String userId = " ";
+  String userId = "";
     bool get load {
     return loading;
   }
@@ -103,10 +103,10 @@ class UserModel extends AppModel {
       prefs.setString("userId",FirebaseAuth.instance.currentUser.uid );
       final mainReferenceText =
        
-        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+        FirebaseDatabase.instance.reference().child('$id/Documents/ActualText');
         final mainReferenceSum =
        
-        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+        FirebaseDatabase.instance.reference().child('$id/Documents/ActualText');
       mainReferenceText.once().then((snap) {
         var data = snap.value;
         if (data == null) {
@@ -188,10 +188,10 @@ class UserModel extends AppModel {
       prefs.setString('userId', FirebaseAuth.instance.currentUser.uid);
       final mainReferenceText =
        
-        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+        FirebaseDatabase.instance.reference().child('$id/Documents/ActualText');
         final mainReferenceSum =
        
-        FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
+        FirebaseDatabase.instance.reference().child('$id/Documents/ActualText');
       mainReferenceText.once().then((snap) {
         var data = snap.value;
         if (data == null) {
@@ -491,11 +491,11 @@ class DocumentModel extends AppModel {
         var deviceName = build.model;
         var deviceVersion = build.version.toString();
         var identifier = build.androidId; //UUID for Android
- prefs.setString("userId", identifier);
+userId=identifier;
       }
     }
 
-    userId=prefs.getString("userId");
+    
 print (userId);
     final mainReferenceText =
         FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
