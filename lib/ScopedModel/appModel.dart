@@ -106,7 +106,7 @@ class UserModel extends AppModel {
         FirebaseDatabase.instance.reference().child('$id/Documents/ActualText');
         final mainReferenceSum =
        
-        FirebaseDatabase.instance.reference().child('$id/Documents/ActualText');
+        FirebaseDatabase.instance.reference().child('$id/Documents/Summary');
       mainReferenceText.once().then((snap) {
         var data = snap.value;
         if (data == null) {
@@ -123,9 +123,10 @@ class UserModel extends AppModel {
                 .reference()
                 .child('${FirebaseAuth.instance.currentUser.uid}/Documents/ActualText')
                 .set(newData);
-            mainReferenceText.remove();
+            
             // notifyListeners();
           });
+          mainReferenceText.remove();
         }
       });
     mainReferenceSum.once().then((snap) {
@@ -144,9 +145,10 @@ class UserModel extends AppModel {
                 .reference()
                 .child('${FirebaseAuth.instance.currentUser.uid}/Documents/Summary')
                 .set(newData);
-            mainReferenceSum.remove();
+            
             // notifyListeners();
           });
+          mainReferenceSum.remove();
         }
       });
     } on FirebaseAuthException catch (e) {
@@ -191,7 +193,7 @@ class UserModel extends AppModel {
         FirebaseDatabase.instance.reference().child('$id/Documents/ActualText');
         final mainReferenceSum =
        
-        FirebaseDatabase.instance.reference().child('$id/Documents/ActualText');
+        FirebaseDatabase.instance.reference().child('$id/Documents/Summary');
       mainReferenceText.once().then((snap) {
         var data = snap.value;
         if (data == null) {
@@ -208,9 +210,10 @@ class UserModel extends AppModel {
                 .reference()
                 .child('${FirebaseAuth.instance.currentUser.uid}/Documents/ActualText')
                 .set(newData);
-            mainReferenceText.remove();
+          
             // notifyListeners();
           });
+            mainReferenceText.remove();
         }
       });
     mainReferenceSum.once().then((snap) {
@@ -229,9 +232,10 @@ class UserModel extends AppModel {
                 .reference()
                 .child('${FirebaseAuth.instance.currentUser.uid}/Documents/Summary')
                 .set(newData);
-            mainReferenceSum.remove();
+       
             // notifyListeners();
           });
+               mainReferenceSum.remove();
         }
       });
     } on FirebaseAuthException catch (e) {

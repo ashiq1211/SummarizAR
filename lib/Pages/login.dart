@@ -224,7 +224,8 @@ class _LoginPageState extends State<LoginPage> {
     )
         .then((response) {
       if (!response['error']) {
-        Navigator.pushReplacementNamed(context, '/homePage');
+        Navigator.of(context)
+    .pushNamedAndRemoveUntil('/homePage', (Route<dynamic> route) => false);
       } else {
         showDialog(
             context: context,
