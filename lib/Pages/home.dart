@@ -75,8 +75,8 @@ int currIndex=0;
             });
       }
     });
-    // model.setRecoTxt = " ";
-    // model.setSumTxt = " ";
+    model.setRecoTxt = " ";
+    model.setSumTxt = " ";
     model.isAppend = 0;
     SharedPreferences.getInstance().then((prefs) {
        user=prefs.getString("userId");
@@ -341,8 +341,8 @@ Widget _buildSearchField() {
                 ),
                 onTap: () async {
                   
-                  // model.setRecoTxt = " ";
-                  // model.setSumTxt = " ";
+                  model.setRecoTxt = " ";
+                  model.setSumTxt = " ";
                   // final pickedFile = await picker.getImage(source: ImageSource.camera);
                   Navigator.pushNamed (context,"/cameraPage");
                 },
@@ -451,12 +451,12 @@ leading:_isSearching ?  BackButton(onPressed:(){
           body: TabBarView(
             children: [
               RefreshIndicator(
-                  color: Colors.black,
+                  color: Colors.white,
                   onRefresh: model.refreshDoc,
                   child: Scaffold(
                       backgroundColor: Colors.black, body: tab1(model))),
               RefreshIndicator(
-                  color: Colors.black,
+                  color: Colors.white,
                   onRefresh: model.refreshDoc,
                   child: Scaffold(
                       backgroundColor: Colors.black, body: tab2(model)))
