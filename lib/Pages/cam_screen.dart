@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:camera/camera.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -32,7 +33,7 @@ class _CameraScreenState extends State<CameraScreen> {
   List cameras;
   int flag = 0;
   var imagePath;
-
+bool recognizeloading=false;
   File file;
   final pdf = pw.Document();
   DateTime date = DateTime.now();
@@ -41,6 +42,7 @@ class _CameraScreenState extends State<CameraScreen> {
   double zoom = 0.0;
   File _image;
   bool retake = false;
+  bool summaryloading=false;
   final picker = ImagePicker();
   Future initCamera(CameraDescription cameraDescription) async {
     if (cameraController != null) {
@@ -245,7 +247,7 @@ class _CameraScreenState extends State<CameraScreen> {
                           color: Colors.white,
                         ),
                         onPressed: () {
-                           createPdf(str);
+                           createPdf(str,1);
                           
                         })),SizedBox(width: 10,),
                         
@@ -315,20 +317,26 @@ class _CameraScreenState extends State<CameraScreen> {
         IconButton(
             icon: Icon(Octicons.note, color: Colors.white, size: 40),
             onPressed: () {
-              createPdf(model.recognizedTxt).then((value) {
-                model.putDoc(file.readAsBytesSync(), date,"actualText").then((value) {
-                  file.delete();
-                });
-                
-              });
+             setState(() {
+               summaryloading=true;
+             });
               model.getSummary(model.recognizedTxt).then((value) {
-                  createPdf(model.sumTxt).then((value) {
+                  createPdf(model.sumTxt,0).then((value) {
                 model.putDoc(file.readAsBytesSync(), date,"summary").then((value){
                 file.delete();
                 });
                 
               });
               });
+               createPdf(model.recognizedTxt,0).then((value) {
+                model.putDoc(file.readAsBytesSync(), date,"actualText").then((value) {
+                  file.delete();
+                });
+                
+              });
+               setState(() {
+               summaryloading=false;
+             });
             }),
         SizedBox(
           height: 10,
@@ -448,7 +456,7 @@ class _CameraScreenState extends State<CameraScreen> {
   }
 
   void createText() {}
-  Future createPdf(String recognizedText) async {
+  Future createPdf(String recognizedText,int isSave) async {
     date = DateTime.now();
     pdf.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
@@ -462,6 +470,8 @@ class _CameraScreenState extends State<CameraScreen> {
 
     file = File(imagePath);
     file.writeAsBytesSync(await pdf.save());
+    if(isSave==1){ showToast();}
+   
  
     print(file);
   }
@@ -506,7 +516,7 @@ class _CameraScreenState extends State<CameraScreen> {
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 17),
                   color: Color.fromRGBO(00, 00, 00, 0.7),
-                  child: model.loading
+                  child: (summaryloading || recognizeloading)
                       ? Center(
                           child: CircularProgressIndicator(
                               valueColor: new AlwaysStoppedAnimation<Color>(
@@ -572,6 +582,9 @@ Widget addNew(Mainmodel model){
   ],);
 } 
   onCapture(context, Mainmodel model) async {
+    setState(() {
+      recognizeloading=true;
+    });
     try {
       final name = DateTime.now();
       var imagePath = join((await getApplicationDocumentsDirectory()).path,
@@ -603,6 +616,9 @@ Widget addNew(Mainmodel model){
     } catch (e) {
       showCameraException(e);
     }
+      setState(() {
+      recognizeloading=false;
+    });
   }
 
   void showCameraException(e) {}
@@ -620,6 +636,14 @@ Widget addNew(Mainmodel model){
     // );
     print("image picked");
     _cropImage(pickedFile.path,model);
+  }
+void showToast() {
+    Fluttertoast.showToast(
+        msg: 'Document has been saved !.',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        backgroundColor: Colors.red,
+        textColor: Colors.yellow);
   }
 
    _cropImage(filePath,Mainmodel model) async {
