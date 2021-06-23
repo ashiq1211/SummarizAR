@@ -32,10 +32,15 @@ class _CameraScreenState extends State<CameraScreen> {
   CameraController cameraController;
   List cameras;
   int flag = 0;
-  var imagePath;
+  var pdfPathActual;
+  var pdfPathSummary;
 bool recognizeloading=false;
-  File file;
-  final pdf = pw.Document();
+  File fileActual;
+   File fileSummary;
+   File file;
+   final pdf = pw.Document();
+  final pdfActual = pw.Document();
+  final pdfSummary = pw.Document();
   DateTime date = DateTime.now();
   int selectedCameraIndex;
   bool flash = true;
@@ -247,7 +252,7 @@ bool recognizeloading=false;
                           color: Colors.white,
                         ),
                         onPressed: () {
-                           createPdf(str,1);
+                           createSavepdf(str);
                           
                         })),SizedBox(width: 10,),
                         
@@ -317,26 +322,15 @@ bool recognizeloading=false;
         IconButton(
             icon: Icon(Octicons.note, color: Colors.white, size: 40),
             onPressed: () {
-             setState(() {
-               summaryloading=true;
-             });
+            
               model.getSummary(model.recognizedTxt).then((value) {
-                  createPdf(model.sumTxt,0).then((value) {
-                model.putDoc(file.readAsBytesSync(), date,"summary").then((value){
-                file.delete();
-                });
+                  createAndCloudPdf(model.recognizedTxt,model.sumTxt, model).then((value) {
+              print("done");
                 
               });
               });
-               createPdf(model.recognizedTxt,0).then((value) {
-                model.putDoc(file.readAsBytesSync(), date,"actualText").then((value) {
-                  file.delete();
-                });
-                
-              });
-               setState(() {
-               summaryloading=false;
-             });
+              
+           
             }),
         SizedBox(
           height: 10,
@@ -456,24 +450,54 @@ bool recognizeloading=false;
   }
 
   void createText() {}
-  Future createPdf(String recognizedText,int isSave) async {
+  Future createAndCloudPdf(String recognizedText,String summary,Mainmodel model) async {
     date = DateTime.now();
-    pdf.addPage(pw.Page(
+   
+      pdfActual.addPage(pw.Page(
         pageFormat: PdfPageFormat.a4,
         build: (pw.Context context) {
           return pw.Center(
             child: pw.Text(recognizedText),
           );
         }));
-    imagePath =
-        join((await getExternalStorageDirectory()).path, '${date}.pdf');
+        pdfSummary.addPage(pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Text(summary),
+          );
+        }));
+   pdfPathActual= join((await getExternalStorageDirectory()).path, 'ActualText ${date}.pdf');
+   pdfPathSummary= join((await getExternalStorageDirectory()).path, 'Summary ${date}.pdf');
+     fileActual=File(pdfPathActual);
+     fileSummary=File(pdfPathSummary);
 
-    file = File(imagePath);
-    file.writeAsBytesSync(await pdf.save());
-    if(isSave==1){ showToast();}
-   
+    fileActual.writeAsBytesSync(await pdfActual.save());
+  
+    fileSummary.writeAsBytesSync(await pdfSummary.save());
+
+   model.putDoc(fileActual.readAsBytesSync(), fileSummary.readAsBytesSync(), date);
  
-    print(file);
+    fileActual.delete();
+                fileSummary.delete();
+ 
+
+  }
+  void createSavepdf( String str)async{
+    date = DateTime.now();
+    pdf.addPage(pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Text(str),
+          );
+        }));
+    var pdfPath =
+        join((await getApplicationDocumentsDirectory()).path, '${date}.pdf');
+
+    file = File(pdfPath);
+    file.writeAsBytesSync(await pdf.save());
+    showToast();
   }
 
   void sharePdf() {}
@@ -506,7 +530,7 @@ bool recognizeloading=false;
                       : new Column(
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: <Widget>[
-                            rectShapeARContainer(model.sumTxt,"summary"),
+                            rectShapeARContainer(model.sumTxt,"Summary"),
                           ],
                         ),
               Align(
@@ -516,7 +540,7 @@ bool recognizeloading=false;
                   width: double.infinity,
                   padding: EdgeInsets.symmetric(horizontal: 30, vertical: 17),
                   color: Color.fromRGBO(00, 00, 00, 0.7),
-                  child: (summaryloading || recognizeloading)
+                  child: model.load
                       ? Center(
                           child: CircularProgressIndicator(
                               valueColor: new AlwaysStoppedAnimation<Color>(
@@ -582,9 +606,7 @@ Widget addNew(Mainmodel model){
   ],);
 } 
   onCapture(context, Mainmodel model) async {
-    setState(() {
-      recognizeloading=true;
-    });
+   
     try {
       final name = DateTime.now();
       var imagePath = join((await getApplicationDocumentsDirectory()).path,
@@ -616,9 +638,7 @@ Widget addNew(Mainmodel model){
     } catch (e) {
       showCameraException(e);
     }
-      setState(() {
-      recognizeloading=false;
-    });
+     
   }
 
   void showCameraException(e) {}

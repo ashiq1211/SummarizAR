@@ -95,30 +95,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
     Mainmodel model = ScopedModel.of(this.context);
 
     model.recognizeText(widget.imgPath).then((value) {
-      if (!value["error"]) {
-        print(value["error"]);
-        createPdf(value["TextRecognized"]).then((value) {
-          print("ashi");
-          model.putDoc(file.readAsBytesSync(), date,"actualText").then((value) {
-            setState(() {
-              document=value["document"];
-            });
-            if (value["error"]) {
-              showDialog(
-                  context: this.context,
-                  builder: (BuildContext context) {
-                    return AlertWidget(value["message"]);
-                  });
-            }
-          });
-        });
-      } else {
-        showDialog(
-            context: this.context,
-            builder: (BuildContext context) {
-              return AlertWidget(value["message"]);
-            });
-      }
+    
     });
   }
 
@@ -130,6 +107,23 @@ class _PreviewScreenState extends State<PreviewScreen> {
         backgroundColor: Colors.red,
         textColor: Colors.yellow);
   }
+  void createSavepdf( String str)async{
+    date = DateTime.now();
+    pdf.addPage(pw.Page(
+        pageFormat: PdfPageFormat.a4,
+        build: (pw.Context context) {
+          return pw.Center(
+            child: pw.Text(str),
+          );
+        }));
+    var pdfPath =
+        join((await getApplicationDocumentsDirectory()).path, '${date}.pdf');
+
+    file = File(pdfPath);
+    file.writeAsBytesSync(await pdf.save());
+    showToast();
+  }
+
 
   @override
   Widget build(BuildContext context) {
@@ -194,10 +188,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     if (model.load) {
                       return;
                     }
-                    if (flag == 0) {
-                      file.delete();
-                      print("bjbvjzbxvjxbjxbjkbdfjkbdfkbjfdff");
-                    }
+                   
                     Navigator.pushAndRemoveUntil(
                       this.context,
                       MaterialPageRoute(builder: (context) => HomePage()),
@@ -213,18 +204,12 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 actions: [
                   IconButton(
                     onPressed: () async {
-                      setState(() {
-                        flag = 1;
-                      });
+                      
                       if (model.load) {
                         return;
                       }
-                      file.delete();
-                      print(file);
-
-                      file = File(imagePath);
-                      file.writeAsBytesSync(await pdf.save());
-                      showToast();
+                      
+                  createSavepdf(model.recognizedTxt);
                     },
                     icon: new Icon(Icons.picture_as_pdf),
                   ),
@@ -234,9 +219,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
                         return;
                       }
 
-                      print(imagePath);
                     
-                      Share.shareFiles([imagePath], subject: "Document");
+                    
+                      Share.share(model.recognizedTxt,subject: "Actual Text");
                     },
                     icon: new Icon(Icons.share),
                   ),
@@ -244,10 +229,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
               ),
               body:body(model, context)) ,
           onWillPop: () async {
-            if (flag == 0) {
-              file.delete();
-              print("bjbvjzbxvjxbjxbjkbdfjkbdfkbjfdff");
-            }
+           
             Navigator.pushAndRemoveUntil(
               this.context,
               MaterialPageRoute(builder: (context) => HomePage()),

@@ -68,8 +68,8 @@ class SummaryModel extends AppModel {
     );
     var responseData = json.decode(response.body);
     summaryText = responseData["summary"];
-    loading = false;
-    notifyListeners();
+    // loading = false;
+    // notifyListeners();
     return {"error": false};
     // var response=await http.get(Uri.parse(url),headers: {
 
@@ -392,9 +392,10 @@ class DocumentModel extends AppModel {
     };
   }
 
-  Future<Map<dynamic, dynamic>> putDoc(List<int> asset, DateTime date,String type) async {
+  Future<Map<dynamic, dynamic>> putDoc(List<int> assetActual,List<int> assetSummary, DateTime date,) async {
     String formattedDate = DateFormat('dd-MM-yy kk:mm').format(date);
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    String crypto=" ";
     var mainReference;
     var reference;
     var url;
@@ -408,13 +409,13 @@ class DocumentModel extends AppModel {
         userId = identifier;
       }
     }
-    if(type=="actualText"){
-       mainReference =
+    
+       var mainReferenceActualDatabase =
         FirebaseDatabase.instance.reference().child('$userId/Documents/ActualText');
-    }else{
-       mainReference =
+
+       var mainReferenceSummaryDatabase =
         FirebaseDatabase.instance.reference().child('$userId/Documents/Summary');
-    }
+
     
     haserror = false;
     loading = true;
@@ -423,38 +424,50 @@ class DocumentModel extends AppModel {
       String createCryptoRandomString([int length = 32]) {
         final Random _random = Random.secure();
         var values = List<int>.generate(length, (i) => _random.nextInt(256));
+        crypto=base64Url.encode(values);
         return base64Url.encode(values);
       }
 
-      void documentFileUpload(String str, String name) {
-        var data = {
-          "PDF": str,
-          "FileName": name,
+      void documentFileUpload(String str1, String str2,String name) {
+        var dataActual = {
+          "PDF": str1,
+          "FileName": "ActualText+$name",
           "Date": formattedDate,
           "ActualDate": date.toString()
         };
-        mainReference.child(createCryptoRandomString()).set(data).then((value) {
+        var dataSummary = {
+          "PDF": str1,
+          "FileName": "Summary+$name",
+          "Date": formattedDate,
+          "ActualDate": date.toString()
+        };
+        mainReferenceActualDatabase.child(createCryptoRandomString()).set(dataActual).then((value) {
           print("Successfully");
-          print(str);
+ 
+        });
+           mainReferenceSummaryDatabase.child(crypto).set(dataSummary).then((value) {
+          print("Successfully");
+ 
         });
       }
- if(type=="actualText"){
-     reference =
-          FirebaseStorage.instance.ref().child("$userId/Documents/ActualText/$date");
+
+    var  referenceActualStorage =
+          FirebaseStorage.instance.ref().child("$userId/Documents/ActualText/ActualText_$date");
       
-    }else{
-        reference =
-          FirebaseStorage.instance.ref().child("$userId/Documents/Summary/$date");
-     
-    }
+
+     var   referenceSummaryStorage=
+          FirebaseStorage.instance.ref().child("$userId/Documents/Summary/Summary_$date");
+
      
 
-      UploadTask uploadTask = reference.putData(asset);
-
-      var imageUrl = await (await uploadTask).ref.getDownloadURL();
-      url = imageUrl.toString();
+      UploadTask uploadTask1 = referenceActualStorage.putData(assetActual);
+      UploadTask uploadTask2= referenceSummaryStorage.putData(assetSummary);
+      var pdfUrlActual = await (await uploadTask1).ref.getDownloadURL();
+      var pdfUrlSummary = await (await uploadTask2).ref.getDownloadURL();
+      var urlActual = pdfUrlActual.toString();
+      var urlSummary = pdfUrlSummary.toString();
       print(url);
-      documentFileUpload(url, date.toString());
+      documentFileUpload(urlActual,urlSummary, date.toString());
     } on FirebaseException catch (e) {
       var connectivityResult = await (Connectivity().checkConnectivity());
       if (connectivityResult == ConnectivityResult.none) {
