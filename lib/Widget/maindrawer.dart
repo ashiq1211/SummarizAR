@@ -7,8 +7,8 @@ import 'package:scoped_model/scoped_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MainDrawer extends StatefulWidget {
-  // final String user;
-  // MainDrawer(this.user);
+  final String user;
+  MainDrawer(this.user);
 
   @override
   _MainDrawerState createState() => _MainDrawerState();
@@ -16,15 +16,15 @@ class MainDrawer extends StatefulWidget {
 
 class _MainDrawerState extends State<MainDrawer> {
   bool press = false;
-  String user="";
+
 @override
   void initState() {
     // TODO: implement initState
     super.initState();
-SharedPreferences.getInstance().then((prefs) {
-       user=prefs.getString("userId");
-       print(user);
-    });
+// SharedPreferences.getInstance().then((prefs) {
+//        user=prefs.getString("userId");
+//        print(user);
+//     });
   }
   @override
   Widget build(BuildContext context) {
@@ -51,7 +51,7 @@ SharedPreferences.getInstance().then((prefs) {
         ),
       ),
       child: new Center(
-        child: user==""?Icon(Icons.person_add,size: 40,): Text(
+        child: widget.user==""?Icon(Icons.person_add,size: 40,): Text(
           FirebaseAuth.instance.currentUser.email[0].toUpperCase(),style: TextStyle(fontSize: 30,fontWeight: FontWeight.bold),
         ),
       ),
@@ -60,13 +60,13 @@ SharedPreferences.getInstance().then((prefs) {
                 height: 5.0,
               ),
               Text(
-              user==""?"":  FirebaseAuth.instance.currentUser.email.toString(),
+             widget. user==""?"":  FirebaseAuth.instance.currentUser.email.toString(),
                 style: TextStyle(
                   fontSize: 22.0,
                   fontWeight: FontWeight.w800,
                 ),
               ),
-            user==""?Container(): SizedBox(
+              widget.user==""?Container(): SizedBox(
                 height: 20.0,
               ),
               SizedBox(
@@ -80,13 +80,13 @@ SharedPreferences.getInstance().then((prefs) {
                     onPrimary: Colors.black, // foreground
                   ),
                   onPressed: () {
-                setState(() {
-                  user="";
-                });
-                     user==""?{Navigator.pushNamed(context, "/login"),}:{Navigator.of(context)
-    .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false),model.signout()};
+                // setState(() {
+                //   user="";
+                // });
+                       widget.user==""?{Navigator.pushNamed(context, "/login"),}:{Navigator.of(context)
+    .pushNamedAndRemoveUntil('/login', (Route<dynamic> route) => false).then((value) => model.signout()),};
                   },
-                  child: user==""?Text('Sign in'):Text('Sign out'),
+                  child:   widget.user==""?Text('Sign in'):Text('Sign out'),
                 ),
               )
             ],

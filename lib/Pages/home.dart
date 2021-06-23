@@ -31,7 +31,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final picker = ImagePicker();
   TabController _tabController;
-  String user="noUser";
+  String user="";
   bool load=true;
   List<DocumentModel> itemList = [];
   File _image;
@@ -446,7 +446,7 @@ leading:_isSearching ?  BackButton(onPressed:(){
               
           drawer:_isSearching?null: Drawer(
 
-            child: MainDrawer(),
+            child: MainDrawer(user),
           ),
           body: TabBarView(
             children: [
