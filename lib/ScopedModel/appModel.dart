@@ -551,6 +551,7 @@ print (userId);
         // notifyListeners();
         // print(loading);
       });
+      summList=[];
       mainReferenceSummary.once().then((DataSnapshot snap) {
         if (snap.value == null) {
           loading = false;
